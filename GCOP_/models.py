@@ -83,7 +83,7 @@ class Branches(models.Model):
     branch_location = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'branches'
 
 
@@ -137,7 +137,7 @@ class Groups(models.Model):
     group_name = models.CharField(unique=True, max_length=100)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'groups'
 
 
@@ -147,7 +147,7 @@ class JoinedGroups(models.Model):
     position = models.ForeignKey('Positions', models.DO_NOTHING, blank=True, null=True)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'joined_groups'
 
 
@@ -168,7 +168,7 @@ class Member(models.Model):
     church_branch = models.ForeignKey(Branches, models.DO_NOTHING, db_column='church_branch', blank=True, null=True)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'member'
 
 
@@ -177,7 +177,7 @@ class Positions(models.Model):
     position_name = models.CharField(unique=True, max_length=100)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'positions'
 
 
@@ -190,7 +190,7 @@ class Relations(models.Model):
     relationship = models.ForeignKey('Relationships', models.DO_NOTHING, blank=True, null=True)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'relations'
 
 
@@ -199,5 +199,5 @@ class Relationships(models.Model):
     relationship_type = models.CharField(unique=True, max_length=50)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'relationships'
