@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 from pathlib import Path
 import os
-# import dj_database_url
+import dj_database_url
 
 
 
@@ -27,6 +27,8 @@ SECRET_KEY = 'django-insecure-s)e7eeh2k$ai&)9_fg3cbz36y$hcng3(rf@l9t-6h51t6x&5*)
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+
+
 
 ALLOWED_HOSTS = [
     "localhost",
@@ -82,14 +84,15 @@ WSGI_APPLICATION = 'GCOP_DB_.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-import os
-import dj_database_url
+
+
 
 
 
 DATABASES = {
-    'default': dj_database_url.config(default='postgresql://gcop_database_user:Qq54l3gA1Ss5M8uHe3dYcrPaE4ftEJXy@dpg-cv2u5pd6l47c739hvna0-a.oregon-postgres.render.com/gcop_database')
+    "default": dj_database_url.config(default=os.environ.get('DATABASE_URL'),conn_max_age=1800)
 }
+
 
 
 
