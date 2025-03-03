@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 from pathlib import Path
 import os
 # import dj_database_url
-from dotenv import load_dotenv
+
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -28,7 +28,12 @@ SECRET_KEY = 'django-insecure-s)e7eeh2k$ai&)9_fg3cbz36y$hcng3(rf@l9t-6h51t6x&5*)
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    "localhost",
+    "127.0.0.1",
+    "gcop-db.onrender.com",  # Add your Render domain here
+]
+
 
 
 # Application definition
