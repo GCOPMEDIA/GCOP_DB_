@@ -88,7 +88,7 @@ import dj_database_url
 
 
 DATABASES = {
-    'default': dj_database_url.config(default=os.getenv('DATABASE_URL'), conn_max_age=600)
+    'default': dj_database_url.config(default='postgresql://gcop_database_user:Qq54l3gA1Ss5M8uHe3dYcrPaE4ftEJXy@dpg-cv2u5pd6l47c739hvna0-a.oregon-postgres.render.com/gcop_database')
 }
 
 
