@@ -148,7 +148,7 @@ class JoinedGroups(models.Model):
 
     class Meta:
         managed = True
-        db_table = 'joined_groups'
+        db_table = 'joinedGroups'
 
 
 class Member(models.Model):
