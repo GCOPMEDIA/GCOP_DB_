@@ -42,6 +42,7 @@ class UserDetailsForm(forms.Form):
     marital_status = forms.ChoiceField(choices=married_status, widget=forms.Select,label='Marital Status')
 
 
+
 class FurtherQuestionsForm(forms.Form):
     number_of_children = forms.IntegerField(label='Number Of Children')
     number_of_survivors = forms.IntegerField(label="Number Of Survivors")
@@ -50,6 +51,7 @@ class FurtherQuestionsForm(forms.Form):
     tithe_card_number = forms.CharField(max_length=200, label='Tithe Card Number if any')
     church_branch = forms.ChoiceField(choices=church_branches,widget=forms.Select)
     groups_joined = forms.MultipleChoiceField(choices=group_choices, widget=forms.CheckboxSelectMultiple,label='Which Branch Do You Worship With')
+    position = forms.CharField(max_length=250, label='What Position Do You Hold')
 
 
 class NextForm(forms.Form):
