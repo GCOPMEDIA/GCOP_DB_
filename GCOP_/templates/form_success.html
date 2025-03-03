@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Submitted</title>
+    <style>
+        /* Import Google Font */
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* Allow scrolling */
+    min-height: 100vh;
+    padding: 20px;
+    overflow-y: auto; /* Enables scrolling if needed */
+}
+
+.container {
+    background: white;
+    max-width: 500px;
+    width: 100%;
+    max-height: 90vh; /* Limit height to 80% of viewport */
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    animation: fadeIn 0.8s ease-in-out;
+    overflow-y: auto; /* Scroll inside container if content overflows */
+}
+
+        h2 {
+            color: #4a4a4a;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        p {
+            color: #666;
+            margin-bottom: 20px;
+            font-size: 16px;
+        }
+
+        ul {
+            list-style: none;
+            text-align: left;
+            padding: 0;
+        }
+
+        li {
+            background: #f7f7f7;
+            padding: 12px;
+            border-radius: 8px;
+            margin: 5px 0;
+            font-size: 15px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        li strong {
+            color: #333;
+        }
+
+        /* Button Styling */
+        .btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 20px;
+            background: #764ba2;
+            color: white;
+            font-weight: 500;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: 0.3s ease-in-out;
+        }
+
+        .btn:hover {
+            background: #5a3d85;
+        }
+
+        /* Fade-in Animation */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>✅ Form Submitted Successfully!</h2>
+        <p>Here is your submitted data:</p>
+        <ul>
+            {% for key, value in data.items %}
+                <li><strong>{{ key }}</strong>: {{ value }}</li>
+            {% endfor %}
+        </ul>
+        <a href="/" class="btn">Back to Home</a>
+    </div>
+</body>
+</html>

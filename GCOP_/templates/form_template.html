@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
+    <title>Member Form</title>
+    <style>
+        /* Google Font */
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* Allow scrolling */
+    min-height: 100vh;
+    padding: 20px;
+    overflow-y: auto; /* Enables scrolling if needed */
+}
+
+.container {
+    background: white;
+    max-width: 500px;
+    width: 100%;
+    max-height: 90vh; /* Limit height to 80% of viewport */
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    animation: fadeIn 0.8s ease-in-out;
+    overflow-y: auto; /* Scroll inside container if content overflows */
+}
+
+
+        h2 {
+            color: #4a4a4a;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        form {
+            text-align: left;
+            margin-top: 20px;
+
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        button {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background: #764ba2;
+            color: white;
+            font-weight: 500;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: 0.3s ease-in-out;
+        }
+
+        button:hover {
+            background: #5a3d85;
+        }
+
+        /* Progress Indicator */
+        .progress-bar {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .progress-step {
+            width: 50%;
+            height: 5px;
+            background: #ddd;
+            border-radius: 3px;
+        }
+
+        .progress-step.active {
+            background: #764ba2;
+        }
+
+        /* Fade-in Animation */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Progress Bar -->
+        <div class="progress-bar">
+            <div class="progress-step {% if step == '1' %}active{% endif %}"></div>
+            <div class="progress-step {% if step == '2' %}active{% endif %}"></div>
+            <div class="progress-step {% if step == '3' %}active{% endif %}"></div>
+            <div class="progress-step {% if step == '4' %}active{% endif %}"></div>
+            <div class="progress-step {% if step == '5' %}active{% endif %}"></div>
+            <div class="progress-step {% if step == '6' %}active{% endif %}"></div>
+        </div>
+
+        <h2>
+    {% if step == '1' %} Step: 1 Member's Personal Details
+    {% elif step == '2' %} Step 2: Further Details
+    {% elif step == '3' %} Child Details - {{ child_index }} of {{ request.session.num_children }}
+    {% elif step == '4' %} Father Details
+    {% elif step == '5' %} Mother Details
+    {% elif step == '6' %} Survivor Details - {{ survivor_index }} of {{ request.session.num_survivors }}
+    {% endif %}
+</h2>
+
+
+<form method="post" action="{% if step == '1' %}{% url 'user_form' %}
+{% elif step == '2' %}{% url 'further_questions' %}
+{% elif step == '3' %}{% url 'child_details' child_index %}
+{% elif step == '4' %}{% url 'father_details' %}
+{% elif step == '5' %}{% url 'mother_details' %}
+{% elif step == '6' %}{% url 'survivor_details' survivor_index %}
+{% endif %}">
+
+            {% csrf_token %}
+            {{ form.as_p }}
+
+            <input type="hidden" name="step" value="{{ step }}">
+            <button type="submit">
+                {% if step == '1' %} Next {% elif step == '2' %} Next {% elif step == '3' %}  Next {% elif step == '4' %}  Next {% elif step == '5' %}  Next {% elif step == '6' %}  Next {% else %} Submit {% endif %}
+            </button>
+        </form>
+    </div>
+
+</body>
+</html>
+
+
+
