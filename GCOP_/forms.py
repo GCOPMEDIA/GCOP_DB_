@@ -30,6 +30,12 @@ relation = [
     ('child','Child'),
     ('sibling',"Sibling")
 ]
+parents = [
+    ('Both',"Yes Both Are Alive"),
+    ('Only Father','Yes But Only My Father'),
+    ('Only Mother',"Yes But Only My Mother"),
+    ('None',"No Both Are Dead")
+]
 
 class UserDetailsForm(forms.Form):
     first_name = forms.CharField(max_length=100, label="First Name")
@@ -45,12 +51,13 @@ class UserDetailsForm(forms.Form):
 
 class FurtherQuestionsForm(forms.Form):
     number_of_children = forms.IntegerField(label='Number Of Children')
-    number_of_survivors = forms.IntegerField(label="Number Of Survivors")
-    date_joined = forms.DateField( label="What Year Did You Join GCOP", required=False)
-    welfare_card_number = forms.CharField(max_length=200, label="Welfare Card Number if any")
-    tithe_card_number = forms.CharField(max_length=200, label='Tithe Card Number if any')
+    number_of_survivors = forms.IntegerField(label="Number Of Close Relatives")
+    parent_status = forms.ChoiceField(label='Are Your Parents Still Alive?',choices=parents)
+    date_joined = forms.CharField( label="What Year Did You Join GCOP", required=False,help_text='eg:2025')
+    welfare_card_number = forms.CharField(max_length=200, label="Welfare Card Number if any",required=False)
+    tithe_card_number = forms.CharField(max_length=200, label='Tithe Card Number if any',required=False)
     church_branch = forms.ChoiceField(choices=church_branches,widget=forms.Select)
-    groups_joined = forms.MultipleChoiceField(choices=group_choices, widget=forms.CheckboxSelectMultiple,label='Which Branch Do You Worship With')
+    groups_joined = forms.MultipleChoiceField(choices=group_choices, widget=forms.CheckboxSelectMultiple,label='Which Church Groups Are You A Member Of?',required=False)
     position = forms.CharField(max_length=250, label='What Position Do You Hold')
 
 
@@ -73,11 +80,19 @@ class MotherForm(forms.Form):
     mother_is_member = forms.ChoiceField(choices=yes_or_no, widget=forms.Select,
                                          label='Is Your Mother A Member Of GCOP?')
 class SurvivorForm(forms.Form):
-    survivor_first_name = forms.CharField(max_length=250, label="Survivor's First Name")
-    survivor_other_name = forms.CharField(max_length=250, label="Survivor's Other Names")
-    survivor_phone_number = forms.CharField(max_length=15, label="Survivor's Phone Number", required=False)
-    survivor_relation = forms.ChoiceField(choices=relation,widget=forms.Select,label="Relationship With Survivor")
+    survivor_first_name = forms.CharField(max_length=250, label="Relative's First Name")
+    survivor_other_name = forms.CharField(max_length=250, label="Relative's Other Names")
+    survivor_phone_number = forms.CharField(max_length=15, label="Relative's Phone Number", required=False)
+    survivor_relation = forms.ChoiceField(choices=relation,widget=forms.Select,label="Relationship With Relative")
     survivor_is_member = forms.ChoiceField(choices=yes_or_no, widget=forms.Select,
-                                         label='Is Your Survivor A Member Of GCOP?')
+                                         label='Is Your Relative A Member Of GCOP?')
+
+class SpouseForm(forms.Form):
+    spouse_first_name = forms.CharField(max_length=250, label="Spouse's First Name")
+    spouse_other_name = forms.CharField(max_length=250, label="Spouse's Other Names")
+    spouse_phone_number = forms.CharField(max_length=15, label="Spouse's Phone Number")
+    spouse_is_member = forms.ChoiceField(choices=yes_or_no, widget=forms.Select,
+                                         label='Is Your Spouse A Member Of GCOP?')
+
 
 
