@@ -38,6 +38,19 @@ ALLOWED_HOSTS = [
     "gcop-db.onrender.com",  # Add your Render domain here
 ]
 
+import os
+from google.oauth2.service_account import Credentials
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+GOOGLE_DRIVE_FOLDER_ID = "1A7lHRGhCbVd7u67X0tqOrKtxQOhamKe6"  # Replace with your actual Folder ID
+
+GS_CREDENTIALS = Credentials.from_service_account_file(
+    os.path.join(BASE_DIR, "credentials.json")
+)
+
+DEFAULT_FILE_STORAGE = "GCOP_.storages.GoogleDriveStorage"  # Custom storage backend
+
 
 
 # Application definition
