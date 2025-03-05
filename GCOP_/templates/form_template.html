@@ -195,7 +195,13 @@
                     previousStepUrl = "{% url 'further_questions' %}";
                 }
             } else if (currentStep === '4') {
-                previousStepUrl = "{% url 'child_details' child_index=request.session.num_children %}";
+                // Ensure num_children is valid
+                const numChildren = parseInt("{{ request.session.num_children }}");
+                if (numChildren >= 1) {
+                    previousStepUrl = "{% url 'child_details' child_index=1 %}".replace("1", numChildren);
+                } else {
+                    previousStepUrl = "{% url 'further_questions' %}";
+                }
             } else if (currentStep === '5') {
                 previousStepUrl = "{% url 'father_details' %}";
             } else if (currentStep === '6') {
