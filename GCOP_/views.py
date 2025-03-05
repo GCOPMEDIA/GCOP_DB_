@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.core.serializers.json import DjangoJSONEncoder
 import json
 from datetime import date
-from .forms import UserDetailsForm, FurtherQuestionsForm, NextForm, FatherForm, MotherForm, SurvivorForm
+from .forms import UserDetailsForm, FurtherQuestionsForm, NextForm, FatherForm, MotherForm, SurvivorForm, SpouseForm
 
 # Utility function to convert date fields to strings
 def convert_dates_to_strings(data):
@@ -20,7 +20,6 @@ def update_session_data(request, new_data):
     request.session['final_data5'] = json.dumps(user_data, cls=DjangoJSONEncoder)  # Store back
     request.session.modified = True  # Ensure session is saved
 
-
 # Step 1: User Details Form
 def user_form_view(request):
     if request.method == 'POST':
@@ -29,12 +28,9 @@ def user_form_view(request):
             cleaned_data = convert_dates_to_strings(form.cleaned_data)
             update_session_data(request, cleaned_data)
             return redirect('further_questions')  # Move to Step 2
-
     else:
         form = UserDetailsForm()
-
     return render(request, 'form_template.html', {'form': form, 'step': '1'})
-
 
 # Step 2: Further Questions (Collecting number of children and survivors)
 def further_questions_view(request):
@@ -46,19 +42,52 @@ def further_questions_view(request):
             # Store numbers for child & survivor processing
             request.session['num_children'] = int(cleaned_data.get('number_of_children', 0))
             request.session['num_survivors'] = int(cleaned_data.get('number_of_survivors', 0))
+            request.session['marital_status'] = cleaned_data.get('marital_status', 'single')
+            request.session['parent_status'] = cleaned_data.get('parent_status', 'None')
 
             update_session_data(request, cleaned_data)
-            return redirect('child_details', child_index=1)  # Start with first child
+
+            # Determine the next step based on conditions
+            if request.session['marital_status'] == 'married':
+                return redirect('spouse_details')
+            elif request.session['num_children'] > 0:
+                return redirect('child_details', child_index=1)
+            elif request.session['parent_status'] != 'None':
+                return redirect('father_details')
+            else:
+                return redirect('survivor_details', survivor_index=1)
 
     else:
         form = FurtherQuestionsForm()
 
     return render(request, 'form_template.html', {'form': form, 'step': '2'})
 
+# Step 3: Spouse Details (Only shown if married)
+def spouse_details(request):
+    if request.method == 'POST':
+        form = SpouseForm(request.POST)
+        if form.is_valid():
+            cleaned_data = convert_dates_to_strings(form.cleaned_data)
+            update_session_data(request, cleaned_data)
 
-# Step 3: Child Details (Handles multiple children dynamically)
+            if request.session.get('num_children', 0) > 0:
+                return redirect('child_details', child_index=1)
+            elif request.session.get('parent_status', 'None') != 'None':
+                return redirect('father_details')
+            else:
+                return redirect('survivor_details', survivor_index=1)
+
+    else:
+        form = SpouseForm()
+
+    return render(request, 'form_template.html', {'form': form, 'step': 'spouse'})
+
+# Step 4: Child Details (Handles multiple children dynamically)
 def child_details_view(request, child_index):
     num_children = request.session.get('num_children', 0)
+
+    if num_children == 0:
+        return redirect('father_details')  # Skip if no children
 
     if request.method == 'POST':
         form = NextForm(request.POST)
@@ -74,45 +103,52 @@ def child_details_view(request, child_index):
     else:
         form = NextForm()
 
-    return render(request, 'form_template.html', {'form': form, 'step': '3', 'child_index': child_index})
+    return render(request, 'form_template.html', {'form': form, 'step': '4', 'child_index': child_index})
 
-
-# Step 4: Father Details
+# Step 5: Father Details
 def father_details(request):
-    if request.method == 'POST':
-        form = FatherForm(request.POST)
-        if form.is_valid():
-            cleaned_data = convert_dates_to_strings(form.cleaned_data)
-            update_session_data(request, cleaned_data)
-            return redirect('mother_details')
+    parent_status = request.session.get('parent_status', 'None')
+    if parent_status in ['Both', 'Only Father']:
+        if request.method == 'POST':
+            form = FatherForm(request.POST)
+            if form.is_valid():
+                cleaned_data = convert_dates_to_strings(form.cleaned_data)
+                update_session_data(request, cleaned_data)
+                return redirect('mother_details')
 
+        else:
+            form = FatherForm()
+
+        return render(request, 'form_template.html', {'form': form, 'step': '4'})
     else:
-        form = FatherForm()
+        return redirect('mother_details')
 
-    return render(request, 'form_template.html', {'form': form, 'step': '4'})
-
-
-# Step 5: Mother Details
 def mother_details(request):
-    if request.method == 'POST':
-        form = MotherForm(request.POST)
-        if form.is_valid():
-            cleaned_data = convert_dates_to_strings(form.cleaned_data)
-            update_session_data(request, cleaned_data)
+    parent_status = request.session.get('parent_status', 'None')
+    if parent_status in ['Both', 'Only Mother']:
+        if request.method == 'POST':
+            form = MotherForm(request.POST)
+            if form.is_valid():
+                cleaned_data = convert_dates_to_strings(form.cleaned_data)
+                update_session_data(request, cleaned_data)
+                return redirect('survivor_details', survivor_index=1)
 
-            # Ensure survivor index is tracked properly
-            request.session['current_survivor_index'] = 1  # Initialize survivor index
-            return redirect('survivor_details', survivor_index=1)
+        else:
+            form = MotherForm()
 
+        return render(request, 'form_template.html', {'form': form, 'step': '5'})
     else:
-        form = MotherForm()
+        return redirect('survivor_details', survivor_index=1)
 
-    return render(request, 'form_template.html', {'form': form, 'step': '5'})
+# Step 6: Mother Details
 
 
-# Step 6: Survivor Details (Handles multiple survivors dynamically)
+# Step 7: Survivor Details (Handles multiple survivors dynamically)
 def survivor_details_view(request, survivor_index):
     num_survivors = request.session.get('num_survivors', 0)
+
+    if num_survivors == 0:
+        return redirect('form_success')  # Skip if no survivors
 
     if request.method == 'POST':
         form = SurvivorForm(request.POST)
@@ -128,10 +164,9 @@ def survivor_details_view(request, survivor_index):
     else:
         form = SurvivorForm()
 
-    return render(request, 'form_template.html', {'form': form, 'step': '6', 'survivor_index': survivor_index})
+    return render(request, 'form_template.html', {'form': form, 'step': '7', 'survivor_index': survivor_index})
 
-
-# Step 7: Success Page (Shows collected data)
+# Step 8: Success Page (Shows collected data)
 def form_success_view(request):
     data = json.loads(request.session.get('final_data5', '{}'))  # Load all collected data
     return render(request, 'form_success.html', {'data': data})  # Render success page
