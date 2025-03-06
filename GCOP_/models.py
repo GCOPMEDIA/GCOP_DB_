@@ -7,9 +7,10 @@
 # Feel free to rename the models, but don't rename db_table values or field names.
 from django.db import models
 from django.db import models
-from gdstorage.storage import GoogleDriveStorage
+from cloudinary.models import CloudinaryField
 
-gdstorage = GoogleDriveStorage()
+
+
 
 class AuthGroup(models.Model):
     name = models.CharField(unique=True, max_length=150)
@@ -154,7 +155,6 @@ class JoinedGroups(models.Model):
         db_table = 'joinedGroups'
 
 
-google_drive_storage = GoogleDriveStorage()
 
 
 
@@ -163,7 +163,7 @@ class Member(models.Model):
     member_id = models.AutoField(primary_key=True)
     f_name = models.CharField(max_length=100)
     l_name = models.CharField(max_length=100)
-    member_image = models.FileField(upload_to="uploads/",null=True,blank=True,storage=gdstorage)
+    member_image = CloudinaryField('image',blank=True,null=True)
     date_of_birth = models.DateField(blank=True, null=True)
     hometown = models.CharField(max_length=100, blank=True, null=True)
     gender = models.CharField(max_length=10, blank=True, null=True)
