@@ -45,11 +45,12 @@ class UserDetailsForm(forms.Form):
     address = forms.CharField(max_length=100, label="Ghana Post Address")
     hometown = forms.CharField(max_length=100, label="Home Town")
     gender = forms.ChoiceField(choices=gender_choices,widget=forms.Select)
-    marital_status = forms.ChoiceField(choices=married_status, widget=forms.Select,label='Marital Status')
+
 
 
 
 class FurtherQuestionsForm(forms.Form):
+    marital_status = forms.ChoiceField(choices=married_status, widget=forms.Select, label='Marital Status')
     number_of_children = forms.IntegerField(label='Number Of Children')
     number_of_survivors = forms.IntegerField(label="Number Of Close Relatives")
     parent_status = forms.ChoiceField(label='Are Your Parents Still Alive?',choices=parents)
