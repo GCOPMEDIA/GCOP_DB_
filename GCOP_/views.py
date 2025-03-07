@@ -18,10 +18,8 @@ def login_(request):
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
-        print(username)
         user = authenticate(request,username=username,password=password)
         if user is not None:
-
             login(request,user)
             return redirect('user_form')
         else:
@@ -60,8 +58,8 @@ def further_questions_view(request):
             cleaned_data = convert_dates_to_strings(form.cleaned_data)
 
             # Store numbers for child & survivor processing
-            request.session['num_children'] = int(cleaned_data.get('number_of_children', 0))
-            request.session['num_survivors'] = int(cleaned_data.get('number_of_survivors', 0))
+            request.session['number_of_children'] = int(cleaned_data.get('number_of_children', 0))
+            request.session['number_of_survivors'] = int(cleaned_data.get('number_of_survivors', 0))
             request.session['marital_status'] = cleaned_data.get('marital_status', 'single')
             request.session['parent_status'] = cleaned_data.get('parent_status', 'None')
 
@@ -70,7 +68,7 @@ def further_questions_view(request):
             # Determine the next step based on conditions
             if request.session['marital_status'] == 'married':
                 return redirect('spouse_details')
-            elif request.session['num_children'] > 0:
+            elif request.session['number_of_children'] > 0:
                 return redirect('child_details', child_index=1)
             elif request.session['parent_status'] != 'None':
                 return redirect('father_details')
@@ -90,7 +88,7 @@ def spouse_details(request):
             cleaned_data = convert_dates_to_strings(form.cleaned_data)
             update_session_data(request, cleaned_data)
 
-            if request.session.get('num_children', 0) > 0:
+            if request.session.get('number_of_children', 0) > 0:
                 return redirect('child_details', child_index=1)
             elif request.session.get('parent_status', 'None') != 'None':
                 return redirect('father_details')
@@ -104,9 +102,9 @@ def spouse_details(request):
 
 # Step 4: Child Details (Handles multiple children dynamically)
 def child_details_view(request, child_index):
-    num_children = request.session.get('num_children', 0)
+    number_of_children = request.session.get('number_of_children', 0)
 
-    if num_children == 0:
+    if number_of_children == 0:
         return redirect('father_details')  # Skip if no children
 
     if request.method == 'POST':
@@ -115,7 +113,7 @@ def child_details_view(request, child_index):
             cleaned_data = convert_dates_to_strings(form.cleaned_data)
             update_session_data(request, {f'child_{child_index}': cleaned_data})
 
-            if child_index < num_children:
+            if child_index < number_of_children:
                 return redirect('child_details', child_index=child_index + 1)
             else:
                 return redirect('father_details')
@@ -165,9 +163,9 @@ def mother_details(request):
 
 # Step 7: Survivor Details (Handles multiple survivors dynamically)
 def survivor_details_view(request, survivor_index):
-    num_survivors = request.session.get('num_survivors', 0)
+    number_of_survivors = request.session.get('number_of_survivors', 0)
 
-    if num_survivors == 0:
+    if number_of_survivors == 0:
         return redirect('form_success')  # Skip if no survivors
 
     if request.method == 'POST':
@@ -176,7 +174,7 @@ def survivor_details_view(request, survivor_index):
             cleaned_data = convert_dates_to_strings(form.cleaned_data)
             update_session_data(request, {f'survivor_{survivor_index}': cleaned_data})
 
-            if survivor_index < num_survivors:
+            if survivor_index < number_of_survivors:
                 return redirect('survivor_details', survivor_index=survivor_index + 1)
             else:
                 return redirect('form_success')
