@@ -1,5 +1,4 @@
 from django import forms
-from django_select2.forms import Select2MultipleWidget
 
 positions = [
 
@@ -53,9 +52,7 @@ parents = [
     ('Only Mother',"Yes But Only My Mother"),
     ('None',"No Both Are Dead")
 ]
-group_positions = [
-    ()
-]
+
 
 class UserDetailsForm(forms.Form):
     first_name = forms.CharField(max_length=100, label="First Name")
