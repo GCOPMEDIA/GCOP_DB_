@@ -1,5 +1,8 @@
 from django.shortcuts import render, redirect
 from django.core.serializers.json import DjangoJSONEncoder
+from django.contrib.auth.models import User
+from django.http import HttpResponse
+from django.contrib.auth import authenticate,login
 import json
 from datetime import date
 from .forms import UserDetailsForm, FurtherQuestionsForm, NextForm, FatherForm, MotherForm, SurvivorForm, SpouseForm
@@ -11,6 +14,20 @@ def convert_dates_to_strings(data):
         if isinstance(value, date):
             data[key] = value.strftime('%Y-%m-%d')
     return data
+def login_(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        print(username)
+        user = authenticate(request,username=username,password=password)
+        if user is not None:
+
+            login(request,user)
+            return redirect('user_form')
+        else:
+            return HttpResponse(status=403)
+    else:
+        return render(request,'registration/login.html',{})
 
 # Utility function to update session data
 def update_session_data(request, new_data):
@@ -22,15 +39,18 @@ def update_session_data(request, new_data):
 
 # Step 1: User Details Form
 def user_form_view(request):
-    if request.method == 'POST':
-        form = UserDetailsForm(request.POST)
-        if form.is_valid():
-            cleaned_data = convert_dates_to_strings(form.cleaned_data)
-            update_session_data(request, cleaned_data)
-            return redirect('further_questions')  # Move to Step 2
-    else:
-        form = UserDetailsForm()
-    return render(request, 'form_template.html', {'form': form, 'step': '1'})
+    if User.is_authenticated:
+
+        if request.method == 'POST':
+            form = UserDetailsForm(request.POST)
+            if form.is_valid():
+                cleaned_data = convert_dates_to_strings(form.cleaned_data)
+                update_session_data(request, cleaned_data)
+                return redirect('further_questions')  # Move to Step 2
+        else:
+            form = UserDetailsForm()
+        return render(request, 'form_template.html', {'form': form, 'step': '1'})
+    else:return HttpResponse(status=403)
 
 # Step 2: Further Questions (Collecting number of children and survivors)
 def further_questions_view(request):
