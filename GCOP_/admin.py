@@ -19,5 +19,5 @@ admin.site.register(Joinedgroups)
 admin.site.register(Member)
 admin.site.register(ChurchPositions)
 admin.site.register(Relations)
-admin.site.register(Relationships)
+
 
