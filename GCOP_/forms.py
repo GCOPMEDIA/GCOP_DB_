@@ -1,10 +1,26 @@
 from django import forms
 from django_select2.forms import Select2MultipleWidget
 
+positions = [
+    ('clergy',"Clergy"),
+    ('elder',"Elder"),
+    ('worker',"Worker"),
+    ('admin secretary',"Administrator Secretary"),
+    ('media',"Media")
+
+]
+
 group_choices = [
     ('youth',"Youth"),
-    ("elders","Elders"),
-    ('pastors',"Pastors")
+    ("women's fellowship","Women's Fellowship"),
+    ('choir',"Choir"),
+    ('band','Band'),
+    ('ushers','Ushers'),
+    ('tambourine',"Tambourine"),
+    ('prayer',"Prayer"),
+    ("youth choir",'Youth Choir'),
+    ('singing band','Singing Band'),
+    ('mercy ladies','Mercy Ladies')
 ]
 gender_choices = [
     ('male',"Male"),
