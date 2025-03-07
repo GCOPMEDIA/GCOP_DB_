@@ -3,7 +3,6 @@ from .views import *
 
 urlpatterns = [
     path('',login_,name='login_'),
-
     path('user_form', user_form_view, name='user_form'),
     path('further_questions/', further_questions_view, name='further_questions'),
     path('child_details/<int:child_index>/', child_details_view, name='child_details'),
