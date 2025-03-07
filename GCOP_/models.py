@@ -164,6 +164,7 @@ class Member(models.Model):
     f_name = models.CharField(max_length=100)
     l_name = models.CharField(max_length=100)
     member_image = CloudinaryField('image',blank=True,null=True)
+    address = models.CharField(max_length=100,blank=True,null=True)
     date_of_birth = models.DateField(blank=True, null=True)
     hometown = models.CharField(max_length=100, blank=True, null=True)
     gender = models.CharField(max_length=10, blank=True, null=True)
