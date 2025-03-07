@@ -60,6 +60,14 @@
             border-radius: 6px;
             font-size: 14px;
         }
+        .form {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 14px;
+        }
 
         .button-container {
             display: flex;
@@ -132,10 +140,10 @@
         <h2>
             {% if step == '1' %} Step: 1 Member's Personal Details
             {% elif step == '2' %} Step 2: Further Details
-            {% elif step == '3' %} Child Details - {{ child_index }} of {{ request.session.num_children }}
+            {% elif step == '3' %} Child Details - {{ child_index }} of {{ request.session.number_of_children }}
             {% elif step == '4' %} Father Details
             {% elif step == '5' %} Mother Details
-            {% elif step == '6' %} Close Relatives - {{ survivor_index }} of {{ request.session.num_survivors }}
+            {% elif step == '6' %} Close Relatives - {{ survivor_index }} of {{ request.session.number_of_survivors }}
             {% elif step == 'spouse' %} Spouse Details
             {% endif %}
         </h2>
@@ -151,7 +159,9 @@
             {% elif step == 'spouse' %}{% url 'spouse_details' %}
             {% endif %}">
             {% csrf_token %}
+            <div class="form">
             {{ form.as_p }}
+                </div>
 
             <input type="hidden" name="step" value="{{ step }}">
 
@@ -195,8 +205,8 @@
                     previousStepUrl = "{% url 'further_questions' %}";
                 }
             } else if (currentStep === '4') {
-                // Ensure num_children is valid
-                const numChildren = parseInt("{{ request.session.num_children }}");
+                // Ensure number_of_children is valid
+                const numChildren = parseInt("{{ request.session.number_of_children }}");
                 if (numChildren >= 1) {
                     previousStepUrl = "{% url 'child_details' child_index=1 %}".replace("1", numChildren);
                 } else {
