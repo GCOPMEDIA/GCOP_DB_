@@ -190,3 +190,6 @@ class Relations(models.Model):
     l_name = models.CharField(max_length=100)
     phone_number = models.CharField(max_length=20, blank=True, null=True)
     is_member = models.BooleanField(blank=True, null=True)
+
+class Relationships(models.Model):
+    id()
