@@ -2,25 +2,26 @@ from django import forms
 from django_select2.forms import Select2MultipleWidget
 
 positions = [
-    ('clergy',"Clergy"),
-    ('elder',"Elder"),
-    ('worker',"Worker"),
-    ('admin secretary',"Administrator Secretary"),
-    ('media',"Media")
+
 
 ]
 
 group_choices = [
-    ('youth',"Youth"),
-    ("women's fellowship","Women's Fellowship"),
-    ('choir',"Choir"),
-    ('band','Band'),
-    ('ushers','Ushers'),
-    ('tambourine',"Tambourine"),
-    ('prayer',"Prayer"),
-    ("youth choir",'Youth Choir'),
-    ('singing band','Singing Band'),
-    ('mercy ladies','Mercy Ladies')
+    ('clergy',"Clergy"),
+    ('elder',"Elder"),
+    ('worker',"Worker"),
+    ('media',"Media"),
+    ('12',"Youth"),
+    ("2","Women's Fellowship"),
+    ('4',"Choir"),
+    ('5','Band'),
+    ('6','Ushers'),
+    ('7',"Tambourine"),
+    ('8',"Prayer"),
+    ("9",'Youth Choir'),
+    ('10','Singing Band'),
+    ('11','Mercy Ladies'),
+    ("1","Lyric Group")
 ]
 gender_choices = [
     ('male',"Male"),
@@ -52,6 +53,9 @@ parents = [
     ('Only Mother',"Yes But Only My Mother"),
     ('None',"No Both Are Dead")
 ]
+group_positions = [
+    ()
+]
 
 class UserDetailsForm(forms.Form):
     first_name = forms.CharField(max_length=100, label="First Name")
@@ -74,7 +78,7 @@ class FurtherQuestionsForm(forms.Form):
     welfare_card_number = forms.CharField(max_length=200, label="Welfare Card Number if any",required=False)
     tithe_card_number = forms.CharField(max_length=200, label='Tithe Card Number if any',required=False)
     church_branch = forms.ChoiceField(choices=church_branches,widget=forms.Select)
-    groups_joined = forms.MultipleChoiceField(choices=group_choices, widget=forms.CheckboxSelectMultiple,label='Which Church Groups Are You A Member Of?',required=False)
+    group_name = forms.MultipleChoiceField(choices=group_choices,widget=forms.SelectMultiple(attrs={'class': 'multi-dropdown'}))
     position = forms.CharField(max_length=250, label='What Position Do You Hold')
 
 
