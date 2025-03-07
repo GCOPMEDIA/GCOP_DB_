@@ -90,10 +90,10 @@ class Branches(models.Model):
 class ChurchPositions(models.Model):
     postition_id = models.AutoField(primary_key=True)
     position_name = models.CharField(unique=True, max_length=100)
-    member = models.ForeignKey('Member', models.DO_NOTHING, blank=True, null=True)
+    member = models.ForeignKey('Member', on_delete=models.CASCADE,null=True,blank=True)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'church_positions'
 
 
@@ -157,7 +157,7 @@ class Joinedgroups(models.Model):
     member = models.ForeignKey('Member', models.DO_NOTHING, blank=True, null=True)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'joinedGroups'
 
 
@@ -180,7 +180,7 @@ class Member(models.Model):
     position = models.IntegerField(db_column='Position', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'member'
 
 
@@ -191,3 +191,6 @@ class Relations(models.Model):
     phone_number = models.CharField(max_length=20, blank=True, null=True)
     relationship = models.CharField(max_length=100,blank=True,null=True)
     is_member = models.BooleanField(blank=True, null=True)
+    class Meta:
+        managed = True
+        db_table = 'relations'
