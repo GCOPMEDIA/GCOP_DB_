@@ -110,7 +110,7 @@
                 <li><strong>{{ key }}</strong>: {{ value }}</li>
             {% endfor %}
         </ul>
-        <a href="/" class="btn">Register Another Member </a>
+        <a href="{% url 'user_form' %}" class="btn">Register Another Member </a>
     </div>
 </body>
 </html>
