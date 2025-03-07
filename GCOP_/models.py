@@ -6,10 +6,6 @@
 #   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
 # Feel free to rename the models, but don't rename db_table values or field names.
 from django.db import models
-from django.db import models
-from cloudinary.models import CloudinaryField
-
-
 
 
 class AuthGroup(models.Model):
@@ -87,8 +83,18 @@ class Branches(models.Model):
     branch_location = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
-        managed = True
+        managed = False
         db_table = 'branches'
+
+
+class ChurchPositions(models.Model):
+    postition_id = models.AutoField(primary_key=True)
+    position_name = models.CharField(unique=True, max_length=100)
+    member = models.ForeignKey('Member', models.DO_NOTHING, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'church_positions'
 
 
 class DjangoAdminLog(models.Model):
@@ -141,31 +147,26 @@ class Groups(models.Model):
     group_name = models.CharField(unique=True, max_length=100)
 
     class Meta:
-        managed = True
+        managed = False
         db_table = 'groups'
 
 
-class JoinedGroups(models.Model):
+class Joinedgroups(models.Model):
+    id = models.BigAutoField(primary_key=True)
     group = models.ForeignKey(Groups, models.DO_NOTHING, blank=True, null=True)
     member = models.ForeignKey('Member', models.DO_NOTHING, blank=True, null=True)
-    position = models.ForeignKey('Positions', models.DO_NOTHING, blank=True, null=True)
 
     class Meta:
-        managed = True
+        managed = False
         db_table = 'joinedGroups'
-
-
-
-
 
 
 class Member(models.Model):
     member_id = models.AutoField(primary_key=True)
     f_name = models.CharField(max_length=100)
     l_name = models.CharField(max_length=100)
-    member_image = CloudinaryField('image',blank=True,null=True)
-    address = models.CharField(max_length=100,blank=True,null=True)
     date_of_birth = models.DateField(blank=True, null=True)
+    address=models.CharField(max_length=100,null=True,blank=True)
     hometown = models.CharField(max_length=100, blank=True, null=True)
     gender = models.CharField(max_length=10, blank=True, null=True)
     marital_status = models.CharField(max_length=20, blank=True, null=True)
@@ -176,38 +177,16 @@ class Member(models.Model):
     tithe_card_num = models.CharField(unique=True, max_length=50, blank=True, null=True)
     created_at = models.DateTimeField(blank=True, null=True)
     church_branch = models.ForeignKey(Branches, models.DO_NOTHING, db_column='church_branch', blank=True, null=True)
+    position = models.IntegerField(db_column='Position', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        managed = True
+        managed = False
         db_table = 'member'
 
 
-class Positions(models.Model):
-    postition_id = models.AutoField(primary_key=True)
-    position_name = models.CharField(unique=True, max_length=100)
-
-    class Meta:
-        managed = True
-        db_table = 'positions'
-
-
 class Relations(models.Model):
+    id = models.BigAutoField(primary_key=True)
     f_name = models.CharField(max_length=100)
     l_name = models.CharField(max_length=100)
     phone_number = models.CharField(max_length=20, blank=True, null=True)
     is_member = models.BooleanField(blank=True, null=True)
-    member = models.ForeignKey(Member, models.DO_NOTHING, blank=True, null=True)
-    relationship = models.ForeignKey('Relationships', models.DO_NOTHING, blank=True, null=True)
-
-    class Meta:
-        managed = True
-        db_table = 'relations'
-
-
-class Relationships(models.Model):
-    relationship_id = models.AutoField(primary_key=True)
-    relationship_type = models.CharField(unique=True, max_length=50)
-
-    class Meta:
-        managed = True
-        db_table = 'relationships'
