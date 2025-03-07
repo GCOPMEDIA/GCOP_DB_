@@ -121,7 +121,7 @@ def child_details_view(request, child_index):
     else:
         form = NextForm()
 
-    return render(request, 'form_template.html', {'form': form, 'step': '4', 'child_index': child_index})
+    return render(request, 'form_template.html', {'form': form, 'step': '3', 'child_index': child_index})
 
 # Step 5: Father Details
 def father_details(request):
