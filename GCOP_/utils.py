@@ -33,7 +33,7 @@ def member_entry(data):
 
     for g in data['group_name']:
         group = Groups.objects.get(group_id=int(g))
-        jgroup = Joinedgroups(group=group,member=m)
+        jgroup = Joinedgroups(group=group,member=m.member_id)
         jgroup.save()
         ##print('Saved group data')
 
@@ -42,7 +42,7 @@ def member_entry(data):
                       l_name=data['father_other_name'],
                       phone_number=data['father_phone_number'],
                       relationship='Father',
-                      is_member=data['father_is_member'],member_id=m)
+                      is_member=data['father_is_member'],member_id=m.member_id)
 
         f.save()
         ##print('Saved father data')
@@ -50,7 +50,7 @@ def member_entry(data):
                       l_name=data['mother_other_name'],
                       phone_number=data['mother_phone_number'],
                       relationship='Mother',
-                      is_member=data['mother_is_member'],member_id=m)
+                      is_member=data['mother_is_member'],member_id=m.member_id)
 
         m.save()
         ##print('Saved mother data')
@@ -59,7 +59,7 @@ def member_entry(data):
                       l_name=data['father_other_name'],
                       phone_number=data['father_phone_number'],
                       relationship='Father',
-                      is_member=data['father_is_member'],member_id=m)
+                      is_member=data['father_is_member'],member_id=m.member_id)
 
         f.save()
         ##print('Saved father data')
@@ -68,7 +68,7 @@ def member_entry(data):
                       l_name=data['mother_other_name'],
                       phone_number=data['mother_phone_number'],
                       relationship='Mother',
-                      is_member=data['mother_is_member'],member_id=m)
+                      is_member=data['mother_is_member'],member_id=m.member_id)
 
         m.save()
         ##print('Saved mother data')
@@ -80,7 +80,7 @@ def member_entry(data):
                       l_name=cd['child_other_name'],
                       phone_number=cd['child_phone_number'],
                       relationship='Child',
-                      is_member=cd['child_is_member'],member_id=m)
+                      is_member=cd['child_is_member'],member_id=m.member_id)
 
         cc.save()
         ##print('Saved child data')
@@ -91,7 +91,7 @@ def member_entry(data):
                       l_name=sd['survivor_other_name'],
                       phone_number=sd['survivor_phone_number'],
                       relationship='Close Relative',
-                      is_member=sd['survivor_is_member'],member_id=m)
+                      is_member=sd['survivor_is_member'],member_id=m.member_id)
 
         cc.save()
         ##print('Saved survivor data')
@@ -102,7 +102,7 @@ def member_entry(data):
                   l_name=data['spouse_other_name'],
                   phone_number=data['spouse_phone_number'],
                   relationship='Spouse',
-                  is_member=data['spouse_is_member'],member_id=m)
+                  is_member=data['spouse_is_member'],member_id=m.member_id)
 
     sp.save()
     ##print('Saved spouse data')
