@@ -33,7 +33,7 @@ def member_entry(data):
 
     for g in data['group_name']:
         group = Groups.objects.get(group_id=int(g))
-        jgroup = Joinedgroups(group=group,member=m.member_id)
+        jgroup = Joinedgroups(group=group,member=m)
         jgroup.save()
         ##print('Saved group data')
 
