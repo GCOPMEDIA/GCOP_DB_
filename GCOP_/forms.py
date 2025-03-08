@@ -6,10 +6,10 @@ positions = [
 ]
 
 group_choices = [
-    ('clergy',"Clergy"),
-    ('elder',"Elder"),
-    ('worker',"Worker"),
-    ('media',"Media"),
+    ('13',"Clergy"),
+    ('14',"Elder"),
+    ('15',"Worker"),
+    ('16',"Media"),
     ('12',"Youth"),
     ("2","Women's Fellowship"),
     ('4',"Choir"),
@@ -37,14 +37,25 @@ yes_or_no = [
 
 ]
 church_branches = [
-    ('mercy temple','Mercy Temple'),
-    ('something',"temple")
+    ('Mercy Temple','Mercy Temple'),
+    ('Shalom Temple',"Shalom Temple"),
+    ("Great is Jehovah","Great is Jehovah"),
+    ("Christ the King","Christ the King"),
+    ("Nhyira Temple","Nhyira Temple"),
+    ("USA","USA"),
+    ("CANADA","CANADA")
 ]
 relation = [
     ('mother','Mother'),
     ('father','Father'),
     ('child','Child'),
-    ('sibling',"Sibling")
+    ('sibling',"Sibling"),
+    ('aunty',"Aunty"),
+    ('uncle','Uncle'),
+    ('cousin',"Cousin"),
+    ('niece',"Niece"),
+    ('nephew','Nephew'),
+    ('grandparent',"GrandParent")
 ]
 parents = [
     ('Both',"Yes Both Are Alive"),
@@ -61,7 +72,10 @@ class UserDetailsForm(forms.Form):
     phone = forms.CharField(max_length=15, label="Phone Number", required=False)
     address = forms.CharField(max_length=100, label="Ghana Post Address")
     hometown = forms.CharField(max_length=100, label="Home Town")
-    gender = forms.ChoiceField(choices=gender_choices,widget=forms.Select)
+    gender = forms.ChoiceField(choices=gender_choices,widget=forms.Select,label='Gender')
+    baptism = forms.ChoiceField(choices=yes_or_no,widget=forms.Select,label='Have You Been Baptized? ')
+    baptist_at_gcop = forms.ChoiceField(choices=yes_or_no,widget=forms.Select,label='Were You Baptized At GCOP?')
+    history = forms.CharField(widget=forms.Textarea(attrs={'row':4,'cols':100}),label='Brief History')
 
 
 
@@ -71,7 +85,7 @@ class FurtherQuestionsForm(forms.Form):
     number_of_children = forms.IntegerField(label='Number Of Children')
     number_of_survivors = forms.IntegerField(label="Number Of Close Relatives")
     parent_status = forms.ChoiceField(label='Are Your Parents Still Alive?',choices=parents)
-    date_joined = forms.CharField( label="What Year Did You Join GCOP", required=False,help_text='eg:2025')
+    date_joined = forms.DateField( label="What Year Did You Join GCOP", required=False,help_text='dd/mm/yy')
     welfare_card_number = forms.CharField(max_length=200, label="Welfare Card Number if any",required=False)
     tithe_card_number = forms.CharField(max_length=200, label='Tithe Card Number if any',required=False)
     church_branch = forms.ChoiceField(choices=church_branches,widget=forms.Select)
