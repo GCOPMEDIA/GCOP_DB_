@@ -93,7 +93,7 @@ class ChurchPositions(models.Model):
     member = models.ForeignKey('Member', models.DO_NOTHING, blank=True, null=True)
 
     class Meta:
-        managed = True
+        managed = False
         db_table = 'church_positions'
 
 
@@ -171,19 +171,19 @@ class Member(models.Model):
     gender = models.CharField(max_length=10, blank=True, null=True)
     marital_status = models.CharField(max_length=20, blank=True, null=True)
     date_joined = models.DateField(blank=True, null=True)
-    phone_number = models.CharField( max_length=20, blank=True, null=True)
+    phone_number = models.CharField(unique=True, max_length=20, blank=True, null=True)
     history = models.TextField(blank=True, null=True)
-    welfare_card_num = models.CharField(unique=True, max_length=50, blank=True, null=True)
-    tithe_card_num = models.CharField(unique=True, max_length=50, blank=True, null=True)
+    welfare_card_num = models.CharField(max_length=50, blank=True, null=True)
+    tithe_card_num = models.CharField(max_length=50, blank=True, null=True)
     created_at = models.DateTimeField(blank=True, null=True)
     church_branch = models.ForeignKey(Branches, models.DO_NOTHING, db_column='church_branch', blank=True, null=True)
     member_image = models.CharField(max_length=255, blank=True, null=True)
-    address = models.CharField(max_length=1, blank=True, null=True)
+    address = models.CharField(max_length=250, blank=True, null=True)
     baptism_status = models.BooleanField(blank=True, null=True)
     baptist_at_gcop = models.BooleanField(blank=True, null=True)
 
     class Meta:
-        managed = True
+        managed = False
         db_table = 'member'
 
 
@@ -193,19 +193,9 @@ class Relations(models.Model):
     l_name = models.CharField(max_length=100)
     phone_number = models.CharField(max_length=20, blank=True, null=True)
     is_member = models.BooleanField(blank=True, null=True)
-    relationship = models.ForeignKey('Relationships', models.DO_NOTHING, blank=True, null=True)
-    relationship_0 = models.CharField(db_column='relationship', max_length=255, blank=True, null=True)  # Field renamed because of name conflict.
-    member = models.ForeignKey(Member, models.DO_NOTHING, blank=True, null=True)
+    relationship = models.CharField(max_length=255, blank=True, null=True)
+    member_id = models.IntegerField(blank=True, null=True)
 
     class Meta:
         managed = False
         db_table = 'relations'
-
-
-class Relationships(models.Model):
-    relationship_id = models.AutoField(primary_key=True)
-    relationship_type = models.CharField(unique=True, max_length=50)
-
-    class Meta:
-        managed = False
-        db_table = 'relationships'
