@@ -6,6 +6,7 @@ from django.contrib.auth import authenticate,login
 import json
 from datetime import date
 from .forms import UserDetailsForm, FurtherQuestionsForm, NextForm, FatherForm, MotherForm, SurvivorForm, SpouseForm
+from .utils import *
 
 # Utility function to convert date fields to strings
 def convert_dates_to_strings(data):
@@ -187,4 +188,5 @@ def survivor_details_view(request, survivor_index):
 # Step 8: Success Page (Shows collected data)
 def form_success_view(request):
     data = json.loads(request.session.get('final_data5', '{}'))  # Load all collected data
+    member_entry(data)
     return render(request, 'form_success.html', {'data': data})  # Render success page
