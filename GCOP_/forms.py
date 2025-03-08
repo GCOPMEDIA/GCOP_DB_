@@ -127,5 +127,15 @@ class SpouseForm(forms.Form):
     spouse_is_member = forms.ChoiceField(choices=yes_or_no, widget=forms.Select,
                                          label='Is Your Spouse A Member Of GCOP?')
 
+from django import forms
+from .models import Member
+
+class MemberImageUploadForm(forms.ModelForm):
+    class Meta:
+        model = Member
+        fields = ['member_image']
+
+
+
 
 
