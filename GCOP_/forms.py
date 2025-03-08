@@ -66,7 +66,7 @@ parents = [
 
 
 class UserDetailsForm(forms.Form):
-    first_name = forms.CharField(max_length=100, label="First Name")
+    first_name = forms.CharField(max_length=100, label="Surname Name")
     other_name = forms.CharField(max_length=100, label="Other Names")
     date_of_birth = forms.DateField(widget=forms.DateInput(attrs={'type':'date'}))
     phone = forms.CharField(max_length=15, label="Phone Number", required=False)
