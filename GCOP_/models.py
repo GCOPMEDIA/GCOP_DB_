@@ -171,7 +171,8 @@ class Member(models.Model):
     gender = models.CharField(max_length=10, blank=True, null=True)
     marital_status = models.CharField(max_length=20, blank=True, null=True)
     date_joined = models.DateField(blank=True, null=True)
-    phone_number = models.CharField(unique=True, max_length=20, blank=True, null=True)
+    phone_number = models.CharField(max_length=20, blank=True, null=True)
+    emergency_num = models.CharField(max_length=20,blank=True,null=True)
     history = models.TextField(blank=True, null=True)
     welfare_card_num = models.CharField(max_length=50, blank=True, null=True)
     tithe_card_num = models.CharField(max_length=50, blank=True, null=True)
@@ -199,3 +200,12 @@ class Relations(models.Model):
     class Meta:
         managed = False
         db_table = 'relations'
+
+
+from django import forms
+from .models import Member
+
+class MemberImageUploadForm(forms.ModelForm):
+    class Meta:
+        model = Member
+        fields = ['member_image']
