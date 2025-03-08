@@ -187,6 +187,7 @@ def survivor_details_view(request, survivor_index):
 
 # Step 8: Success Page (Shows collected data)
 def form_success_view(request):
-    data = json.loads(request.session.get('final_data5', '{}'))  # Load all collected data
+    data = json.loads(request.session.get('final_data5', '{}'))
+    print(data)# Load all collected data
     member_entry(data)
     return render(request, 'form_success.html', {'data': data})  # Render success page
