@@ -6,6 +6,7 @@ positions = [
 ]
 
 group_choices = [
+    ('17',"Men's Fellowship"),
     ('13',"Clergy"),
     ('14',"Elder"),
     ('15',"Worker"),
@@ -66,7 +67,7 @@ parents = [
 
 
 class UserDetailsForm(forms.Form):
-    first_name = forms.CharField(max_length=100, label="Surname Name")
+    first_name = forms.CharField(max_length=100, label="Surname ")
     other_name = forms.CharField(max_length=100, label="Other Names")
     date_of_birth = forms.DateField(widget=forms.DateInput(attrs={'type':'date'}))
     phone = forms.CharField(max_length=15, label="Phone Number", required=False)
@@ -85,7 +86,7 @@ class FurtherQuestionsForm(forms.Form):
     number_of_children = forms.IntegerField(label='Number Of Children')
     number_of_survivors = forms.IntegerField(label="Number Of Close Relatives")
     parent_status = forms.ChoiceField(label='Are Your Parents Still Alive?',choices=parents)
-    date_joined = forms.DateField( label="What Year Did You Join GCOP", required=False,help_text='dd/mm/yy')
+    date_joined = forms.DateField( label="What Year Did You Join GCOP", required=False,help_text='mm/dd/yy')
     welfare_card_number = forms.CharField(max_length=200, label="Welfare Card Number if any",required=False)
     tithe_card_number = forms.CharField(max_length=200, label='Tithe Card Number if any',required=False)
     church_branch = forms.ChoiceField(choices=church_branches,widget=forms.Select)
@@ -94,25 +95,25 @@ class FurtherQuestionsForm(forms.Form):
 
 
 class NextForm(forms.Form):
-    child_first_name = forms.CharField(max_length=250, label="Child's First Name")
+    child_first_name = forms.CharField(max_length=250, label="Child's Surname")
     child_other_name = forms.CharField(max_length=250, label="Child's Other Names")
     child_phone_number = forms.CharField(max_length=15, label="Child's Phone Number", required=False)
     child_is_member = forms.ChoiceField(choices=yes_or_no, widget=forms.Select, label='Is Your Child A Member Of GCOP?')
 
 class FatherForm(forms.Form):
-    father_first_name = forms.CharField(max_length=250, label="Father's First Name")
+    father_first_name = forms.CharField(max_length=250, label="Father's Surname")
     father_other_name = forms.CharField(max_length=250, label="Father's Other Names")
     father_phone_number = forms.CharField(max_length=15, label="Father's Phone Number", required=False)
     father_is_member = forms.ChoiceField(choices=yes_or_no, widget=forms.Select,
                                          label='Is Your Father A Member Of GCOP?')
 class MotherForm(forms.Form):
-    mother_first_name = forms.CharField(max_length=250, label="Mother's First Name")
+    mother_first_name = forms.CharField(max_length=250, label="Mother's Surname")
     mother_other_name = forms.CharField(max_length=250, label="Mother's Other Names")
     mother_phone_number = forms.CharField(max_length=15, label="Mother's Phone Number", required=False)
     mother_is_member = forms.ChoiceField(choices=yes_or_no, widget=forms.Select,
                                          label='Is Your Mother A Member Of GCOP?')
 class SurvivorForm(forms.Form):
-    survivor_first_name = forms.CharField(max_length=250, label="Relative's First Name")
+    survivor_first_name = forms.CharField(max_length=250, label="Relative's Surname")
     survivor_other_name = forms.CharField(max_length=250, label="Relative's Other Names")
     survivor_phone_number = forms.CharField(max_length=15, label="Relative's Phone Number", required=False)
     survivor_relation = forms.ChoiceField(choices=relation,widget=forms.Select,label="Relationship With Relative")
@@ -120,7 +121,7 @@ class SurvivorForm(forms.Form):
                                          label='Is Your Relative A Member Of GCOP?')
 
 class SpouseForm(forms.Form):
-    spouse_first_name = forms.CharField(max_length=250, label="Spouse's First Name")
+    spouse_first_name = forms.CharField(max_length=250, label="Spouse's Surname")
     spouse_other_name = forms.CharField(max_length=250, label="Spouse's Other Names")
     spouse_phone_number = forms.CharField(max_length=15, label="Spouse's Phone Number")
     spouse_is_member = forms.ChoiceField(choices=yes_or_no, widget=forms.Select,
