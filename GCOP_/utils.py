@@ -42,16 +42,16 @@ def member_entry(data):
                       l_name=data['father_other_name'],
                       phone_number=data['father_phone_number'],
                       relationship='Father',
-                      is_member=data['father_is_member'])
-        f.member = m
+                      is_member=data['father_is_member'],member_id=m)
+
         f.save()
         ##print('Saved father data')
         m = Relations(f_name=data['mother_first_name'],
                       l_name=data['mother_other_name'],
                       phone_number=data['mother_phone_number'],
                       relationship='Mother',
-                      is_member=data['mother_is_member'])
-        m.member = m
+                      is_member=data['mother_is_member'],member_id=m)
+
         m.save()
         ##print('Saved mother data')
     elif data['parent_status']=='Only Father':
@@ -59,8 +59,8 @@ def member_entry(data):
                       l_name=data['father_other_name'],
                       phone_number=data['father_phone_number'],
                       relationship='Father',
-                      is_member=data['father_is_member'])
-        f.member = m
+                      is_member=data['father_is_member'],member_id=m)
+
         f.save()
         ##print('Saved father data')
     elif data['parent_status']=='Only Mother':
@@ -68,8 +68,8 @@ def member_entry(data):
                       l_name=data['mother_other_name'],
                       phone_number=data['mother_phone_number'],
                       relationship='Mother',
-                      is_member=data['mother_is_member'])
-        m.member = m
+                      is_member=data['mother_is_member'],member_id=m)
+
         m.save()
         ##print('Saved mother data')
 
@@ -80,8 +80,8 @@ def member_entry(data):
                       l_name=cd['child_other_name'],
                       phone_number=cd['child_phone_number'],
                       relationship='Child',
-                      is_member=cd['child_is_member'])
-        cc.member = m
+                      is_member=cd['child_is_member'],member_id=m)
+
         cc.save()
         ##print('Saved child data')
 
@@ -91,8 +91,8 @@ def member_entry(data):
                       l_name=sd['survivor_other_name'],
                       phone_number=sd['survivor_phone_number'],
                       relationship='Close Relative',
-                      is_member=sd['survivor_is_member'])
-        cc.member = m
+                      is_member=sd['survivor_is_member'],member_id=m)
+
         cc.save()
         ##print('Saved survivor data')
 
@@ -102,8 +102,8 @@ def member_entry(data):
                   l_name=data['spouse_other_name'],
                   phone_number=data['spouse_phone_number'],
                   relationship='Spouse',
-                  is_member=data['spouse_is_member'])
-    sp.member = m
+                  is_member=data['spouse_is_member'],member_id=m)
+
     sp.save()
     ##print('Saved spouse data')
 
