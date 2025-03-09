@@ -135,3 +135,120 @@ def get_member(f_name, l_name, phone_num):
         return None
 
 
+from fpdf import FPDF
+from jinja2 import Environment, FileSystemLoader
+from .models import Member, Relations, ChurchPositions, Branches, Groups, Joinedgroups  # Ensure correct imports
+
+
+def print_pdf(member_id):
+    try:
+        # Fetch member details
+        member = Member.objects.get(member_id=member_id)
+
+        # Fetch related people
+        mother = Relations.objects.filter(member_id=member.member_id, relationship__iexact='Mother').first()
+        father = Relations.objects.filter(member_id=member.member_id, relationship__iexact='Father').first()
+        spouse = Relations.objects.filter(member_id=member.member_id, relationship__iexact='Spouse').first()
+        close_relative = Relations.objects.filter(member_id=member.member_id,
+                                                  relationship__iexact='Close Relative').first()
+
+        # Fetch positions
+        positions = ChurchPositions.objects.filter(member=member)
+        position_names = ", ".join([pos.position_name for pos in positions]) if positions else "None"
+
+        # Fetch church branch
+        church_branch = member.church_branch.branch_name if member.church_branch else "Unknown"
+
+        # Fetch joined groups efficiently
+        group_names = Groups.objects.filter(
+            group_id__in=Joinedgroups.objects.filter(member=member).values_list('group', flat=True)
+        ).values_list('group_name', flat=True)
+        group_names = ", ".join(group_names) if group_names else "None"
+
+        # **Retrieve Cloudinary Image URL**
+        image_url = member.member_image.url if member.member_image else None
+
+        # Prepare data dictionary
+        data = {
+            "title": "Member Details",
+            "image_path": image_url,  # Cloudinary Image URL
+            "f_name": member.f_name,
+            "l_name": member.l_name,
+            "phone_number": member.phone_number or "N/A",
+            "date_of_birth": member.date_of_birth.strftime("%Y-%m-%d") if member.date_of_birth else "N/A",
+            "address": member.address or "N/A",
+            "home_town": member.hometown or "N/A",
+            "date_joined": member.date_joined.strftime("%Y") if member.date_joined else "N/A",
+            "welfare_card_num": member.welfare_card_num or "N/A",
+            "tithe_card_num": member.tithe_card_num or "N/A",
+            "church_branch": church_branch,
+            "groups": group_names,
+            "positions": position_names,
+            "occupation": "Unknown",  # Add occupation field if available
+            "emergency_number": "N/A",  # Add emergency number field if needed
+            "history": member.history or "N/A",
+            "marital_status": member.marital_status or "N/A",
+            "c_f_name": spouse.f_name if spouse else "N/A",
+            "c_l_name": spouse.l_name if spouse else "N/A",
+            "c_phone_number": spouse.phone_number if spouse else "N/A",
+            "c_is_member": "Yes" if spouse and spouse.is_member else "No",
+            "f_f_name": father.f_name if father else "N/A",
+            "f_l_name": father.l_name if father else "N/A",
+            "f_phone_number": father.phone_number if father else "N/A",
+            "f_is_member": "Yes" if father and father.is_member else "No",
+            "m_f_name": mother.f_name if mother else "N/A",
+            "m_l_name": mother.l_name if mother else "N/A",
+            "m_phone_number": mother.phone_number if mother else "N/A",
+            "m_is_member": "Yes" if mother and mother.is_member else "No",
+            "r_f_name": close_relative.f_name if close_relative else "N/A",
+            "r_l_name": close_relative.l_name if close_relative else "N/A",
+            "r_phone_number": close_relative.phone_number if close_relative else "N/A",
+            "r_is_member": "Yes" if close_relative and close_relative.is_member else "No",
+            "nxt_of_kin": spouse.f_name if spouse else "N/A"
+        }
+
+        # Set up Jinja2 environment
+        import os
+
+        ROOT_DIR = os.path.dirname(os.path.abspath(__file__))  # Get the directory of utils.py
+        env = Environment(loader=FileSystemLoader(ROOT_DIR))
+        template = env.get_template('template.txt')
+
+        # Render the template with data
+        rendered_text = template.render(data)
+
+        # Create a PDF object
+        pdf = FPDF()
+        pdf.add_page()
+        pdf.set_font("Arial", size=12)
+
+        # Add rendered text to the PDF
+        pdf.multi_cell(0, 10, txt=rendered_text)
+
+        # **Cloudinary Images Can't Be Directly Embedded in FPDF**
+        # If you need the image, you'll have to download it first.
+        if image_url:
+            import requests
+            from PIL import Image
+            from io import BytesIO
+
+            response = requests.get(image_url)
+            if response.status_code == 200:
+                img = Image.open(BytesIO(response.content))
+                local_image_path = f"temp_{member_id}.jpg"
+                img.save(local_image_path)  # Save image locally
+                pdf.image(local_image_path, x=10, y=pdf.get_y(), w=100)  # Add to PDF
+
+        # Save the PDF
+        output_path = f"output_{member_id}.pdf"
+        pdf.output(output_path)
+
+        print(f"PDF generated successfully! Saved as {output_path}")
+        return output_path
+
+    except Member.DoesNotExist:
+        print("Error: Member not found.")
+    except Exception as e:
+        print(f"An error occurred: {e}")
+
+
