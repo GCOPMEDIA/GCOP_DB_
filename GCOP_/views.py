@@ -2,17 +2,12 @@ from django.shortcuts import render, redirect
 from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib.auth.models import User
 from django.http import HttpResponse
-from django.contrib.auth import authenticate,login
+from django.contrib.auth import authenticate, login
 import json
 from datetime import date
 from .forms import UserDetailsForm, FurtherQuestionsForm, NextForm, FatherForm, MotherForm, SurvivorForm, SpouseForm
 from .utils import *
 from django.contrib.auth.decorators import login_required
-
-
-
-
-
 
 
 # Utility function to convert date fields to strings
@@ -22,18 +17,21 @@ def convert_dates_to_strings(data):
         if isinstance(value, date):
             data[key] = value.strftime('%Y-%m-%d')
     return data
+
+
 def login_(request):
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
-        user = authenticate(request,username=username,password=password)
+        user = authenticate(request, username=username, password=password)
         if user is not None:
-            login(request,user)
+            login(request, user)
             return redirect('user_form')
         else:
             return HttpResponse(status=403)
     else:
-        return render(request,'registration/login.html',{})
+        return render(request, 'registration/login.html', {})
+
 
 # Utility function to update session data
 @login_required
@@ -43,6 +41,7 @@ def update_session_data(request, new_data):
     user_data.update(new_data)  # Merge new data
     request.session['final_data5'] = json.dumps(user_data, cls=DjangoJSONEncoder)  # Store back
     request.session.modified = True  # Ensure session is saved
+
 
 # Step 1: User Details Form
 @login_required
@@ -58,7 +57,9 @@ def user_form_view(request):
         else:
             form = UserDetailsForm()
         return render(request, 'form_template.html', {'form': form, 'step': '1'})
-    else:return HttpResponse(status=403)
+    else:
+        return HttpResponse(status=403)
+
 
 # Step 2: Further Questions (Collecting number of children and survivors)
 @login_required
@@ -91,6 +92,7 @@ def further_questions_view(request):
 
     return render(request, 'form_template.html', {'form': form, 'step': '2'})
 
+
 # Step 3: Spouse Details (Only shown if married)
 @login_required
 def spouse_details(request):
@@ -111,6 +113,7 @@ def spouse_details(request):
         form = SpouseForm()
 
     return render(request, 'form_template.html', {'form': form, 'step': 'spouse'})
+
 
 # Step 4: Child Details (Handles multiple children dynamically)
 @login_required
@@ -136,9 +139,9 @@ def child_details_view(request, child_index):
 
     return render(request, 'form_template.html', {'form': form, 'step': '3', 'child_index': child_index})
 
+
 # Step 5: Father Details
 @login_required
-
 def father_details(request):
     parent_status = request.session.get('parent_status', 'None')
     if parent_status in ['Both', 'Only Father']:
@@ -155,6 +158,8 @@ def father_details(request):
         return render(request, 'form_template.html', {'form': form, 'step': '4'})
     else:
         return redirect('mother_details')
+
+
 @login_required
 def mother_details(request):
     parent_status = request.session.get('parent_status', 'None')
@@ -172,6 +177,7 @@ def mother_details(request):
         return render(request, 'form_template.html', {'form': form, 'step': '5'})
     else:
         return redirect('survivor_details', survivor_index=1)
+
 
 # Step 6: Mother Details
 
@@ -201,29 +207,13 @@ def survivor_details_view(request, survivor_index):
     return render(request, 'form_template.html', {'form': form, 'step': '7', 'survivor_index': survivor_index})
 
 
-
 from django.shortcuts import render
 from .models import Member
+
 
 @login_required
 def members_without_images(request):
     members = Member.objects.filter(member_image__isnull=True)
-    from django.shortcuts import get_object_or_404, redirect
-    from .forms import MemberImageUploadForm
-
-    def upload_member_image(request, member_id):
-        member = get_object_or_404(Member, member_id=member_id)
-
-        if request.method == 'POST':
-            form = MemberImageUploadForm(request.POST, request.FILES, instance=member)
-            if form.is_valid():
-                form.save()
-                return redirect('members_without_images')  # Redirect after upload
-        else:
-            form = MemberImageUploadForm(instance=member)
-
-        return render(request, 'upload_member_image.html', {'form': form, 'member': member})
-
     return render(request, 'members_without_images.html', {'members': members})
 
 
@@ -246,11 +236,50 @@ def upload_member_image(request, member_id):
     return render(request, 'upload_member_image.html', {'form': form, 'member': member})
 
 
-
 # Step 8: Success Page (Shows collected data)
 @login_required
 def form_success_view(request):
     data = json.loads(request.session.get('final_data5', '{}'))
-    print(data)# Load all collected data
+    print(data)  # Load all collected data
     member_entry(data)
     return render(request, 'form_success.html', {'data': data})  # Render success page
+
+
+from .forms import MemberSearchForm
+
+
+def member_form_view(request):
+    if request.method == "POST":
+        form = MemberSearchForm(request.POST)
+        if form.is_valid():
+            f_name = form.cleaned_data['f_name']
+            l_name = form.cleaned_data['l_name']
+            phone = form.cleaned_data['phone_num']
+            return redirect('users_search_view', f_name=f_name or 'none', l_name=l_name or 'none',
+                            phone_num=phone or 'none')
+    else:
+        form = MemberSearchForm()
+
+    return render(request, 'get_user_form.html', {'form': form})
+
+
+from django.http import HttpResponse
+
+
+def print_view(request,member_id):
+    try:
+        member = Member.objects.get(member_id=member_id)
+
+        print(member.f_name)
+        return render(request,'print_view.html',{'member':member})
+    except:
+        return HttpResponse("Member not found.", status=404)
+    # Handle member not found
+def users_search_view(request,f_name,l_name,phone_num):
+    members = Member.objects.filter(
+        Q(f_name__iexact=f_name) | Q(l_name__iexact=l_name) | Q(phone_number=phone_num)
+    )
+    if members:
+        return render(request,'users_search_view.html',{'members':members})
+    else:
+        return HttpResponse("Member not found.", status=404)
