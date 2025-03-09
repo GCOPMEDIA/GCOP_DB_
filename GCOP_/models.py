@@ -172,7 +172,7 @@ class Member(models.Model):
     marital_status = models.CharField(max_length=20, blank=True, null=True)
     date_joined = models.DateField(blank=True, null=True)
     phone_number = models.CharField(max_length=20, blank=True, null=True)
-    emergency_num = models.CharField(max_length=20,blank=True,null=True)
+    # emergency_num = models.CharField(max_length=20,blank=True,null=True)
     history = models.TextField(blank=True, null=True)
     welfare_card_num = models.CharField(max_length=50, blank=True, null=True)
     tithe_card_num = models.CharField(max_length=50, blank=True, null=True)
