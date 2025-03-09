@@ -8,6 +8,7 @@ from datetime import date
 from .forms import UserDetailsForm, FurtherQuestionsForm, NextForm, FatherForm, MotherForm, SurvivorForm, SpouseForm
 from .utils import *
 
+
 # Utility function to convert date fields to strings
 def convert_dates_to_strings(data):
     """Recursively converts all date objects in a dictionary to string format (YYYY-MM-DD)."""
@@ -184,6 +185,50 @@ def survivor_details_view(request, survivor_index):
         form = SurvivorForm()
 
     return render(request, 'form_template.html', {'form': form, 'step': '7', 'survivor_index': survivor_index})
+
+
+
+from django.shortcuts import render
+from .models import Member
+
+def members_without_images(request):
+    members = Member.objects.filter(member_image__isnull=True)
+    from django.shortcuts import get_object_or_404, redirect
+    from .forms import MemberImageUploadForm
+
+    def upload_member_image(request, member_id):
+        member = get_object_or_404(Member, member_id=member_id)
+
+        if request.method == 'POST':
+            form = MemberImageUploadForm(request.POST, request.FILES, instance=member)
+            if form.is_valid():
+                form.save()
+                return redirect('members_without_images')  # Redirect after upload
+        else:
+            form = MemberImageUploadForm(instance=member)
+
+        return render(request, 'upload_member_image.html', {'form': form, 'member': member})
+
+    return render(request, 'members_without_images.html', {'members': members})
+
+
+from django.shortcuts import get_object_or_404, redirect
+from .forms import MemberImageUploadForm
+
+def upload_member_image(request, member_id):
+    member = get_object_or_404(Member, member_id=member_id)
+
+    if request.method == 'POST':
+        form = MemberImageUploadForm(request.POST, request.FILES, instance=member)
+        if form.is_valid():
+            form.save()
+            return redirect('members_without_images')  # Redirect after upload
+    else:
+        form = MemberImageUploadForm(instance=member)
+
+    return render(request, 'upload_member_image.html', {'form': form, 'member': member})
+
+
 
 # Step 8: Success Page (Shows collected data)
 def form_success_view(request):
