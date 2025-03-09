@@ -1,5 +1,7 @@
 from django.urls import path
 from .views import *
+from django.urls import path
+from .views import members_without_images, upload_member_image
 
 urlpatterns = [
     path('',login_,name='login_'),
@@ -10,5 +12,16 @@ urlpatterns = [
     path('mother_details/', mother_details, name='mother_details'),
     path('survivor_details/<int:survivor_index>/', survivor_details_view, name='survivor_details'),
     path('form_success/', form_success_view, name='form_success'),
-    path('spouse_details',spouse_details,name='spouse_details')
+    path('spouse_details',spouse_details,name='spouse_details'),
+    path('members-without-images/', members_without_images, name='members_without_images'),
+    path('upload-member-image/<int:member_id>/', upload_member_image, name='upload_member_image'),
+
 ]
+
+
+
+
+
+
+
+
