@@ -283,3 +283,23 @@ def users_search_view(request,f_name,l_name,phone_num):
         return render(request,'users_search_view.html',{'members':members})
     else:
         return HttpResponse("Member not found.", status=404)
+
+
+from django.http import HttpResponse
+from django.shortcuts import render, get_object_or_404
+from .models import Member
+from .utils import print_pdf  # Import the utility function
+
+
+def download_pdf(request, member_id):
+    try:
+        # Generate the PDF using the utility function
+        output_path = print_pdf(member_id)
+
+        # Serve the PDF as a downloadable file
+        with open(output_path, 'rb') as pdf_file:
+            response = HttpResponse(pdf_file.read(), content_type='application/pdf')
+            response['Content-Disposition'] = f'attachment; filename="member_{member_id}.pdf"'
+            return response
+    except Exception as e:
+        return HttpResponse(f"An error occurred: {e}", status=500)
