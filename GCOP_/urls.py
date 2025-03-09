@@ -2,6 +2,8 @@ from django.urls import path
 from .views import *
 from django.urls import path
 from .views import members_without_images, upload_member_image
+from .views import print_view, download_pdf  # Import the new view
+
 
 urlpatterns = [
     path('',login_,name='login_'),
@@ -17,9 +19,12 @@ urlpatterns = [
     path('upload-member-image/<int:member_id>/', upload_member_image, name='upload_member_image'),
     path('print_preview/<member_id>',print_view,name='print_preview'),
     path('search_member/',member_form_view,name='member_form_view'),
-    path('users_search_view/<f_name>/<l_name>/<phone_num>',users_search_view,name='users_search_view')
+    path('users_search_view/<f_name>/<l_name>/<phone_num>',users_search_view,name='users_search_view'),
+path('download-pdf/<int:member_id>/', download_pdf, name='download_pdf'),
 
 ]
+
+
 
 
 
