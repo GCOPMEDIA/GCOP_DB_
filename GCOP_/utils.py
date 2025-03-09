@@ -116,3 +116,22 @@ def user_without_image():
         }
 
     return data
+from django.db.models import Q
+
+def get_member(f_name, l_name, phone_num):
+    data = {}
+    try:
+        members = Member.objects.filter(
+            Q(f_name__iexact=f_name) | Q(l_name__iexact=l_name) | Q(phone_number=phone_num)
+        )
+        for i in members:
+            data = {'id': i.member_id,
+                    'first_name': i.f_name,
+                    "last_name": i.l_name
+                    }
+
+        return data
+    except:
+        return None
+
+
