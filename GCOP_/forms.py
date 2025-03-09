@@ -136,6 +136,11 @@ class MemberImageUploadForm(forms.ModelForm):
         fields = ['member_image']
 
 
+from django import forms
 
+class MemberSearchForm(forms.Form):
+    f_name = forms.CharField(label="Surname", max_length=100,required=False )
+    l_name = forms.CharField(label="Other Names", max_length=100,required=False )
+    phone_num = forms.CharField(label="Phone Number", max_length=15,required=False )
 
 
