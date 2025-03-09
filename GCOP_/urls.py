@@ -15,6 +15,9 @@ urlpatterns = [
     path('spouse_details',spouse_details,name='spouse_details'),
     path('members-without-images/', members_without_images, name='members_without_images'),
     path('upload-member-image/<int:member_id>/', upload_member_image, name='upload_member_image'),
+    path('print_preview/<member_id>',print_view,name='print_preview'),
+    path('search_member/',member_form_view,name='member_form_view'),
+    path('users_search_view/<f_name>/<l_name>/<phone_num>',users_search_view,name='users_search_view')
 
 ]
 
