@@ -97,14 +97,13 @@ def member_entry(data):
         ##print('Saved survivor data')
 
 
-
-    sp = Relations(f_name=data['spouse_first_name'],
-                  l_name=data['spouse_other_name'],
-                  phone_number=data['spouse_phone_number'],
-                  relationship='Spouse',
-                  is_member=data['spouse_is_member'],member_id=m.member_id)
-
-    sp.save()
+    if data['marital_status'] == 'married':
+        sp = Relations(f_name=data['spouse_first_name'],
+                      l_name=data['spouse_other_name'],
+                      phone_number=data['spouse_phone_number'],
+                      relationship='Spouse',
+                      is_member=data['spouse_is_member'],member_id=m.member_id)
+        sp.save()
     ##print('Saved spouse data')
 
 def user_without_image():
