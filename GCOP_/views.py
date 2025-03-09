@@ -7,6 +7,12 @@ import json
 from datetime import date
 from .forms import UserDetailsForm, FurtherQuestionsForm, NextForm, FatherForm, MotherForm, SurvivorForm, SpouseForm
 from .utils import *
+from django.contrib.auth.decorators import login_required
+
+
+
+
+
 
 
 # Utility function to convert date fields to strings
@@ -30,6 +36,7 @@ def login_(request):
         return render(request,'registration/login.html',{})
 
 # Utility function to update session data
+@login_required
 def update_session_data(request, new_data):
     """Merge new form data into session storage (final_data5) to accumulate all responses."""
     user_data = json.loads(request.session.get('final_data5', '{}'))  # Load existing session data
@@ -38,6 +45,7 @@ def update_session_data(request, new_data):
     request.session.modified = True  # Ensure session is saved
 
 # Step 1: User Details Form
+@login_required
 def user_form_view(request):
     if User.is_authenticated:
 
@@ -53,6 +61,7 @@ def user_form_view(request):
     else:return HttpResponse(status=403)
 
 # Step 2: Further Questions (Collecting number of children and survivors)
+@login_required
 def further_questions_view(request):
     if request.method == 'POST':
         form = FurtherQuestionsForm(request.POST)
@@ -83,6 +92,7 @@ def further_questions_view(request):
     return render(request, 'form_template.html', {'form': form, 'step': '2'})
 
 # Step 3: Spouse Details (Only shown if married)
+@login_required
 def spouse_details(request):
     if request.method == 'POST':
         form = SpouseForm(request.POST)
@@ -103,6 +113,7 @@ def spouse_details(request):
     return render(request, 'form_template.html', {'form': form, 'step': 'spouse'})
 
 # Step 4: Child Details (Handles multiple children dynamically)
+@login_required
 def child_details_view(request, child_index):
     number_of_children = request.session.get('number_of_children', 0)
 
@@ -126,6 +137,8 @@ def child_details_view(request, child_index):
     return render(request, 'form_template.html', {'form': form, 'step': '3', 'child_index': child_index})
 
 # Step 5: Father Details
+@login_required
+
 def father_details(request):
     parent_status = request.session.get('parent_status', 'None')
     if parent_status in ['Both', 'Only Father']:
@@ -142,7 +155,7 @@ def father_details(request):
         return render(request, 'form_template.html', {'form': form, 'step': '4'})
     else:
         return redirect('mother_details')
-
+@login_required
 def mother_details(request):
     parent_status = request.session.get('parent_status', 'None')
     if parent_status in ['Both', 'Only Mother']:
@@ -164,6 +177,7 @@ def mother_details(request):
 
 
 # Step 7: Survivor Details (Handles multiple survivors dynamically)
+@login_required
 def survivor_details_view(request, survivor_index):
     number_of_survivors = request.session.get('number_of_survivors', 0)
 
@@ -191,6 +205,7 @@ def survivor_details_view(request, survivor_index):
 from django.shortcuts import render
 from .models import Member
 
+@login_required
 def members_without_images(request):
     members = Member.objects.filter(member_image__isnull=True)
     from django.shortcuts import get_object_or_404, redirect
@@ -215,6 +230,8 @@ def members_without_images(request):
 from django.shortcuts import get_object_or_404, redirect
 from .forms import MemberImageUploadForm
 
+
+@login_required
 def upload_member_image(request, member_id):
     member = get_object_or_404(Member, member_id=member_id)
 
@@ -231,6 +248,7 @@ def upload_member_image(request, member_id):
 
 
 # Step 8: Success Page (Shows collected data)
+@login_required
 def form_success_view(request):
     data = json.loads(request.session.get('final_data5', '{}'))
     print(data)# Load all collected data
