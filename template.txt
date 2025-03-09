@@ -1,0 +1,41 @@
+
+
+Content: {{ content }}
+
+
+    {{ title }}
+Image: [IMAGE:{{ image_path }}]
+
+SURNAME: {{ f_name }}
+FIRST NAMES: {{ l_name }}
+PHONE NUMBER: {{ phone_number }}
+DATE OF BIRTH: {{ date_of_birth }}
+GHANA POST ADDRESS: {{ address }}
+HOME TOWN: {{ home_town }}
+WHAT YEAR DID YOU JOIN GCOP: {{ date_joined }}
+WELFARE CARD NUMBER IF ANY: {{ welfare_card_num }}
+TITHE CARD NUMBER IF ANY: {{ tithe_card_num }}
+CHURCH BRANCH: {{ church_branch }}
+GROUP(S) JOINED: {{ groups }}
+WHAT POSITION DO YOU HOLD: {{ positions }}
+OCCUPATION: {{ occupation }}
+EMERGENCY NUMBER: {{ emergency_number }}
+BRIEF HISTORY: {{ history }}
+MARITAL STATUS: {{ marital_status }}
+CHILD'S SURNAME: {{ c_f_name }}
+CHILD'S FIRST NAMES: {{ c_l_name }}
+CHILD'S PHONE NUMBER: {{ c_phone_number }}
+IS YOUR CHILD A MEMBER OF GCOP: {{ c_is_member }}
+FATHER'S SURNAME: {{ f_f_name }}
+FATHER'S FIRST NAMES: {{ f_l_name }}
+FATHER'S PHONE NUMBER: {{ f_phone_number }}
+IS YOUR FATHER A MEMBER OF GCOP: {{ f_is_member }}
+MOTHER'S SURNAME: {{ m_f_name }}
+MOTHER'S FIRST NAMES: {{ m_l_name }}
+MOTHER'S PHONE NUMBER: {{ m_phone_number }}
+IS YOUR MOTHER A MEMBER OF GCOP: {{ m_is_member }}
+RELATIVE'S SURNAME: {{ r_f_name }}
+RELATIVE'S FIRST NAMES: {{ r_l_name }}
+RELATIVE'S PHONE NUMBER: {{ r_phone_number }}
+IS YOUR RELATIVE A MEMBER OF GCOP: {{ r_is_member }}
+NEXT OF KING: {{ nxt_of_kin }}
