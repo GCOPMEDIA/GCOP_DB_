@@ -107,3 +107,13 @@ def member_entry(data):
     sp.save()
     ##print('Saved spouse data')
 
+def user_without_image():
+    users = Member.objects.filter(member_image__isnull=True)
+    data = {}
+    for i in users:
+        data = { 'id':i.member_id,
+                 'first_name':i.f_name,
+                 "last_name":i.l_name
+        }
+
+    return data
