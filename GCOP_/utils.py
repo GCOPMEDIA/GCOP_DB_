@@ -208,10 +208,7 @@ def print_pdf(member_id):
         }
 
         # Set up Jinja2 environment
-        import os
-
-        ROOT_DIR = os.path.dirname(os.path.abspath(__file__))  # Get the directory of utils.py
-        env = Environment(loader=FileSystemLoader(ROOT_DIR))
+        env = Environment(loader=FileSystemLoader("GCOP_/templates"))
         template = env.get_template('template.txt')
 
         # Render the template with data
@@ -244,8 +241,9 @@ def print_pdf(member_id):
         pdf.output(output_path)
 
         print(f"PDF generated successfully! Saved as {output_path}")
-        return output_path
 
+        return output_path
+    #
     except Member.DoesNotExist:
         print("Error: Member not found.")
     except Exception as e:
