@@ -177,8 +177,7 @@ def print_pdf(member_id):
 
         # Prepare data dictionary
         data = {
-            "title": """God's Church Of Peace
-                            MEMBERSHIP FORM""",
+            "title": "God's Church Of Peace\n MEMBERSHIP FORM",
             "image_path": image_url,
             "SURNAME": member.f_name,
             "FIRST NAMES": member.l_name,
@@ -225,7 +224,7 @@ def print_pdf(member_id):
 
         # Title
         pdf.set_font("Arial", style='B', size=16)
-        pdf.cell(200, 10, data["title"], ln=True, align='C')
+        pdf.multi_cell(200, 10, data["title"], ln=True, align='C')
         pdf.ln(2)
 
 
@@ -238,6 +237,11 @@ def print_pdf(member_id):
                 img.save(local_image_path)
                 pdf.image(local_image_path, x=160, y=10, w=35, h=45)  # Top-right corner
                 pdf.ln(20)
+        pdf.set_font("Arial", style='B', size=50)
+        pdf.set_text_color(200, 200, 200)  # Light gray color for watermark
+        pdf.rotate(45, x=30, y=150)  # Rotates text diagonally
+        pdf.text(30, 150, "Property of G.C.O.P")  # Watermark text
+        pdf.rotate(0)  # Reset rotation after watermark
 
         # Details Section
         pdf.set_font("Arial", size=10)
