@@ -177,8 +177,9 @@ def print_pdf(member_id):
 
         # Prepare data dictionary
         data = {
-            "title": "God's Church Of Peace ",
-                "image_path": image_url,
+            "title": """God's Church Of Peace
+                            MEMBERSHIP FORM""",
+            "image_path": image_url,
             "SURNAME": member.f_name,
             "FIRST NAMES": member.l_name,
             "PHONE NUMBER": member.phone_number or "N/A",
