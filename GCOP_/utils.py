@@ -194,7 +194,24 @@ def print_pdf(member_id):
             "occupation": "Unknown",
             "emergency_number": "N/A",
             "history": member.history or "N/A",
-            "marital_status": member.marital_status or "N/A"
+            "marital_status": member.marital_status or "N/A",
+            "c_f_name": relations["Spouse"].f_name if relations["Spouse"] else "N/A",
+            "c_l_name": relations["Spouse"].l_name if relations["Spouse"] else "N/A",
+            "c_phone_number": relations["Spouse"].phone_number if relations["Spouse"] else "N/A",
+            "c_is_member": "Yes" if relations["Spouse"] and relations["Spouse"].is_member else "No",
+            "f_f_name": relations["Father"].f_name if relations["Father"] else "N/A",
+            "f_l_name": relations["Father"].l_name if relations["Father"] else "N/A",
+            "f_phone_number": relations["Father"].phone_number if relations["Father"] else "N/A",
+            "f_is_member": "Yes" if relations["Father"] and relations["Father"].is_member else "No",
+            "m_f_name": relations["Mother"].f_name if relations["Mother"] else "N/A",
+            "m_l_name": relations["Mother"].l_name if relations["Mother"] else "N/A",
+            "m_phone_number": relations["Mother"].phone_number if relations["Mother"] else "N/A",
+            "m_is_member": "Yes" if relations["Mother"] and relations["Mother"].is_member else "No",
+            "r_f_name": relations["Close Relative"].f_name if relations["Close Relative"] else "N/A",
+            "r_l_name": relations["Close Relative"].l_name if relations["Close Relative"] else "N/A",
+            "r_phone_number": relations["Close Relative"].phone_number if relations["Close Relative"] else "N/A",
+            "r_is_member": "Yes" if relations["Close Relative"] and relations["Close Relative"].is_member else "No",
+            "nxt_of_kin": relations["Spouse"].f_name if relations["Spouse"] else "N/A"
         }
 
         # Create PDF
@@ -218,30 +235,21 @@ def print_pdf(member_id):
 
         # Details Section
         pdf.set_font("Arial", size=12)
-        fields = [
-            ("SURNAME", data["f_name"]),
-            ("FIRST NAMES", data["l_name"]),
-            ("PHONE NUMBER", data["phone_number"]),
-            ("DATE OF BIRTH", data["date_of_birth"]),
-            ("GHANA POST ADDRESS", data["address"]),
-            ("HOME TOWN", data["home_town"]),
-            ("WHAT YEAR DID YOU JOIN GCOP", data["date_joined"]),
-            ("WELFARE CARD NUMBER IF ANY", data["welfare_card_num"]),
-            ("TITHE CARD NUMBER IF ANY", data["tithe_card_num"]),
-            ("CHURCH BRANCH", data["church_branch"]),
-            ("GROUP(S) JOINED", data["groups"]),
-            ("WHAT POSITION DO YOU HOLD", data["positions"]),
-            ("OCCUPATION", data["occupation"]),
-            ("EMERGENCY NUMBER", data["emergency_number"]),
-            ("BRIEF HISTORY", data["history"]),
-            ("MARITAL STATUS", data["marital_status"])
-        ]
+        for field, value in data.items():
+            if field not in ["title", "image_path"]:
+                pdf.set_font("Arial", style='B', size=12)
+                pdf.cell(80, 8, f"{field.replace('_', ' ').upper()}:", border=0)
+                pdf.set_font("Arial", size=12)
+                pdf.cell(100, 8, value, ln=True)
 
-        for field, value in fields:
-            pdf.set_font("Arial", style='B', size=12)
-            pdf.cell(80, 8, f"{field}:", border=0)
-            pdf.set_font("Arial", size=12)
-            pdf.cell(100, 8, value, ln=True)
+        # Pastor Signature Section
+        pdf.ln(10)
+        pdf.set_font("Arial", style='B', size=12)
+        pdf.cell(80, 8, "PASTOR'S NAME:", border=0)
+        pdf.cell(100, 8, "_____________________")
+        pdf.ln(10)
+        pdf.cell(80, 8, "SIGNATURE:", border=0)
+        pdf.cell(100, 8, "_____________________")
 
         # Save the PDF
         output_path = f"output_{member_id}.pdf"
@@ -253,6 +261,7 @@ def print_pdf(member_id):
         print("Error: Member not found.")
     except Exception as e:
         print(f"An error occurred: {e}")
+
         # **Cloudinary Images Can't Be Directly Embedded in FPDF**
         # If you need the image, you'll have to download it first.
         # if image_url:
