@@ -215,28 +215,32 @@ def print_pdf(member_id):
         rendered_text = template.render(data)
 
         # Create a PDF object
+        # Create a PDF object
         pdf = FPDF()
         pdf.add_page()
         pdf.set_font("Arial", size=12)
 
-        # Add rendered text to the PDF
+        # Render the template with data
+        rendered_text = template.render(data)
 
+        # Process text line by line
+        for line in rendered_text.split("\n"):
+            if line.strip().startswith("Image: [IMAGE:"):
+        # Extract image path from the line (if exists)
+                if image_url:
+                    import requests
+                from PIL import Image
+                from io import BytesIO
 
-        # **Cloudinary Images Can't Be Directly Embedded in FPDF**
-        # If you need the image, you'll have to download it first.
-        if image_url:
-            import requests
-            from PIL import Image
-            from io import BytesIO
-
-            response = requests.get(image_url)
-            if response.status_code == 200:
-                img = Image.open(BytesIO(response.content))
+                response = requests.get(image_url)
+                if response.status_code == 200:
+                    img = Image.open(BytesIO(response.content))
                 local_image_path = f"temp_{member_id}.jpg"
                 img.save(local_image_path)  # Save image locally
-                pdf.image(local_image_path, x=10, y=pdf.get_y(), w=80,h=60)
-        pdf.multi_cell(0, 10, txt=rendered_text)
-                # Add to PDF
+                pdf.image(local_image_path, x=10, y=pdf.get_y(), w=80, h=60)  # Insert image
+                pdf.ln(65)  # Move cursor down to avoid overlap
+            else:
+                pdf.multi_cell(0, 10, txt=line)  # Add text normally
 
         # Save the PDF
         output_path = f"output_{member_id}.pdf"
@@ -245,6 +249,30 @@ def print_pdf(member_id):
         print(f"PDF generated successfully! Saved as {output_path}")
 
         return output_path
+
+        # **Cloudinary Images Can't Be Directly Embedded in FPDF**
+        # If you need the image, you'll have to download it first.
+        # if image_url:
+        #     import requests
+        #     from PIL import Image
+        #     from io import BytesIO
+        #
+        #     response = requests.get(image_url)
+        #     if response.status_code == 200:
+        #         img = Image.open(BytesIO(response.content))
+        #         local_image_path = f"temp_{member_id}.jpg"
+        #         img.save(local_image_path)  # Save image locally
+        #         pdf.image(local_image_path, x=10, y=pdf.get_y(), w=80,h=60)
+        # pdf.multi_cell(0, 10, txt=rendered_text)
+                # Add to PDF
+
+        # Save the PDF
+        # output_path = f"output_{member_id}.pdf"
+        # pdf.output(output_path)
+
+        # print(f"PDF generated successfully! Saved as {output_path}")
+
+        # return output_path
     #
     except Member.DoesNotExist:
         print("Error: Member not found.")
