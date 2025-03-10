@@ -137,9 +137,8 @@ def get_member(f_name, l_name, phone_num):
         return None
 
 
-from jinja2 import Environment, FileSystemLoader
-
 from fpdf import FPDF
+from jinja2 import Environment, FileSystemLoader
 from .models import Member, Relations, ChurchPositions, Branches, Groups, Joinedgroups
 import requests
 from PIL import Image
@@ -214,8 +213,8 @@ def print_pdf(member_id):
                 img = Image.open(BytesIO(response.content))
                 local_image_path = f"temp_{member_id}.jpg"
                 img.save(local_image_path)
-                pdf.image(local_image_path, x=65, y=pdf.get_y(), w=80, h=60)
-                pdf.ln(70)
+                pdf.image(local_image_path, x=75, y=pdf.get_y(), w=35, h=45)  # 3.5x4.5cm image size
+                pdf.ln(50)
 
         # Details Section
         pdf.set_font("Arial", size=12)
@@ -254,7 +253,6 @@ def print_pdf(member_id):
         print("Error: Member not found.")
     except Exception as e:
         print(f"An error occurred: {e}")
-
         # **Cloudinary Images Can't Be Directly Embedded in FPDF**
         # If you need the image, you'll have to download it first.
         # if image_url:
@@ -279,9 +277,6 @@ def print_pdf(member_id):
 
         # return output_path
     #
-    except Member.DoesNotExist:
-        print("Error: Member not found.")
-    except Exception as e:
-        print(f"An error occurred: {e}")
+
 
 
