@@ -267,13 +267,12 @@ from django.http import HttpResponse
 
 
 def print_view(request,member_id):
-    try:
+
         member = Member.objects.get(member_id=member_id)
 
         print(member.f_name)
         return render(request,'print_view.html',{'member':member})
-    except:
-        return HttpResponse("Member not found.", status=404)
+
     # Handle member not found
 def users_search_view(request,f_name,l_name,phone_num):
     members = Member.objects.filter(
