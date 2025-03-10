@@ -227,9 +227,7 @@ def print_pdf(member_id):
         pdf.set_font("Arial", style='B', size=16)
         pdf.cell(200, 10, data["title"], ln=True, align='C')
         pdf.ln(2)
-        pdf.set_font("Arial", style='B', size=16)
-        pdf.cell(200, 10, data["subtitle"], ln=True, align='C')
-        pdf.ln(5)
+
 
         # Image
         if image_url:
