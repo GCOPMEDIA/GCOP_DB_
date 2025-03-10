@@ -239,7 +239,7 @@ def print_pdf(member_id):
                 img = Image.open(BytesIO(response.content))
                 local_image_path = f"temp_{member_id}.jpg"
                 img.save(local_image_path)
-                pdf.image(local_image_path, x=75, y=pdf.get_y(), w=35, h=45)  # 3.5x4.5cm image size
+                pdf.image(local_image_path, x=160, y=10, w=35, h=45)  # Top-right corner
                 pdf.ln(50)
 
         # Details Section
