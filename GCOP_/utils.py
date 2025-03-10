@@ -220,7 +220,7 @@ def print_pdf(member_id):
         pdf.set_font("Arial", size=12)
 
         # Add rendered text to the PDF
-        pdf.multi_cell(0, 10, txt=rendered_text)
+
 
         # **Cloudinary Images Can't Be Directly Embedded in FPDF**
         # If you need the image, you'll have to download it first.
@@ -235,6 +235,7 @@ def print_pdf(member_id):
                 local_image_path = f"temp_{member_id}.jpg"
                 img.save(local_image_path)  # Save image locally
                 pdf.image(local_image_path, x=10, y=pdf.get_y(), w=80,h=60)
+        pdf.multi_cell(0, 10, txt=rendered_text)
                 # Add to PDF
 
         # Save the PDF
