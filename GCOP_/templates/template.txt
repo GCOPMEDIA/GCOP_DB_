@@ -33,3 +33,6 @@ RELATIVE'S FIRST NAMES: {{ r_l_name }}
 RELATIVE'S PHONE NUMBER: {{ r_phone_number }}
 IS YOUR RELATIVE A MEMBER OF GCOP: {{ r_is_member }}
 NEXT OF KING: {{ nxt_of_kin }}
+PASTOR'S NAME: _____________________
+SIGNATURE: _______________________
+
