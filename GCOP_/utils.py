@@ -234,7 +234,8 @@ def print_pdf(member_id):
                 img = Image.open(BytesIO(response.content))
                 local_image_path = f"temp_{member_id}.jpg"
                 img.save(local_image_path)  # Save image locally
-                pdf.image(local_image_path, x=10, y=pdf.get_y(), w=100)  # Add to PDF
+                pdf.image(local_image_path, x=10, y=pdf.get_y(), w=80,h=60)
+                # Add to PDF
 
         # Save the PDF
         output_path = f"output_{member_id}.pdf"
