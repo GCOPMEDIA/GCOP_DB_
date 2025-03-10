@@ -13,7 +13,7 @@ def member_entry(data):
                gender = data['gender'],
                marital_status=data['marital_status'],
                date_joined = data['date_joined'],
-                emergeny_num=data['emergency'],
+                emergency_num=data['emergency'],
                 occupation=data['occupation'],
                    nxt_of_kin=data['nxt_of_kin'],
                 welfare_card_num=data['welfare_card_number'],
