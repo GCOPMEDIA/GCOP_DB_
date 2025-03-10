@@ -249,9 +249,9 @@ def print_pdf(member_id):
                     pdf.set_font("Arial", style='B', size=12)
                     pdf.cell(0, 10, txt=question + ":", ln=False)
                     pdf.set_font("Arial", size=12)
-                    pdf.multi_cell(0, 10, txt=answer.strip())
+                    pdf.multi_cell(0, 10, txt=answer.strip())  # Text will wrap automatically
                 else:
-                    pdf.multi_cell(0, 10, txt=line)
+                    pdf.multi_cell(0, 10, txt=line)  # Text will wrap automatically
                 pdf.ln(5)  # Add space between sections
 
         # Save the PDF
