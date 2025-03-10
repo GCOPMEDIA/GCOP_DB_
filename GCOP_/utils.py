@@ -178,7 +178,8 @@ def print_pdf(member_id):
         # Prepare data dictionary
         data = {
             "title": "God's Church Of Peace "
-                     "\n MEMBERSHIP FORM",
+                     ,
+            'subtitle':"MEMBERSHIP FORM",
             "image_path": image_url,
             "SURNAME": member.f_name,
             "FIRST NAMES": member.l_name,
@@ -225,7 +226,10 @@ def print_pdf(member_id):
 
         # Title
         pdf.set_font("Arial", style='B', size=16)
-        pdf.multi_cell(200, 10, data["title"], ln=True, align='C')
+        pdf.cell(200, 10, data["title"], ln=True, align='C')
+        pdf.ln(10)
+        pdf.set_font("Arial", style='B', size=16)
+        pdf.cell(200, 10, data["subtitle"], ln=True, align='C')
         pdf.ln(10)
 
         # Image
