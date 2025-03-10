@@ -177,7 +177,7 @@ def print_pdf(member_id):
 
         # Prepare data dictionary
         data = {
-            "title": "GCOP MEMBERSHIP FORM",
+            "title": "God's Church Of Peace\n MEMBERSHIP FORM",
             "image_path": image_url,
             "SURNAME": member.f_name,
             "FIRST NAMES": member.l_name,
@@ -244,7 +244,8 @@ def print_pdf(member_id):
                 pdf.set_font("Arial", style='B', size=12)
                 pdf.cell(80, 8, f"{field.replace('_', ' ').upper()}:", border=0)
                 pdf.set_font("Arial", size=12)
-                pdf.cell(100, 8, value, ln=True)
+                pdf.multi_cell(100, 8, value)  # Wrap text properly for long values
+                pdf.ln(2)  # Add a little space between fields
 
         # Pastor Signature Section
         pdf.ln(10)
