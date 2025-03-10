@@ -185,7 +185,7 @@ def print_pdf(member_id):
             "FIRST NAMES": member.l_name,
             "PHONE NUMBER": member.phone_number or "N/A",
             "DATE OF BIRTH": member.date_of_birth.strftime("%Y-%m-%d") if member.date_of_birth else "N/A",
-            "GHANA POST ADDRESS": member.address or "N/A",
+            "GHANA POST ADDRESS": str(member.address).strip() or "N/A",
             "HOME TOWN": member.hometown or "N/A",
             "YEAR JOINED GCOP": member.date_joined.strftime("%Y") if member.date_joined else "N/A",
             "WELFARE CARD NUMBER": member.welfare_card_num or "N/A",
