@@ -71,7 +71,7 @@ class UserDetailsForm(forms.Form):
     other_name = forms.CharField(max_length=100, label="Other Names")
     date_of_birth = forms.DateField(widget=forms.DateInput(attrs={'type':'date'}))
     phone = forms.CharField(max_length=15, label="Phone Number", required=False)
-    # emergency = forms.CharField(max_length=15,label='Emergency Contact',required=False)
+    emergency = forms.CharField(max_length=15,label='Emergency Contact',required=False)
     occupation = forms.CharField(max_length=100,label='Occupation',required=False)
     nxt_of_kin = forms.CharField(max_length=100,label='Name Of Next Of Kin',required=False)
     address = forms.CharField(max_length=100, label="Ghana Post Address")
