@@ -236,6 +236,16 @@ def print_pdf(member_id):
                 pdf.image(local_image_path, x=160, y=10, w=35, h=45)  # Top-right corner
                 pdf.ln(20)
 
+        # Add watermark
+        pdf.set_font("Arial", style='B', size=50)
+        pdf.set_text_color(200, 200, 200)  # Light gray for watermark
+        pdf.rotate(45, x=30, y=150)  # Rotate text diagonally
+        pdf.text(30, 150, "Property of G.C.O.P")  # Watermark text
+        pdf.rotate(0)  # Reset rotation
+
+        # Reset text color for main content
+        pdf.set_text_color(0, 0, 0)  # Black text for main content
+        pdf.set_font("Arial", size=12)  # Reset font size if needed
 
         # Details Section
         pdf.set_font("Arial", size=10)
@@ -256,11 +266,7 @@ def print_pdf(member_id):
         pdf.cell(80, 8, "SIGNATURE:", border=0)
         pdf.cell(100, 8, "_____________________")
 
-        pdf.set_font("Arial", style='B', size=50)
-        pdf.set_text_color(200, 200, 200)  # Light gray color for watermark
-        pdf.rotate(45, x=30, y=150)  # Rotates text diagonally
-        pdf.text(30, 150, "Property of G.C.O.P")  # Watermark text
-        pdf.rotate(0)  # Reset rotation after watermark
+
 
         # Save the PDF
         output_path = f"output_{member_id}.pdf"
