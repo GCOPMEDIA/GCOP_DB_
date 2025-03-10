@@ -139,7 +139,10 @@ def get_member(f_name, l_name, phone_num):
 
 from fpdf import FPDF
 from jinja2 import Environment, FileSystemLoader
-from .models import Member, Relations, ChurchPositions, Branches, Groups, Joinedgroups  # Ensure correct imports
+from .models import Member, Relations, ChurchPositions, Branches, Groups, Joinedgroups
+import requests
+from PIL import Image
+from io import BytesIO
 
 
 def print_pdf(member_id):
@@ -148,11 +151,13 @@ def print_pdf(member_id):
         member = Member.objects.get(member_id=member_id)
 
         # Fetch related people
-        mother = Relations.objects.filter(member_id=member.member_id, relationship__iexact='Mother').first()
-        father = Relations.objects.filter(member_id=member.member_id, relationship__iexact='Father').first()
-        spouse = Relations.objects.filter(member_id=member.member_id, relationship__iexact='Spouse').first()
-        close_relative = Relations.objects.filter(member_id=member.member_id,
-                                                  relationship__iexact='Close Relative').first()
+        relations = {
+            "Mother": Relations.objects.filter(member_id=member.member_id, relationship__iexact='Mother').first(),
+            "Father": Relations.objects.filter(member_id=member.member_id, relationship__iexact='Father').first(),
+            "Spouse": Relations.objects.filter(member_id=member.member_id, relationship__iexact='Spouse').first(),
+            "Close Relative": Relations.objects.filter(member_id=member.member_id,
+                                                       relationship__iexact='Close Relative').first()
+        }
 
         # Fetch positions
         positions = ChurchPositions.objects.filter(member=member)
@@ -161,19 +166,19 @@ def print_pdf(member_id):
         # Fetch church branch
         church_branch = member.church_branch.branch_name if member.church_branch else "Unknown"
 
-        # Fetch joined groups efficiently
+        # Fetch joined groups
         group_names = Groups.objects.filter(
             group_id__in=Joinedgroups.objects.filter(member=member).values_list('group', flat=True)
         ).values_list('group_name', flat=True)
         group_names = ", ".join(group_names) if group_names else "None"
 
-        # **Retrieve Cloudinary Image URL**
+        # Retrieve Cloudinary Image URL
         image_url = member.member_image.url if member.member_image else None
 
         # Prepare data dictionary
         data = {
-            "title": "GCOP MEMBERS FORM Details",
-            "image_path": image_url,  # Cloudinary Image URL
+            "title": "GCOP MEMBERSHIP FORM",
+            "image_path": image_url,
             "f_name": member.f_name,
             "l_name": member.l_name,
             "phone_number": member.phone_number or "N/A",
@@ -186,86 +191,101 @@ def print_pdf(member_id):
             "church_branch": church_branch,
             "groups": group_names,
             "positions": position_names,
-            "occupation": "Unknown",  # Add occupation field if available
-            "emergency_number": "N/A",  # Add emergency number field if needed
+            "occupation": "Unknown",
+            "emergency_number": "N/A",
             "history": member.history or "N/A",
             "marital_status": member.marital_status or "N/A",
-            "c_f_name": spouse.f_name if spouse else "N/A",
-            "c_l_name": spouse.l_name if spouse else "N/A",
-            "c_phone_number": spouse.phone_number if spouse else "N/A",
-            "c_is_member": "Yes" if spouse and spouse.is_member else "No",
-            "f_f_name": father.f_name if father else "N/A",
-            "f_l_name": father.l_name if father else "N/A",
-            "f_phone_number": father.phone_number if father else "N/A",
-            "f_is_member": "Yes" if father and father.is_member else "No",
-            "m_f_name": mother.f_name if mother else "N/A",
-            "m_l_name": mother.l_name if mother else "N/A",
-            "m_phone_number": mother.phone_number if mother else "N/A",
-            "m_is_member": "Yes" if mother and mother.is_member else "No",
-            "r_f_name": close_relative.f_name if close_relative else "N/A",
-            "r_l_name": close_relative.l_name if close_relative else "N/A",
-            "r_phone_number": close_relative.phone_number if close_relative else "N/A",
-            "r_is_member": "Yes" if close_relative and close_relative.is_member else "No",
-            "nxt_of_kin": spouse.f_name if spouse else "N/A"
+            "c_f_name": relations["Spouse"].f_name if relations["Spouse"] else "N/A",
+            "c_l_name": relations["Spouse"].l_name if relations["Spouse"] else "N/A",
+            "c_phone_number": relations["Spouse"].phone_number if relations["Spouse"] else "N/A",
+            "c_is_member": "Yes" if relations["Spouse"] and relations["Spouse"].is_member else "No",
+            "f_f_name": relations["Father"].f_name if relations["Father"] else "N/A",
+            "f_l_name": relations["Father"].l_name if relations["Father"] else "N/A",
+            "f_phone_number": relations["Father"].phone_number if relations["Father"] else "N/A",
+            "f_is_member": "Yes" if relations["Father"] and relations["Father"].is_member else "No",
+            "m_f_name": relations["Mother"].f_name if relations["Mother"] else "N/A",
+            "m_l_name": relations["Mother"].l_name if relations["Mother"] else "N/A",
+            "m_phone_number": relations["Mother"].phone_number if relations["Mother"] else "N/A",
+            "m_is_member": "Yes" if relations["Mother"] and relations["Mother"].is_member else "No",
+            "r_f_name": relations["Close Relative"].f_name if relations["Close Relative"] else "N/A",
+            "r_l_name": relations["Close Relative"].l_name if relations["Close Relative"] else "N/A",
+            "r_phone_number": relations["Close Relative"].phone_number if relations["Close Relative"] else "N/A",
+            "r_is_member": "Yes" if relations["Close Relative"] and relations["Close Relative"].is_member else "No",
+            "nxt_of_kin": relations["Spouse"].f_name if relations["Spouse"] else "N/A"
         }
 
-        # Set up Jinja2 environment
-        env = Environment(loader=FileSystemLoader("GCOP_/templates"))
-        template = env.get_template('template.txt')
-
-        # Render the template with data
-        rendered_text = template.render(data)
-
-        # Create a PDF object
+        # Create PDF
         pdf = FPDF()
         pdf.add_page()
-        pdf.set_font("Arial", size=12)
 
-        # Center and Bolden the Title
+        # Title
         pdf.set_font("Arial", style='B', size=16)
-        pdf.cell(0, 10, txt=data["title"], ln=True, align='C')
-        pdf.ln(10)  # Add space after title
+        pdf.cell(200, 10, data["title"], ln=True, align='C')
+        pdf.ln(10)
 
-        # Process text line by line
-        for line in rendered_text.split("\n"):
-            if line.strip().startswith("Image: [IMAGE:"):
-                # Extract image path from the line (if exists)
-                if image_url:
-                    import requests
-                    from PIL import Image
-                    from io import BytesIO
+        # Image
+        if image_url:
+            response = requests.get(image_url)
+            if response.status_code == 200:
+                img = Image.open(BytesIO(response.content))
+                local_image_path = f"temp_{member_id}.jpg"
+                img.save(local_image_path)
+                pdf.image(local_image_path, x=75, y=pdf.get_y(), w=35, h=45)  # 3.5x4.5cm image size
+                pdf.ln(50)
 
-                    response = requests.get(image_url)
-                    if response.status_code == 200:
-                        img = Image.open(BytesIO(response.content))
-                        local_image_path = f"temp_{member_id}.jpg"
-                        img.save(local_image_path)  # Save image locally
-                        pdf.image(local_image_path, x=10, y=pdf.get_y(), w=80, h=60)  # Insert image
-                        pdf.ln(65)  # Move cursor down to avoid overlap
-            else:
-                # Bolden the Questions
-                if ":" in line:
-                    question, answer = line.split(":", 1)
-                    pdf.set_font("Arial", style='B', size=12)
-                    pdf.cell(0, 10, txt=question + ":", ln=False)
-                    pdf.set_font("Arial", size=12)
-                    pdf.multi_cell(0, 10, txt=answer.strip())
-                else:
-                    pdf.multi_cell(0, 10, txt=line)
-                pdf.ln(5)  # Add space between sections
+        # Details Section
+        pdf.set_font("Arial", size=12)
+        for field, value in data.items():
+            if field not in ["title", "image_path"]:
+                pdf.set_font("Arial", style='B', size=12)
+                pdf.cell(80, 8, f"{field.replace('_', ' ').upper()}:", border=0)
+                pdf.set_font("Arial", size=12)
+                pdf.cell(100, 8, value, ln=True)
+
+        # Pastor Signature Section
+        pdf.ln(10)
+        pdf.set_font("Arial", style='B', size=12)
+        pdf.cell(80, 8, "PASTOR'S NAME:", border=0)
+        pdf.cell(100, 8, "_____________________")
+        pdf.ln(10)
+        pdf.cell(80, 8, "SIGNATURE:", border=0)
+        pdf.cell(100, 8, "_____________________")
 
         # Save the PDF
         output_path = f"output_{member_id}.pdf"
         pdf.output(output_path)
-
         print(f"PDF generated successfully! Saved as {output_path}")
-
         return output_path
 
     except Member.DoesNotExist:
         print("Error: Member not found.")
     except Exception as e:
         print(f"An error occurred: {e}")
+
+        # **Cloudinary Images Can't Be Directly Embedded in FPDF**
+        # If you need the image, you'll have to download it first.
+        # if image_url:
+        #     import requests
+        #     from PIL import Image
+        #     from io import BytesIO
+        #
+        #     response = requests.get(image_url)
+        #     if response.status_code == 200:
+        #         img = Image.open(BytesIO(response.content))
+        #         local_image_path = f"temp_{member_id}.jpg"
+        #         img.save(local_image_path)  # Save image locally
+        #         pdf.image(local_image_path, x=10, y=pdf.get_y(), w=80,h=60)
+        # pdf.multi_cell(0, 10, txt=rendered_text)
+                # Add to PDF
+
+        # Save the PDF
+        # output_path = f"output_{member_id}.pdf"
+        # pdf.output(output_path)
+
+        # print(f"PDF generated successfully! Saved as {output_path}")
+
+        # return output_path
+    #
 
 
 
