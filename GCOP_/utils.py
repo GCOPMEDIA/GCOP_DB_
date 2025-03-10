@@ -235,7 +235,7 @@ def print_pdf(member_id):
                 img.save(local_image_path)
                 pdf.image(local_image_path, x=160, y=10, w=35, h=45)  # Top-right corner
                 pdf.ln(20)
-        pdf.image("./logo.png", x=10, y=10, w=30, h=30)  # Adjust width & height as needed
+        pdf.image("GCOP_/logo.png", x=10, y=10, w=30, h=30)  # Adjust width & height as needed
 
         # Add watermark
         pdf.set_font("Arial", style='B', size=50)
