@@ -219,7 +219,17 @@ def print_pdf(member_id):
         }
 
         # Create PDF
-        pdf = FPDF()
+        class PDF(FPDF):
+            def header(self):
+                # Set watermark on every page
+                self.set_font("Arial", style='B', size=50)
+                self.set_text_color(200, 200, 200)  # Light gray
+                self.rotate(45, x=30, y=150)  # Rotate text diagonally
+                self.text(30, 150, "Property of G.C.O.P")  # Watermark text
+                self.rotate(0)  # Reset rotation after watermark
+
+        # Use the custom PDF class
+        pdf = PDF()
         pdf.add_page()
 
         # Title
@@ -238,18 +248,7 @@ def print_pdf(member_id):
         pdf.image("GCOP_/logo.png", x=10, y=10, w=30, h=30)  # Adjust width & height as needed
 
         # Add watermark
-        class PDF(FPDF):
-            def header(self):
-                # Set watermark on every page
-                self.set_font("Arial", style='B', size=50)
-                self.set_text_color(200, 200, 200)  # Light gray
-                self.rotate(45, x=30, y=150)  # Rotate text diagonally
-                self.text(30, 150, "Property of G.C.O.P")  # Watermark text
-                self.rotate(0)  # Reset rotation after watermark
 
-        # Use the custom PDF class
-        pdf = PDF()
-        pdf.add_page()
 
         # Reset text color for main content
         pdf.set_text_color(0, 0, 0)  # Black text for main content
