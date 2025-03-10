@@ -1,3 +1,6 @@
+
+
+
     {{ title }}
 Image: [IMAGE:{{ image_path }}]
 SURNAME: {{ f_name }}
