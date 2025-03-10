@@ -1,11 +1,5 @@
-
-
-Content: {{ content }}
-
-
     {{ title }}
 Image: [IMAGE:{{ image_path }}]
-
 SURNAME: {{ f_name }}
 FIRST NAMES: {{ l_name }}
 PHONE NUMBER: {{ phone_number }}
