@@ -240,15 +240,15 @@ def print_pdf(member_id):
                 local_image_path = f"temp_{member_id}.jpg"
                 img.save(local_image_path)
                 pdf.image(local_image_path, x=160, y=10, w=35, h=45)  # Top-right corner
-                pdf.ln(50)
+                pdf.ln(20)
 
         # Details Section
-        pdf.set_font("Arial", size=12)
+        pdf.set_font("Arial", size=10)
         for field, value in data.items():
             if field not in ["title", "image_path"]:
-                pdf.set_font("Arial", style='B', size=12)
+                pdf.set_font("Arial", style='B', size=10)
                 pdf.cell(80, 8, f"{field.replace('_', ' ').upper()}:", border=0)
-                pdf.set_font("Arial", size=12)
+                pdf.set_font("Arial", size=10)
                 pdf.multi_cell(100, 8, value)  # Wrap text properly for long values
                 pdf.ln(2)  # Add a little space between fields
 
