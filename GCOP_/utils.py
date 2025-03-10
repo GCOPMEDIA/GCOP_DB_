@@ -236,7 +236,7 @@ def print_pdf(member_id):
                 local_image_path = f"temp_{member_id}.jpg"
                 img.save(local_image_path)
                 pdf.image(local_image_path, x=75, y=pdf.get_y(), w=35, h=45)  # 3.5x4.5cm image size
-                pdf.ln(20)
+                pdf.ln(50)
 
         # Details Section
         pdf.set_font("Arial", size=12)
@@ -249,11 +249,11 @@ def print_pdf(member_id):
                 pdf.ln(2)  # Add a little space between fields
 
         # Pastor Signature Section
-        pdf.ln(5)
+        pdf.ln(10)
         pdf.set_font("Arial", style='B', size=12)
         pdf.cell(80, 8, "PASTOR'S NAME:", border=0)
         pdf.cell(100, 8, "_____________________")
-        pdf.ln(5)
+        pdf.ln(10)
         pdf.cell(80, 8, "SIGNATURE:", border=0)
         pdf.cell(100, 8, "_____________________")
 
