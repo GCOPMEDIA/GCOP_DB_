@@ -235,7 +235,8 @@ def print_pdf(member_id):
 
         # Title
         pdf.set_font("Arial", style='B', size=16)
-        pdf.multi_cell(200, 10, "God's Church Of Peace\nMEMBERSHIP FORM", align='C')
+        pdf.set_xy(35, 10)  # Move title closer to the right, near the logo
+        pdf.multi_cell(120, 10, "God's Church Of Peace\nMEMBERSHIP FORM", align='C')
 
         # Image
         if image_url:
