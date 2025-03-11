@@ -165,6 +165,7 @@ def print_pdf(member_id):
 
         # Fetch church branch
         church_branch = member.church_branch.branch_name if member.church_branch else "Unknown"
+        church_location = member.church_branch.branch_location if member.church_branch else 'Unknown'
 
         # Fetch joined groups
         group_names = Groups.objects.filter(
@@ -188,7 +189,7 @@ def print_pdf(member_id):
             "YEAR JOINED GCOP": member.date_joined.strftime("%Y") if member.date_joined else "N/A",
             "WELFARE CARD NUMBER": member.welfare_card_num or "N/A",
             "TITHE CARD NUMBER": member.tithe_card_num or "N/A",
-            "CHURCH BRANCH": church_branch,
+            "CHURCH BRANCH":  f"({church_location}) {church_branch}",
             "GROUP(S) JOINED": group_names,
             "POSITION(S)": position_names,
             "OCCUPATION": member.occupation or "Unknown",
@@ -245,7 +246,7 @@ def print_pdf(member_id):
                 img.save(local_image_path)
                 pdf.image(local_image_path, x=160, y=10, w=35, h=45)  # Top-right corner
                 pdf.ln(20)
-        pdf.image("GCOP_/logo.png", x=10, y=10, w=30, h=30)  # Adjust width & height as needed
+        pdf.image("GCOP_/logo.png", x=10, y=10, w=20, h=20)  # Adjust width & height as needed
 
         # Add watermark
 
