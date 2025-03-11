@@ -159,6 +159,7 @@ def print_pdf(member_id):
                                                        relationship__iexact='Close Relative').first()
         }
 
+
         # Fetch positions
         positions = ChurchPositions.objects.filter(member=member)
         position_names = ", ".join([pos.position_name for pos in positions]) if positions else "None"
@@ -175,10 +176,14 @@ def print_pdf(member_id):
 
         # Retrieve Cloudinary Image URL
         image_url = member.member_image.url if member.member_image else None
+        # Fetch children
+        try:
+            children = Relations.objects.filter(member_id=member.member_id, relationship__iexact='Child')
+        except:
+            pass
 
         # Prepare data dictionary
         data = {
-
             "image_path": image_url,
             "SURNAME": member.f_name,
             "FIRST NAMES": member.l_name,
@@ -189,35 +194,41 @@ def print_pdf(member_id):
             "YEAR JOINED GCOP": member.date_joined.strftime("%Y") if member.date_joined else "N/A",
             "WELFARE CARD NUMBER": member.welfare_card_num or "N/A",
             "TITHE CARD NUMBER": member.tithe_card_num or "N/A",
-            "CHURCH BRANCH":  f"({church_location}) {church_branch}",
+            "CHURCH BRANCH": f"({church_location}) {church_branch}",
             "GROUP(S) JOINED": group_names,
             "POSITION(S)": position_names,
             "OCCUPATION": member.occupation or "Unknown",
             "EMERGENCY NUMBER": member.emergency_num or "N/A",
             "BRIEF HISTORY": member.history or "N/A",
             "MARITAL STATUS": member.marital_status or "N/A",
-            "CHILD'S SURNAME": relations["Spouse"].f_name if relations["Spouse"] else "N/A",
-            "CHILD'S FIRST NAMEs": relations["Spouse"].l_name if relations["Spouse"] else "N/A",
-            "CHILD'S PHONE NUMBER": relations["Spouse"].phone_number if relations["Spouse"] else "N/A",
-            "IS CHILD A GCOP MEMBER": "Yes" if relations["Spouse"] and relations["Spouse"].is_member else "No",
             "FATHER'S SURNAME": relations["Father"].f_name if relations["Father"] else "N/A",
-            "FATHER'S FIRST NAMEs": relations["Father"].l_name if relations["Father"] else "N/A",
+            "FATHER'S FIRST NAMES": relations["Father"].l_name if relations["Father"] else "N/A",
             "FATHER'S PHONE NUMBER": relations["Father"].phone_number if relations["Father"] else "N/A",
             "IS FATHER A GCOP MEMBER": "Yes" if relations["Father"] and relations["Father"].is_member else "No",
             "MOTHER'S SURNAME": relations["Mother"].f_name if relations["Mother"] else "N/A",
-            "MOTHER'S FIRST NAMEs": relations["Mother"].l_name if relations["Mother"] else "N/A",
+            "MOTHER'S FIRST NAMES": relations["Mother"].l_name if relations["Mother"] else "N/A",
             "MOTHER'S PHONE NUMBER": relations["Mother"].phone_number if relations["Mother"] else "N/A",
             "IS MOTHER A GCOP MEMBER": "Yes" if relations["Mother"] and relations["Mother"].is_member else "No",
             "SPOUSE'S SURNAME": relations["Spouse"].f_name if relations["Spouse"] else "N/A",
-            "SPOUSE'S FIRST NAMEs": relations["Spouse"].l_name if relations["Spouse"] else "N/A",
+            "SPOUSE'S FIRST NAMES": relations["Spouse"].l_name if relations["Spouse"] else "N/A",
             "SPOUSE'S PHONE NUMBER": relations["Spouse"].phone_number if relations["Spouse"] else "N/A",
             "IS SPOUSE A GCOP MEMBER": "Yes" if relations["Spouse"] and relations["Spouse"].is_member else "No",
             "RELATIVE'S SURNAME": relations["Close Relative"].f_name if relations["Close Relative"] else "N/A",
             "RELATIVE'S FIRST NAME": relations["Close Relative"].l_name if relations["Close Relative"] else "N/A",
-            "RELATIVE'S PHONE NUMBER": relations["Close Relative"].phone_number if relations["Close Relative"] else "N/A",
-            "IS RELATIVE A GCOP MEMBER": "Yes" if relations["Close Relative"] and relations["Close Relative"].is_member else "No",
+            "RELATIVE'S PHONE NUMBER": relations["Close Relative"].phone_number if relations[
+                "Close Relative"] else "N/A",
+            "IS RELATIVE A GCOP MEMBER": "Yes" if relations["Close Relative"] and relations[
+                "Close Relative"].is_member else "No",
             "NEXT OF KIN": relations["Spouse"].f_name if relations["Spouse"] else "N/A"
         }
+
+        # Loop through children and dynamically add them
+        if member:
+            for idx, child in enumerate(children, start=1):
+                data[f"CHILD {idx} SURNAME"] = child.f_name
+                data[f"CHILD {idx} FIRST NAMES"] = child.l_name
+                data[f"CHILD {idx} PHONE NUMBER"] = child.phone_number if child.phone_number else "N/A"
+                data[f"IS CHILD {idx} A GCOP MEMBER"] = "Yes" if child.is_member else "No"
 
         # Create PDF
         class PDF(FPDF):
