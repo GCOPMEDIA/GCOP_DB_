@@ -1,23 +1,27 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib.auth.models import User
 from django.http import HttpResponse
 from django.contrib.auth import authenticate, login
-import json
-from datetime import date
-from .forms import UserDetailsForm, FurtherQuestionsForm, NextForm, FatherForm, MotherForm, SurvivorForm, SpouseForm
-from .utils import *
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
+from django.views import View
+from datetime import date
+import json
+
+from .forms import (
+    UserDetailsForm, FurtherQuestionsForm, NextForm,
+    FatherForm, MotherForm, SurvivorForm, SpouseForm,
+    MemberSearchForm, MemberImageUploadForm
+)
+from .models import Member
+from .utils import print_pdf, member_entry
 
 
-# Utility function to convert date fields to strings
-def convert_dates_to_strings(data):
-    """Recursively converts all date objects in a dictionary to string format (YYYY-MM-DD)."""
-    for key, value in data.items():
-        if isinstance(value, date):
-            data[key] = value.strftime('%Y-%m-%d')
-    return data
-
+# ================================
+# Authentication & Utility Functions
+# ================================
 
 def login_(request):
     if request.method == 'POST':
@@ -26,77 +30,86 @@ def login_(request):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
-            return redirect('user_form')
+            next_url = request.GET.get('next', 'user_form')  # Redirect to intended page
+            return redirect(next_url)
         else:
             return HttpResponse(status=403)
-    else:
-        return render(request, 'registration/login.html', {})
+    return render(request, 'registration/login.html', {})
 
 
-# Utility function to update session data
+def convert_dates_to_strings(data):
+    """Recursively converts all date objects in a dictionary to string format (YYYY-MM-DD)."""
+    for key, value in data.items():
+        if isinstance(value, date):
+            data[key] = value.strftime('%Y-%m-%d')
+    return data
+
+
 @login_required
 def update_session_data(request, new_data):
-    """Merge new form data into session storage (final_data5) to accumulate all responses."""
-    user_data = json.loads(request.session.get('final_data5', '{}'))  # Load existing session data
-    user_data.update(new_data)  # Merge new data
-    request.session['final_data5'] = json.dumps(user_data, cls=DjangoJSONEncoder)  # Store back
-    request.session.modified = True  # Ensure session is saved
+    """Merge new form data into session storage to accumulate all responses."""
+    user_data = json.loads(request.session.get('final_data5', '{}'))
+    user_data.update(new_data)
+    request.session['final_data5'] = json.dumps(user_data, cls=DjangoJSONEncoder)
+    request.session.modified = True
 
 
-# Step 1: User Details Form
-@login_required
-def user_form_view(request):
-    if User.is_authenticated:
+# ================================
+# Multi-Step Form Views
+# ================================
 
-        if request.method == 'POST':
-            form = UserDetailsForm(request.POST)
-            if form.is_valid():
-                cleaned_data = convert_dates_to_strings(form.cleaned_data)
-                update_session_data(request, cleaned_data)
-                return redirect('further_questions')  # Move to Step 2
-        else:
-            form = UserDetailsForm()
+class UserFormView(LoginRequiredMixin, View):
+    login_url = '/login/'
+
+    def get(self, request):
+        form = UserDetailsForm()
         return render(request, 'form_template.html', {'form': form, 'step': '1'})
-    else:
-        return HttpResponse(status=403)
+
+    def post(self, request):
+        form = UserDetailsForm(request.POST)
+        if form.is_valid():
+            cleaned_data = convert_dates_to_strings(form.cleaned_data)
+            update_session_data(request, cleaned_data)
+            return redirect('further_questions')
+        return render(request, 'form_template.html', {'form': form, 'step': '1'})
 
 
-# Step 2: Further Questions (Collecting number of children and survivors)
-@login_required
-def further_questions_view(request):
-    if request.method == 'POST':
+class FurtherQuestionsView(LoginRequiredMixin, View):
+    login_url = '/login/'
+
+    def get(self, request):
+        form = FurtherQuestionsForm()
+        return render(request, 'form_template.html', {'form': form, 'step': '2'})
+
+    def post(self, request):
         form = FurtherQuestionsForm(request.POST)
         if form.is_valid():
             cleaned_data = convert_dates_to_strings(form.cleaned_data)
-
-            # Store numbers for child & survivor processing
-            request.session['number_of_children'] = int(cleaned_data.get('number_of_children', 0))
-            request.session['number_of_survivors'] = int(cleaned_data.get('number_of_survivors', 0))
-            request.session['marital_status'] = cleaned_data.get('marital_status', 'single')
-            request.session['parent_status'] = cleaned_data.get('parent_status', 'None')
-
+            request.session.update({
+                'number_of_children': int(cleaned_data.get('number_of_children', 0)),
+                'number_of_survivors': int(cleaned_data.get('number_of_survivors', 0)),
+                'marital_status': cleaned_data.get('marital_status', 'single'),
+                'parent_status': cleaned_data.get('parent_status', 'None')
+            })
             update_session_data(request, cleaned_data)
 
-            # Determine the next step based on conditions
             if request.session['marital_status'] == 'married':
                 return redirect('spouse_details')
             elif request.session['number_of_children'] > 0:
                 return redirect('child_details', child_index=1)
             elif request.session['parent_status'] != 'None':
                 return redirect('father_details')
-            else:
-                return redirect('survivor_details', survivor_index=1)
-
-    else:
-        form = FurtherQuestionsForm()
-
-    return render(request, 'form_template.html', {'form': form, 'step': '2'})
+            return redirect('survivor_details', survivor_index=1)
 
 
-# Step 3: Spouse Details (Only shown if married)
-@login_required
-def spouse_details(request):
-    if request.method == 'POST':
+class SpouseDetailsView(LoginRequiredMixin, View):
+    login_url = '/login/'
+
+    def get(self, request):
+        form = SpouseForm()
+        return render(request, 'form_template.html', {'form': form, 'step': 'spouse'})
+
+    def post(self, request):
         form = SpouseForm(request.POST)
         if form.is_valid():
             cleaned_data = convert_dates_to_strings(form.cleaned_data)
@@ -106,110 +119,72 @@ def spouse_details(request):
                 return redirect('child_details', child_index=1)
             elif request.session.get('parent_status', 'None') != 'None':
                 return redirect('father_details')
-            else:
-                return redirect('survivor_details', survivor_index=1)
-
-    else:
-        form = SpouseForm()
-
-    return render(request, 'form_template.html', {'form': form, 'step': 'spouse'})
+            return redirect('survivor_details', survivor_index=1)
 
 
-# Step 4: Child Details (Handles multiple children dynamically)
 @login_required
 def child_details_view(request, child_index):
     number_of_children = request.session.get('number_of_children', 0)
-
     if number_of_children == 0:
-        return redirect('father_details')  # Skip if no children
+        return redirect('father_details')
 
     if request.method == 'POST':
         form = NextForm(request.POST)
         if form.is_valid():
             cleaned_data = convert_dates_to_strings(form.cleaned_data)
             update_session_data(request, {f'child_{child_index}': cleaned_data})
-
             if child_index < number_of_children:
                 return redirect('child_details', child_index=child_index + 1)
-            else:
-                return redirect('father_details')
+            return redirect('father_details')
 
-    else:
-        form = NextForm()
-
+    form = NextForm()
     return render(request, 'form_template.html', {'form': form, 'step': '3', 'child_index': child_index})
 
 
-# Step 5: Father Details
-@login_required
-def father_details(request):
-    parent_status = request.session.get('parent_status', 'None')
-    if parent_status in ['Both', 'Only Father']:
-        if request.method == 'POST':
-            form = FatherForm(request.POST)
-            if form.is_valid():
-                cleaned_data = convert_dates_to_strings(form.cleaned_data)
-                update_session_data(request, cleaned_data)
-                return redirect('mother_details')
-
-        else:
+class FatherDetailsView(LoginRequiredMixin, View):
+    def get(self, request):
+        if request.session.get('parent_status') in ['Both', 'Only Father']:
             form = FatherForm()
-
-        return render(request, 'form_template.html', {'form': form, 'step': '4'})
-    else:
+            return render(request, 'form_template.html', {'form': form, 'step': '4'})
         return redirect('mother_details')
 
-
-@login_required
-def mother_details(request):
-    parent_status = request.session.get('parent_status', 'None')
-    if parent_status in ['Both', 'Only Mother']:
-        if request.method == 'POST':
-            form = MotherForm(request.POST)
-            if form.is_valid():
-                cleaned_data = convert_dates_to_strings(form.cleaned_data)
-                update_session_data(request, cleaned_data)
-                return redirect('survivor_details', survivor_index=1)
-
-        else:
-            form = MotherForm()
-
-        return render(request, 'form_template.html', {'form': form, 'step': '5'})
-    else:
-        return redirect('survivor_details', survivor_index=1)
+    def post(self, request):
+        form = FatherForm(request.POST)
+        if form.is_valid():
+            update_session_data(request, convert_dates_to_strings(form.cleaned_data))
+            return redirect('mother_details')
+        return render(request, 'form_template.html', {'form': form, 'step': '4'})
 
 
-# Step 6: Mother Details
-
-
-# Step 7: Survivor Details (Handles multiple survivors dynamically)
 @login_required
 def survivor_details_view(request, survivor_index):
     number_of_survivors = request.session.get('number_of_survivors', 0)
-
     if number_of_survivors == 0:
-        return redirect('form_success')  # Skip if no survivors
+        return redirect('form_success')
 
     if request.method == 'POST':
         form = SurvivorForm(request.POST)
         if form.is_valid():
             cleaned_data = convert_dates_to_strings(form.cleaned_data)
             update_session_data(request, {f'survivor_{survivor_index}': cleaned_data})
-
             if survivor_index < number_of_survivors:
                 return redirect('survivor_details', survivor_index=survivor_index + 1)
-            else:
-                return redirect('form_success')
+            return redirect('form_success')
 
-    else:
-        form = SurvivorForm()
-
+    form = SurvivorForm()
     return render(request, 'form_template.html', {'form': form, 'step': '7', 'survivor_index': survivor_index})
 
 
-from django.shortcuts import render
-from .models import Member
+@login_required
+def form_success_view(request):
+    data = json.loads(request.session.get('final_data5', '{}'))
+    member_entry(data)
+    return render(request, 'form_success.html', {'data': data})
 
+
+# ================================
+# Member Management Views
+# ================================
 
 @login_required
 def members_without_images(request):
@@ -217,89 +192,116 @@ def members_without_images(request):
     return render(request, 'members_without_images.html', {'members': members})
 
 
-from django.shortcuts import get_object_or_404, redirect
-from .forms import MemberImageUploadForm
-
-
 @login_required
 def upload_member_image(request, member_id):
     member = get_object_or_404(Member, member_id=member_id)
-
     if request.method == 'POST':
         form = MemberImageUploadForm(request.POST, request.FILES, instance=member)
         if form.is_valid():
             form.save()
-            return redirect('members_without_images')  # Redirect after upload
+            return redirect('members_without_images')
     else:
         form = MemberImageUploadForm(instance=member)
 
     return render(request, 'upload_member_image.html', {'form': form, 'member': member})
 
 
-# Step 8: Success Page (Shows collected data)
 @login_required
-def form_success_view(request):
-    data = json.loads(request.session.get('final_data5', '{}'))
-    print(data)  # Load all collected data
-    member_entry(data)
-    return render(request, 'form_success.html', {'data': data})  # Render success page
-
-
-from .forms import MemberSearchForm
-
-
-def member_form_view(request):
-    if request.method == "POST":
-        form = MemberSearchForm(request.POST)
-        if form.is_valid():
-            f_name = form.cleaned_data['f_name']
-            l_name = form.cleaned_data['l_name']
-            phone = form.cleaned_data['phone_num']
-            return redirect('users_search_view', f_name=f_name or 'none', l_name=l_name or 'none',
-                            phone_num=phone or 'none')
-    else:
-        form = MemberSearchForm()
-
-    return render(request, 'get_user_form.html', {'form': form})
-
-
-from django.http import HttpResponse
-
-
-def print_view(request,member_id):
-
-        member = Member.objects.get(member_id=member_id)
-
-        print(member.f_name)
-        return render(request,'print_view.html',{'member':member})
-
-    # Handle member not found
-def users_search_view(request,f_name,l_name,phone_num):
-    members = Member.objects.filter(
-        Q(f_name__iexact=f_name) | Q(l_name__iexact=l_name) | Q(phone_number=phone_num)
-    )
-    if members:
-        return render(request,'users_search_view.html',{'members':members})
-    else:
-        return HttpResponse("Member not found.", status=404)
-
-
-from django.http import HttpResponse
-from django.shortcuts import render, get_object_or_404
-from .models import Member
-from .utils import print_pdf  # Import the utility function
-
-
 def download_pdf(request, member_id):
-    # print_pdf(member_id)
     try:
-        # Generate the PDF using the utility function
         output_path = print_pdf(member_id)
-
-        #Serve the PDF as a downloadable file
         with open(output_path, 'rb') as pdf_file:
             response = HttpResponse(pdf_file.read(), content_type='application/pdf')
             response['Content-Disposition'] = f'attachment; filename="member_{member_id}.pdf"'
             return response
     except Exception as e:
         return HttpResponse(f"An error occurred: {e}", status=500)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# ================================
+# Authentication & Utility Functions
+# ================================
+
+
+
+
+@login_required
+def update_session_data(request, new_data):
+    """Merge new form data into session storage to accumulate all responses."""
+    user_data = json.loads(request.session.get('final_data5', '{}'))
+    user_data.update(new_data)
+    request.session['final_data5'] = json.dumps(user_data, cls=DjangoJSONEncoder)
+    request.session.modified = True
+
+
+# ================================
+# Multi-Step Form Views
+# ================================
+
+class MotherDetailsView(LoginRequiredMixin, View):
+    login_url = '/login/'
+
+    def get(self, request):
+        if request.session.get('parent_status') in ['Both', 'Only Mother']:
+            form = MotherForm()
+            return render(request, 'form_template.html', {'form': form, 'step': '5'})
+        return redirect('survivor_details', survivor_index=1)
+
+    def post(self, request):
+        form = MotherForm(request.POST)
+        if form.is_valid():
+            update_session_data(request, convert_dates_to_strings(form.cleaned_data))
+            return redirect('survivor_details', survivor_index=1)
+        return render(request, 'form_template.html', {'form': form, 'step': '5'})
+
+
+class MemberFormView(LoginRequiredMixin, View):
+    login_url = '/login/'
+
+    def get(self, request):
+        form = MemberSearchForm()
+        return render(request, 'member_form.html', {'form': form})
+
+    def post(self, request):
+        form = MemberSearchForm(request.POST)
+        if form.is_valid():
+            return redirect('users_search_view', search_query=form.cleaned_data['search_query'])
+        return render(request, 'member_form.html', {'form': form})
+
+
+@login_required
+def users_search_view(request):
+    search_query = request.GET.get('search_query', '').strip()
+    members = Member.objects.filter(name__icontains=search_query) if search_query else None
+    return render(request, 'users_search.html', {'members': members, 'search_query': search_query})
+
+@login_required
+def print_view(request, member_id):
+    """Displays a member's details for printing."""
+    member = get_object_or_404(Member, member_id=member_id)
+    return render(request, 'print_view.html', {'member': member})
+
+# ================================
+# Other Views (Previously Included)
+# ===========
+
+
+
+
+
