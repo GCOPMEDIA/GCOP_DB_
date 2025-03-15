@@ -55,7 +55,7 @@ def update_session_data(request, new_data):
 # ================================
 
 class UserFormView(LoginRequiredMixin, View):
-    login_url = '//'
+    login_url = '/'
 
     def get(self, request):
         form = UserDetailsForm()
@@ -71,7 +71,7 @@ class UserFormView(LoginRequiredMixin, View):
 
 
 class FurtherQuestionsView(LoginRequiredMixin, View):
-    login_url = '//'
+    login_url = '/'
 
     def get(self, request):
         form = FurtherQuestionsForm()
@@ -99,7 +99,7 @@ class FurtherQuestionsView(LoginRequiredMixin, View):
 
 
 class SpouseDetailsView(LoginRequiredMixin, View):
-    login_url = '//'
+    login_url = '/'
 
     def get(self, request):
         form = SpouseForm()
@@ -120,7 +120,7 @@ class SpouseDetailsView(LoginRequiredMixin, View):
 
 
 class ChildDetailsView(LoginRequiredMixin, View):
-    login_url = '//'
+    login_url = '/'
 
     def get(self, request, child_index):
         number_of_children = request.session.get('number_of_children', 0)
@@ -162,7 +162,7 @@ class FatherDetailsView(LoginRequiredMixin, View):
 
 
 class SurvivorDetailsView(LoginRequiredMixin, View):
-    login_url = '//'
+    login_url = '/'
 
     def get(self, request, survivor_index):
         number_of_survivors = request.session.get('number_of_survivors', 0)
@@ -188,7 +188,7 @@ class SurvivorDetailsView(LoginRequiredMixin, View):
 
 
 class FormSuccessView(LoginRequiredMixin, View):
-    login_url = '//'
+    login_url = '/'
 
     def get(self, request):
         data = json.loads(request.session.get('final_data5', '{}'))
@@ -205,7 +205,7 @@ class FormSuccessView(LoginRequiredMixin, View):
 
 
 class MembersWithoutImagesView(LoginRequiredMixin, View):
-    login_url = '//'
+    login_url = '/'
 
     def get(self, request):
         members = Member.objects.filter(member_image__isnull=True)
@@ -217,7 +217,7 @@ class MembersWithoutImagesView(LoginRequiredMixin, View):
   # Import the form
 
 class UploadMemberImageView(LoginRequiredMixin, View):
-    login_url = '//'
+    login_url = '/'
 
     def get(self, request, member_id):
         member = get_object_or_404(Member, member_id=member_id)
@@ -238,7 +238,7 @@ class UploadMemberImageView(LoginRequiredMixin, View):
 
 
 class DownloadPDFView(LoginRequiredMixin, View):
-    login_url = '//'
+    login_url = '/'
 
     def get(self, request, member_id):
         try:
@@ -322,7 +322,7 @@ class MemberFormView(LoginRequiredMixin, View):
 
 
 class UsersSearchView(LoginRequiredMixin, View):
-    login_url = '//'
+    login_url = '/'
 
     def get(self, request):
         search_query = request.GET.get('search_query', '').strip()
@@ -333,7 +333,7 @@ class UsersSearchView(LoginRequiredMixin, View):
 
 
 class PrintView(LoginRequiredMixin, View):
-    login_url = '//'
+    login_url = '/'
 
     def get(self, request, member_id):
         """Displays a member's details for printing."""
