@@ -204,51 +204,51 @@ class FormSuccessView(LoginRequiredMixin, View):
 
 
 
-# class MembersWithoutImagesView(LoginRequiredMixin, View):
-#     login_url = '/'
-#
-#     def get(self, request):
-#         members = Member.objects.filter(member_image__isnull=True)
-#         return render(request, 'members_without_images.html', {'members': members})
+class MembersWithoutImagesView(LoginRequiredMixin, View):
+    login_url = '/'
+
+    def get(self, request):
+        members = Member.objects.filter(member_image__isnull=True)
+        return render(request, 'members_without_images.html', {'members': members})
 
 
 
 
   # Import the form
 
-# class UploadMemberImageView(LoginRequiredMixin, View):
-#     login_url = '/'
-#
-#     def get(self, request, member_id):
-#         member = get_object_or_404(Member, member_id=member_id)
-#         form = MemberImageUploadForm(instance=member)
-#         return render(request, 'upload_member_image.html', {'form': form, 'member': member})
-#
-#     def post(self, request, member_id):
-#         member = get_object_or_404(Member, member_id=member_id)
-#         form = MemberImageUploadForm(request.POST, request.FILES, instance=member)
-#         if form.is_valid():
-#             form.save()
-#             return redirect('members_without_images')
-#
-#         return render(request, 'upload_member_image.html', {'form': form, 'member': member})
+class UploadMemberImageView(LoginRequiredMixin, View):
+    login_url = '/'
+
+    def get(self, request, member_id):
+        member = get_object_or_404(Member, member_id=member_id)
+        form = MemberImageUploadForm(instance=member)
+        return render(request, 'upload_member_image.html', {'form': form, 'member': member})
+
+    def post(self, request, member_id):
+        member = get_object_or_404(Member, member_id=member_id)
+        form = MemberImageUploadForm(request.POST, request.FILES, instance=member)
+        if form.is_valid():
+            form.save()
+            return redirect('members_without_images')
+
+        return render(request, 'upload_member_image.html', {'form': form, 'member': member})
 
 
 
 
 
-# class DownloadPDFView(LoginRequiredMixin, View):
-#     login_url = '/'
-#
-#     def get(self, request, member_id):
-#         try:
-#             output_path = print_pdf(member_id)
-#             with open(output_path, 'rb') as pdf_file:
-#                 response = HttpResponse(pdf_file.read(), content_type='application/pdf')
-#                 response['Content-Disposition'] = f'attachment; filename="member_{member_id}.pdf"'
-#                 return response
-#         except Exception as e:
-#             return HttpResponse(f"An error occurred: {e}", status=500)
+class DownloadPDFView(LoginRequiredMixin, View):
+    login_url = '/'
+
+    def get(self, request, member_id):
+        try:
+            output_path = print_pdf(member_id)
+            with open(output_path, 'rb') as pdf_file:
+                response = HttpResponse(pdf_file.read(), content_type='application/pdf')
+                response['Content-Disposition'] = f'attachment; filename="member_{member_id}.pdf"'
+                return response
+        except Exception as e:
+            return HttpResponse(f"An error occurred: {e}", status=500)
 
 
 
@@ -304,46 +304,10 @@ class MotherDetailsView(LoginRequiredMixin, View):
             return redirect('survivor_details', survivor_index=1)
         return render(request, 'form_template.html', {'form': form, 'step': '5'})
 
-from django.contrib.auth.mixins import UserPassesTestMixin
 
-class SuperAdminRequiredMixin(UserPassesTestMixin):
-    login_url = '/'  # Redirect to homepage or login if needed
+class MemberFormView(LoginRequiredMixin, View):
+    login_url = '/login/'
 
-    def test_func(self):
-        return self.request.user.is_superuser  # Only allow superadmins
-
-    def handle_no_permission(self):
-        return redirect('user_form')  # Redirect unauthorized users to UserFormView
-
-
-class MembersWithoutImagesView(LoginRequiredMixin, SuperAdminRequiredMixin, View):
-    def get(self, request):
-        members = Member.objects.filter(member_image__isnull=True)
-        return render(request, 'members_without_images.html', {'members': members})
-
-
-class UploadMemberImageView(LoginRequiredMixin, SuperAdminRequiredMixin, View):
-    def get(self, request, member_id):
-        member = get_object_or_404(Member, member_id=member_id)
-        form = MemberImageUploadForm(instance=member)
-        return render(request, 'upload_member_image.html', {'form': form, 'member': member})
-
-    def post(self, request, member_id):
-        member = get_object_or_404(Member, member_id=member_id)
-        form = MemberImageUploadForm(request.POST, request.FILES, instance=member)
-        if form.is_valid():
-            form.save()
-            return redirect('members_without_images')
-        return render(request, 'upload_member_image.html', {'form': form, 'member': member})
-
-
-class PrintView(LoginRequiredMixin, SuperAdminRequiredMixin, View):
-    def get(self, request, member_id):
-        member = get_object_or_404(Member, member_id=member_id)
-        return render(request, 'print_view.html', {'member': member})
-
-
-class MemberFormView(LoginRequiredMixin, SuperAdminRequiredMixin, View):
     def get(self, request):
         form = MemberSearchForm()
         return render(request, 'member_form.html', {'form': form})
@@ -352,31 +316,76 @@ class MemberFormView(LoginRequiredMixin, SuperAdminRequiredMixin, View):
         form = MemberSearchForm(request.POST)
         if form.is_valid():
             return redirect('users_search_view', search_query=form.cleaned_data['search_query'])
-        return render(request, 'get_user_form.html', {'form': form})
+        return render(request, 'member_form.html', {'form': form})
 
 
-class UsersSearchView(LoginRequiredMixin, SuperAdminRequiredMixin, View):
+
+
+class UsersSearchView(LoginRequiredMixin, View):
+    login_url = '/'
+
     def get(self, request):
         search_query = request.GET.get('search_query', '').strip()
         members = Member.objects.filter(name__icontains=search_query) if search_query else None
         return render(request, 'users_search.html', {'members': members, 'search_query': search_query})
 
 
-class DownloadPDFView(LoginRequiredMixin, SuperAdminRequiredMixin, View):
+
+
+class PrintView(LoginRequiredMixin, View):
+    login_url = '/'
+
     def get(self, request, member_id):
-        try:
-            output_path = print_pdf(member_id)
-            with open(output_path, 'rb') as pdf_file:
-                response = HttpResponse(pdf_file.read(), content_type='application/pdf')
-                response['Content-Disposition'] = f'attachment; filename="member_{member_id}.pdf"'
-                return response
-        except Exception as e:
-            return HttpResponse(f"An error occurred: {e}", status=500)
+        """Displays a member's details for printing."""
+        member = get_object_or_404(Member, member_id=member_id)
+        return render(request, 'print_view.html', {'member': member})
 
 
-# class MemberFormView(LoginRequiredMixin, View):
-#     login_url = '/login/'
+# ================================
+# Other Views (Previously Included)
+# ===========
+
+
+# from django.contrib.auth.mixins import UserPassesTestMixin
 #
+# class SuperAdminRequiredMixin(UserPassesTestMixin):
+#     login_url = '/'  # Redirect to homepage or login if needed
+#
+#     def test_func(self):
+#         return self.request.user.is_superuser  # Only allow superadmins
+#
+#     def handle_no_permission(self):
+#         return redirect('user_form')  # Redirect unauthorized users to UserFormView
+#
+#
+# class MembersWithoutImagesView(LoginRequiredMixin, SuperAdminRequiredMixin, View):
+#     def get(self, request):
+#         members = Member.objects.filter(member_image__isnull=True)
+#         return render(request, 'members_without_images.html', {'members': members})
+#
+#
+# class UploadMemberImageView(LoginRequiredMixin, SuperAdminRequiredMixin, View):
+#     def get(self, request, member_id):
+#         member = get_object_or_404(Member, member_id=member_id)
+#         form = MemberImageUploadForm(instance=member)
+#         return render(request, 'upload_member_image.html', {'form': form, 'member': member})
+#
+#     def post(self, request, member_id):
+#         member = get_object_or_404(Member, member_id=member_id)
+#         form = MemberImageUploadForm(request.POST, request.FILES, instance=member)
+#         if form.is_valid():
+#             form.save()
+#             return redirect('members_without_images')
+#         return render(request, 'upload_member_image.html', {'form': form, 'member': member})
+#
+#
+# class PrintView(LoginRequiredMixin, SuperAdminRequiredMixin, View):
+#     def get(self, request, member_id):
+#         member = get_object_or_404(Member, member_id=member_id)
+#         return render(request, 'print_view.html', {'member': member})
+#
+#
+# class MemberFormView(LoginRequiredMixin, SuperAdminRequiredMixin, View):
 #     def get(self, request):
 #         form = MemberSearchForm()
 #         return render(request, 'member_form.html', {'form': form})
@@ -386,35 +395,25 @@ class DownloadPDFView(LoginRequiredMixin, SuperAdminRequiredMixin, View):
 #         if form.is_valid():
 #             return redirect('users_search_view', search_query=form.cleaned_data['search_query'])
 #         return render(request, 'get_user_form.html', {'form': form})
-
-
-
-
-# class UsersSearchView(LoginRequiredMixin, View):
-#     login_url = '/'
 #
+#
+# class UsersSearchView(LoginRequiredMixin, SuperAdminRequiredMixin, View):
 #     def get(self, request):
 #         search_query = request.GET.get('search_query', '').strip()
 #         members = Member.objects.filter(name__icontains=search_query) if search_query else None
 #         return render(request, 'users_search.html', {'members': members, 'search_query': search_query})
-
-
-
-
-# class PrintView(LoginRequiredMixin, View):
-#     login_url = '/'
 #
+#
+# class DownloadPDFView(LoginRequiredMixin, SuperAdminRequiredMixin, View):
 #     def get(self, request, member_id):
-#         """Displays a member's details for printing."""
-#         member = get_object_or_404(Member, member_id=member_id)
-#         return render(request, 'print_view.html', {'member': member})
-
-
-# ================================
-# Other Views (Previously Included)
-# ===========
-
-
-
-
-
+#         try:
+#             output_path = print_pdf(member_id)
+#             with open(output_path, 'rb') as pdf_file:
+#                 response = HttpResponse(pdf_file.read(), content_type='application/pdf')
+#                 response['Content-Disposition'] = f'attachment; filename="member_{member_id}.pdf"'
+#                 return response
+#         except Exception as e:
+#             return HttpResponse(f"An error occurred: {e}", status=500)
+#
+#
+#
