@@ -324,16 +324,26 @@ class MemberFormView(LoginRequiredMixin, View):
 
 
 @login_required
-def users_search_view(request):
-    search_query = request.GET.get('search_query', '').strip()
-    members = Member.objects.filter(name__icontains=search_query) if search_query else None
-    return render(request, 'users_search.html', {'members': members, 'search_query': search_query})
 
-@login_required
-def print_view(request, member_id):
-    """Displays a member's details for printing."""
-    member = get_object_or_404(Member, member_id=member_id)
-    return render(request, 'print_view.html', {'member': member})
+class UsersSearchView(LoginRequiredMixin, View):
+    login_url = '//'
+
+    def get(self, request):
+        search_query = request.GET.get('search_query', '').strip()
+        members = Member.objects.filter(name__icontains=search_query) if search_query else None
+        return render(request, 'users_search.html', {'members': members, 'search_query': search_query})
+
+
+
+
+class PrintView(LoginRequiredMixin, View):
+    login_url = '//'
+
+    def get(self, request, member_id):
+        """Displays a member's details for printing."""
+        member = get_object_or_404(Member, member_id=member_id)
+        return render(request, 'print_view.html', {'member': member})
+
 
 # ================================
 # Other Views (Previously Included)
