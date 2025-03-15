@@ -10,11 +10,7 @@ from django.views import View
 from datetime import date
 import json
 
-from .forms import (
-    UserDetailsForm, FurtherQuestionsForm, NextForm,
-    FatherForm, MotherForm, SurvivorForm, SpouseForm,
-    MemberSearchForm, MemberImageUploadForm
-)
+from .forms import *
 from .models import Member
 from .utils import print_pdf, member_entry
 
@@ -45,7 +41,7 @@ def convert_dates_to_strings(data):
     return data
 
 
-@login_required
+
 def update_session_data(request, new_data):
     """Merge new form data into session storage to accumulate all responses."""
     user_data = json.loads(request.session.get('final_data5', '{}'))
@@ -162,7 +158,7 @@ class FatherDetailsView(LoginRequiredMixin, View):
         return render(request, 'form_template.html', {'form': form, 'step': '4'})
 
 
-@login_required
+
 
 
 class SurvivorDetailsView(LoginRequiredMixin, View):
@@ -205,7 +201,7 @@ class FormSuccessView(LoginRequiredMixin, View):
 # Member Management Views
 # ================================
 
-@login_required
+
 
 
 class MembersWithoutImagesView(LoginRequiredMixin, View):
@@ -217,7 +213,7 @@ class MembersWithoutImagesView(LoginRequiredMixin, View):
 
 
 
-@login_required
+
   # Import the form
 
 class UploadMemberImageView(LoginRequiredMixin, View):
@@ -279,7 +275,7 @@ class DownloadPDFView(LoginRequiredMixin, View):
 
 
 
-@login_required
+
 def update_session_data(request, new_data):
     """Merge new form data into session storage to accumulate all responses."""
     user_data = json.loads(request.session.get('final_data5', '{}'))
@@ -323,7 +319,7 @@ class MemberFormView(LoginRequiredMixin, View):
         return render(request, 'member_form.html', {'form': form})
 
 
-@login_required
+
 
 class UsersSearchView(LoginRequiredMixin, View):
     login_url = '//'
