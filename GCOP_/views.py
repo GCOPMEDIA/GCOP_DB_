@@ -59,7 +59,7 @@ def update_session_data(request, new_data):
 # ================================
 
 class UserFormView(LoginRequiredMixin, View):
-    login_url = '/login/'
+    login_url = '//'
 
     def get(self, request):
         form = UserDetailsForm()
@@ -75,7 +75,7 @@ class UserFormView(LoginRequiredMixin, View):
 
 
 class FurtherQuestionsView(LoginRequiredMixin, View):
-    login_url = '/login/'
+    login_url = '//'
 
     def get(self, request):
         form = FurtherQuestionsForm()
@@ -103,7 +103,7 @@ class FurtherQuestionsView(LoginRequiredMixin, View):
 
 
 class SpouseDetailsView(LoginRequiredMixin, View):
-    login_url = '/login/'
+    login_url = '//'
 
     def get(self, request):
         form = SpouseForm()
@@ -122,23 +122,29 @@ class SpouseDetailsView(LoginRequiredMixin, View):
             return redirect('survivor_details', survivor_index=1)
 
 
-@login_required
-def child_details_view(request, child_index):
-    number_of_children = request.session.get('number_of_children', 0)
-    if number_of_children == 0:
-        return redirect('father_details')
 
-    if request.method == 'POST':
+class ChildDetailsView(LoginRequiredMixin, View):
+    login_url = '//'
+
+    def get(self, request, child_index):
+        number_of_children = request.session.get('number_of_children', 0)
+        if number_of_children == 0:
+            return redirect('father_details')
+
+        form = NextForm()
+        return render(request, 'form_template.html', {'form': form, 'step': f'child_{child_index}'})
+
+    def post(self, request, child_index):
         form = NextForm(request.POST)
         if form.is_valid():
             cleaned_data = convert_dates_to_strings(form.cleaned_data)
             update_session_data(request, {f'child_{child_index}': cleaned_data})
-            if child_index < number_of_children:
+
+            if child_index < request.session.get('number_of_children', 0):
                 return redirect('child_details', child_index=child_index + 1)
+
             return redirect('father_details')
 
-    form = NextForm()
-    return render(request, 'form_template.html', {'form': form, 'step': '3', 'child_index': child_index})
 
 
 class FatherDetailsView(LoginRequiredMixin, View):
@@ -157,29 +163,42 @@ class FatherDetailsView(LoginRequiredMixin, View):
 
 
 @login_required
-def survivor_details_view(request, survivor_index):
-    number_of_survivors = request.session.get('number_of_survivors', 0)
-    if number_of_survivors == 0:
-        return redirect('form_success')
 
-    if request.method == 'POST':
+
+class SurvivorDetailsView(LoginRequiredMixin, View):
+    login_url = '//'
+
+    def get(self, request, survivor_index):
+        number_of_survivors = request.session.get('number_of_survivors', 0)
+        if number_of_survivors == 0:
+            return redirect('form_success')
+
+        form = SurvivorForm()
+        return render(request, 'form_template.html', {'form': form, 'step': '7', 'survivor_index': survivor_index})
+
+    def post(self, request, survivor_index):
         form = SurvivorForm(request.POST)
         if form.is_valid():
             cleaned_data = convert_dates_to_strings(form.cleaned_data)
             update_session_data(request, {f'survivor_{survivor_index}': cleaned_data})
-            if survivor_index < number_of_survivors:
+
+            if survivor_index < request.session.get('number_of_survivors', 0):
                 return redirect('survivor_details', survivor_index=survivor_index + 1)
+
             return redirect('form_success')
 
-    form = SurvivorForm()
-    return render(request, 'form_template.html', {'form': form, 'step': '7', 'survivor_index': survivor_index})
 
 
-@login_required
-def form_success_view(request):
-    data = json.loads(request.session.get('final_data5', '{}'))
-    member_entry(data)
-    return render(request, 'form_success.html', {'data': data})
+
+
+class FormSuccessView(LoginRequiredMixin, View):
+    login_url = '//'
+
+    def get(self, request):
+        data = json.loads(request.session.get('final_data5', '{}'))
+        member_entry(data)
+        return render(request, 'form_success.html', {'data': data})
+
 
 
 # ================================
@@ -187,35 +206,54 @@ def form_success_view(request):
 # ================================
 
 @login_required
-def members_without_images(request):
-    members = Member.objects.filter(member_image__isnull=True)
-    return render(request, 'members_without_images.html', {'members': members})
+
+
+class MembersWithoutImagesView(LoginRequiredMixin, View):
+    login_url = '//'
+
+    def get(self, request):
+        members = Member.objects.filter(member_image__isnull=True)
+        return render(request, 'members_without_images.html', {'members': members})
+
 
 
 @login_required
-def upload_member_image(request, member_id):
-    member = get_object_or_404(Member, member_id=member_id)
-    if request.method == 'POST':
+  # Import the form
+
+class UploadMemberImageView(LoginRequiredMixin, View):
+    login_url = '//'
+
+    def get(self, request, member_id):
+        member = get_object_or_404(Member, member_id=member_id)
+        form = MemberImageUploadForm(instance=member)
+        return render(request, 'upload_member_image.html', {'form': form, 'member': member})
+
+    def post(self, request, member_id):
+        member = get_object_or_404(Member, member_id=member_id)
         form = MemberImageUploadForm(request.POST, request.FILES, instance=member)
         if form.is_valid():
             form.save()
             return redirect('members_without_images')
-    else:
-        form = MemberImageUploadForm(instance=member)
 
-    return render(request, 'upload_member_image.html', {'form': form, 'member': member})
+        return render(request, 'upload_member_image.html', {'form': form, 'member': member})
 
 
-@login_required
-def download_pdf(request, member_id):
-    try:
-        output_path = print_pdf(member_id)
-        with open(output_path, 'rb') as pdf_file:
-            response = HttpResponse(pdf_file.read(), content_type='application/pdf')
-            response['Content-Disposition'] = f'attachment; filename="member_{member_id}.pdf"'
-            return response
-    except Exception as e:
-        return HttpResponse(f"An error occurred: {e}", status=500)
+
+
+
+class DownloadPDFView(LoginRequiredMixin, View):
+    login_url = '//'
+
+    def get(self, request, member_id):
+        try:
+            output_path = print_pdf(member_id)
+            with open(output_path, 'rb') as pdf_file:
+                response = HttpResponse(pdf_file.read(), content_type='application/pdf')
+                response['Content-Disposition'] = f'attachment; filename="member_{member_id}.pdf"'
+                return response
+        except Exception as e:
+            return HttpResponse(f"An error occurred: {e}", status=500)
+
 
 
 
