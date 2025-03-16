@@ -305,6 +305,13 @@ class MotherDetailsView(LoginRequiredMixin, View):
         return render(request, 'form_template.html', {'form': form, 'step': '5'})
 
 
+from django.shortcuts import render, redirect
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views import View
+from django.db.models import Q
+from .models import Member
+from .forms import MemberSearchForm
+
 class MemberFormView(LoginRequiredMixin, View):
     login_url = '/'
 
@@ -315,7 +322,12 @@ class MemberFormView(LoginRequiredMixin, View):
     def post(self, request):
         form = MemberSearchForm(request.POST)
         if form.is_valid():
-            return redirect('users_search_view', search_query=form.cleaned_data['search_query'])
+            f_name = form.cleaned_data.get("f_name", "")
+            l_name = form.cleaned_data.get("l_name", "")
+            phone_num = form.cleaned_data.get("phone_num", "")
+
+            # Redirect with all search parameters in the URL
+            return redirect(f"/users_search_view/{f_name}/{l_name}/{phone_num}/")
         return render(request, 'get_user_form.html', {'form': form})
 
 
@@ -325,9 +337,24 @@ class UsersSearchView(LoginRequiredMixin, View):
     login_url = '/'
 
     def get(self, request):
-        search_query = request.GET.get('search_query', '').strip()
-        members = Member.objects.filter(name__icontains=search_query) if search_query else None
-        return render(request, 'users_search_view.html', {'members': members, 'search_query': search_query})
+        f_name = request.GET.get('f_name', '').strip()
+        l_name = request.GET.get('l_name', '').strip()
+        phone_num = request.GET.get('phone_num', '').strip()
+
+        # Build a dynamic query using Q objects
+        filters = Q()
+        if f_name:
+            filters |= Q(f_name__icontains=f_name)
+        if l_name:
+            filters |= Q(l_name__icontains=l_name)
+        if phone_num:
+            filters |= Q(phone_num__icontains=phone_num)
+
+        members = Member.objects.filter(filters) if filters else None
+
+        return render(request, 'users_search_view.html', {
+            'members': members })
+
 
 
 
