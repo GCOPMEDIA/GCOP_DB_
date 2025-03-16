@@ -289,7 +289,7 @@ def update_session_data(request, new_data):
 # ================================
 
 class MotherDetailsView(LoginRequiredMixin, View):
-    login_url = '/login/'
+    login_url = '/'
 
     def get(self, request):
         if request.session.get('parent_status') in ['Both', 'Only Mother']:
@@ -306,17 +306,17 @@ class MotherDetailsView(LoginRequiredMixin, View):
 
 
 class MemberFormView(LoginRequiredMixin, View):
-    login_url = '/login/'
+    login_url = '/'
 
     def get(self, request):
         form = MemberSearchForm()
-        return render(request, 'member_form.html', {'form': form})
+        return render(request, 'get_user_form.html', {'form': form})
 
     def post(self, request):
         form = MemberSearchForm(request.POST)
         if form.is_valid():
             return redirect('users_search_view', search_query=form.cleaned_data['search_query'])
-        return render(request, 'member_form.html', {'form': form})
+        return render(request, 'get_user_form.html', {'form': form})
 
 
 
@@ -327,7 +327,7 @@ class UsersSearchView(LoginRequiredMixin, View):
     def get(self, request):
         search_query = request.GET.get('search_query', '').strip()
         members = Member.objects.filter(name__icontains=search_query) if search_query else None
-        return render(request, 'users_search.html', {'members': members, 'search_query': search_query})
+        return render(request, 'users_search_view.html', {'members': members, 'search_query': search_query})
 
 
 
@@ -388,7 +388,7 @@ class PrintView(LoginRequiredMixin, View):
 # class MemberFormView(LoginRequiredMixin, SuperAdminRequiredMixin, View):
 #     def get(self, request):
 #         form = MemberSearchForm()
-#         return render(request, 'member_form.html', {'form': form})
+#         return render(request, 'get_user_form.html', {'form': form})
 #
 #     def post(self, request):
 #         form = MemberSearchForm(request.POST)
