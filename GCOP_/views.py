@@ -300,12 +300,16 @@ def download_pdf(request, member_id):
     try:
         # Generate the PDF using the utility function
         output_path = print_pdf(member_id)
+        member = Member.objects.get(member_id=member_id)  # Get a single object
+        member.is_printed = True  # Update the field
+        member.save()  # Save changes to the database
 
         # Serve the PDF as a downloadable file
         with open(output_path, 'rb') as pdf_file:
             response = HttpResponse(pdf_file.read(), content_type='application/pdf')
             response['Content-Disposition'] = f'attachment; filename="member_{member_id}.pdf"'
             return response
+
     except Exception as e:
         return HttpResponse("Member not found.", status=404)
 
