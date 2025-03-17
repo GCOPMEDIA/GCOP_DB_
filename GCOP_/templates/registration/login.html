@@ -4,6 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login Form</title>
+    {% load static %}
+
+
+
+
+
+
+
     <style>
         /* General Styles */
         * {
@@ -13,41 +21,61 @@
             font-family: 'Poppins', sans-serif;
         }
 
+        /* Background using logo.png */
         body {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 20px;
+        background: url("{% static 'images/logo.png' %}") no-repeat center center fixed;
+        background-size: contain;
+        height: 100vh;
+        width: 100vw;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 0;
+        padding: 0;
+    }
+
+        /* Dark overlay for contrast */
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(102, 51, 153, 0.7); /* Rebeccapurple overlay */
+            z-index: 0;
         }
 
-        /* Login Container */
+        /* Glassmorphism Login Container */
         .login-container {
-            background: rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
             border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
             width: 100%;
             max-width: 400px;
             padding: 30px;
             text-align: center;
+            z-index: 1;
+            position: relative;
             animation: fadeIn 0.8s ease-in-out;
+            border: 1px solid rgba(255, 255, 255, 0.3);
         }
 
         /* Login Box */
         .login-box h2 {
-            color: #333;
-            font-size: 24px;
+            color: white;
+            font-size: 26px;
             margin-bottom: 10px;
         }
 
         .login-box p {
-            color: #666;
+            color: #ddd;
             font-size: 14px;
             margin-bottom: 20px;
         }
 
-        /* Input Groups */
+        /* Input Fields */
         .input-group {
             margin-bottom: 20px;
             text-align: left;
@@ -55,59 +83,56 @@
 
         .input-group label {
             display: block;
-            color: #333;
+            color: white;
             font-size: 14px;
             margin-bottom: 5px;
         }
 
         .input-group input {
             width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
+            padding: 12px;
+            border: none;
             border-radius: 6px;
             font-size: 14px;
             outline: none;
-            transition: border-color 0.3s ease;
+            background: rgba(255, 255, 255, 0.3);
+            color: white;
+            transition: background 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .input-group input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
         }
 
         .input-group input:focus {
-            border-color: #667eea;
+            background: rgba(255, 255, 255, 0.4);
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
         }
 
         /* Submit Button */
         button {
             width: 100%;
             padding: 12px;
-            background: #764ba2;
+            background: #663399; /* Rebeccapurple */
             color: white;
             font-size: 16px;
             font-weight: 500;
             border: none;
             border-radius: 6px;
             cursor: pointer;
-            transition: background 0.3s ease;
+            transition: background 0.3s ease, transform 0.2s ease;
         }
 
         button:hover {
-            background: #667eea;
+            background: #5a2d85; /* Darker shade of Rebeccapurple */
+            transform: scale(1.05);
         }
 
-        /* Extra Links */
-        .extra-links {
-            margin-top: 20px;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .extra-links a {
-            color: #764ba2;
+        /* Error Message */
+        .error-message {
+            color: #ff4d4d;
             font-size: 14px;
-            text-decoration: none;
-            transition: color 0.3s ease;
-        }
-
-        .extra-links a:hover {
-            color: #667eea;
+            margin-top: 10px;
         }
 
         /* Animations */
@@ -129,26 +154,22 @@
             <h2>Welcome Back!</h2>
             <p>Please log in to your account</p>
             <form method="POST" action="{% url 'login_' %}">
-    {% csrf_token %}
-                <div class="input_group">
-    <label for="username">Username:</label>
-    <input id = username type="text" name="username" required>
-            </div>
-                <div class="input_group">
-    <label for="password">Password:</label>
-    <input id="password" type="password" name="password" required>
-            </div>
-    <button type="submit">Login</button>
-</form>
+                {% csrf_token %}
+                <div class="input-group">
+                    <label for="username">Username:</label>
+                    <input id="username" type="text" name="username" placeholder="Enter your username" required>
+                </div>
+                <div class="input-group">
+                    <label for="password">Password:</label>
+                    <input id="password" type="password" name="password" placeholder="Enter your password" required>
+                </div>
+                <button type="submit">Login</button>
+            </form>
 
-{% if form.errors %}
-    <p style="color: red;">Invalid username or password</p>
-{% endif %}
-
-
+            {% if form.errors %}
+                <p class="error-message">Invalid username or password</p>
+            {% endif %}
         </div>
     </div>
-
-
 </body>
 </html>
