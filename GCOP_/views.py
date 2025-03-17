@@ -308,3 +308,10 @@ def download_pdf(request, member_id):
             return response
     except Exception as e:
         return HttpResponse("Member not found.", status=404)
+
+def to_print(request):
+
+        members = Member.objects.filter(is_printed=False, member_image__isnull=False)
+        return render(request,'to_print.html',{'members':members})
+
+        # return HttpResponse("No Members to print.", status=404)
