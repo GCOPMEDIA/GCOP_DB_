@@ -20,6 +20,7 @@ urlpatterns = [
 path('search_member/',member_form_view,name='member_form_view'),
     path('users_search_view/<f_name>/<l_name>/<phone_num>',users_search_view,name='users_search_view'),
 path('download-pdf/<int:member_id>/', download_pdf, name='download_pdf'),
+    path('to-print/',to_print,name='to_print')
 
 ]
 
