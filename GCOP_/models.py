@@ -184,6 +184,7 @@ class Member(models.Model):
     address = models.CharField(max_length=250, blank=True, null=True)
     baptism_status = models.BooleanField(blank=True, null=True)
     baptist_at_gcop = models.BooleanField(blank=True, null=True)
+    is_printed=models.BooleanField(default=False,blank=True,null=True)
 
     class Meta:
         managed = True
