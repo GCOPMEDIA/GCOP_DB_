@@ -18,6 +18,7 @@ group_choices = [
     ('6','Ushers'),
     ('7',"Tambourine"),
     ('8',"Prayer"),
+    ('9','Children Ministry'),
     ('10','Singing Band'),
     ('11','Mercy Ladies'),
     ("1","Lyric Group")
