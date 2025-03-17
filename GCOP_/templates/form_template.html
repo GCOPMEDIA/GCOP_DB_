@@ -8,9 +8,7 @@
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
     <title>Member Form</title>
     <style>
-        /* Google Font */
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
-
+        /* General Styles */
         * {
             margin: 0;
             padding: 0;
@@ -18,55 +16,72 @@
             font-family: 'Poppins', sans-serif;
         }
 
+        /* Background using logo.png */
         body {
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            background: url("{% static 'images/logo.png' %}") no-repeat center center fixed;
+            background-size: contain;
+            height: 100vh;
+            width: 100vw;
             display: flex;
             justify-content: center;
-            align-items: flex-start;
-            min-height: 100vh;
-            padding: 20px;
-            overflow-y: auto;
+            align-items: center;
+            margin: 0;
+            padding: 0;
         }
 
-        .container {
-            background: white;
-            max-width: 500px;
+        /* Dark overlay for contrast */
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
-            max-height: 90vh;
-            padding: 30px;
+            height: 100%;
+            background: rgba(102, 51, 153, 0.7); /* Rebeccapurple overlay */
+            z-index: 0;
+        }
+
+        /* Glassmorphism Container */
+        .container {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
             border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 500px;
+            padding: 30px;
             text-align: center;
+            z-index: 1;
+            position: relative;
             animation: fadeIn 0.8s ease-in-out;
-            overflow-y: auto;
+            border: 1px solid rgba(255, 255, 255, 0.3);
         }
 
         h2 {
-            color: #4a4a4a;
+            color: white;
             font-weight: 600;
             margin-bottom: 20px;
         }
 
-        form {
-            text-align: left;
-            margin-top: 20px;
-        }
-
         input, select, textarea {
             width: 100%;
-            padding: 10px;
-            margin-top: 10px;
-            border: 1px solid #ccc;
+            padding: 12px;
+            border: none;
             border-radius: 6px;
             font-size: 14px;
+            outline: none;
+            background: rgba(255, 255, 255, 0.3);
+            color: white;
+            transition: background 0.3s ease, box-shadow 0.3s ease;
         }
-        .form {
-            width: 100%;
-            padding: 10px;
-            margin-top: 10px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            font-size: 14px;
+
+        input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        input:focus {
+            background: rgba(255, 255, 255, 0.4);
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
         }
 
         .button-container {
@@ -78,40 +93,21 @@
         button {
             flex: 1;
             padding: 12px;
-            background: #764ba2;
+            background: #663399;
             color: white;
             font-weight: 500;
             border: none;
             border-radius: 8px;
             cursor: pointer;
-            transition: 0.3s ease-in-out;
-        }
-
-        button.previous {
-            background: #6c757d;
+            transition: background 0.3s ease, transform 0.2s ease;
         }
 
         button:hover {
-            opacity: 0.9;
+            background: #5a2d85;
+            transform: scale(1.05);
         }
 
-        .progress-bar {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px;
-        }
-
-        .progress-step {
-            width: 50%;
-            height: 5px;
-            background: #ddd;
-            border-radius: 3px;
-        }
-
-        .progress-step.active {
-            background: #764ba2;
-        }
-
+        /* Animations */
         @keyframes fadeIn {
             from {
                 opacity: 0;
@@ -126,124 +122,23 @@
 </head>
 <body>
     <div class="container">
-        <!-- Progress Bar -->
-        <div class="progress-bar">
-            <div class="progress-step {% if step == '1' %}active{% endif %}"></div>
-            <div class="progress-step {% if step == '2' %}active{% endif %}"></div>
-            <div class="progress-step {% if step == '3' %}active{% endif %}"></div>
-            <div class="progress-step {% if step == '4' %}active{% endif %}"></div>
-            <div class="progress-step {% if step == '5' %}active{% endif %}"></div>
-            <div class="progress-step {% if step == '6' %}active{% endif %}"></div>
-        </div>
+        <h2>Step {{ step }}: {% if step == '1' %} Member's Personal Details {% elif step == '2' %} Further Details {% elif step == '3' %} Child Details - {{ child_index }} of {{ request.session.number_of_children }} {% elif step == '4' %} Father Details {% elif step == '5' %} Mother Details {% elif step == '6' %} Close Relatives - {{ survivor_index }} of {{ request.session.number_of_survivors }} {% elif step == 'spouse' %} Spouse Details {% endif %}</h2>
 
-        <!-- Dynamic Heading -->
-        <h2>
-            {% if step == '1' %} Step: 1 Member's Personal Details
-            {% elif step == '2' %} Step 2: Further Details
-            {% elif step == '3' %} Child Details - {{ child_index }} of {{ request.session.number_of_children }}
-            {% elif step == '4' %} Father Details
-            {% elif step == '5' %} Mother Details
-            {% elif step == '6' %} Close Relatives - {{ survivor_index }} of {{ request.session.number_of_survivors }}
-            {% elif step == 'spouse' %} Spouse Details
-            {% endif %}
-        </h2>
-
-        <!-- Dynamic Form -->
-        <form method="post" action="
-            {% if step == '1' %}{% url 'user_form' %}
-            {% elif step == '2' %}{% url 'further_questions' %}
-            {% elif step == '3' %}{% url 'child_details' child_index %}
-            {% elif step == '4' %}{% url 'father_details' %}
-            {% elif step == '5' %}{% url 'mother_details' %}
-            {% elif step == '6' %}{% url 'survivor_details' survivor_index %}
-            {% elif step == 'spouse' %}{% url 'spouse_details' %}
-            {% endif %}">
+        <form method="post" action="{% url step_url %}">
             {% csrf_token %}
-            <div class="form">
             {{ form.as_p }}
-                </div>
-
-            <input type="hidden" name="step" value="{{ step }}">
-
-            <!-- Button Container -->
             <div class="button-container">
-                <!-- Previous Button -->
                 {% if step != '1' %}
                     <button type="button" class="previous" onclick="goToPreviousStep()">Previous</button>
                 {% endif %}
-
-                <!-- Next/Submit Button -->
-                <button type="submit">
-                    {% if step == '1' %} Next
-                    {% elif step == '2' %} Next
-                    {% elif step == '3' %} Next
-                    {% elif step == '4' %} Next
-                    {% elif step == '5' %} Next
-                    {% elif step == '6' %} Next
-                    {% elif step == 'spouse' %} Next
-                    {% else %} Submit
-                    {% endif %}
-                </button>
+                <button type="submit">Next</button>
             </div>
         </form>
-
-
-<!-- Include jQuery (if not already included) -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-<!-- Use Select2 for a better dropdown experience -->
-<link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
-<script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
-
-<script>
-    $(document).ready(function() {
-        $('.multi-dropdown').select2({
-            placeholder: "Select groups",
-            allowClear: true
-        });
-    });
-</script>
-
     </div>
 
     <script>
-        // Function to navigate to the previous step
         function goToPreviousStep() {
-            const currentStep = "{{ step }}";
-            let previousStepUrl = "";
-
-            if (currentStep === '2') {
-                previousStepUrl = "{% url 'user_form' %}";
-            } else if (currentStep === '3') {
-                // Ensure child_index is valid
-                const childIndex = parseInt("{{ child_index }}") - 1;
-                if (childIndex >= 1) {
-                    previousStepUrl = "{% url 'child_details' child_index=1 %}".replace("1", childIndex);
-                } else {
-                    previousStepUrl = "{% url 'further_questions' %}";
-                }
-            } else if (currentStep === '4') {
-                // Ensure number_of_children is valid
-                const numChildren = parseInt("{{ request.session.number_of_children }}");
-                if (numChildren >= 1) {
-                    previousStepUrl = "{% url 'child_details' child_index=1 %}".replace("1", numChildren);
-                } else {
-                    previousStepUrl = "{% url 'further_questions' %}";
-                }
-            } else if (currentStep === '5') {
-                previousStepUrl = "{% url 'father_details' %}";
-            } else if (currentStep === '6') {
-                // Ensure survivor_index is valid
-                const survivorIndex = parseInt("{{ survivor_index }}") - 1;
-                if (survivorIndex >= 1) {
-                    previousStepUrl = "{% url 'survivor_details' survivor_index=1 %}".replace("1", survivorIndex);
-                } else {
-                    previousStepUrl = "{% url 'mother_details' %}";
-                }
-            } else if (currentStep === 'spouse') {
-                previousStepUrl = "{% url 'further_questions' %}";
-            }
-
+            let previousStepUrl = "{{ previous_url }}";
             if (previousStepUrl) {
                 window.location.href = previousStepUrl;
             }
