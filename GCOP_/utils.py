@@ -16,7 +16,7 @@ def member_entry(data):
                 emergency_num=data['emergency'],
                 occupation=data['occupation'],
                    nxt_of_kin=data['nxt_of_kin'],
-                   dues_card_num = data['dues_card_number'],
+                   place_of_residence = data['place_of_residence'],
                 welfare_card_num=data['welfare_card_number'],
                tithe_card_num=data['tithe_card_number'],
                history=data['history'],
