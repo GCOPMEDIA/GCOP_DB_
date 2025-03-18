@@ -1,28 +1,27 @@
 from .models import *
 
+
 def member_entry(data):
-
-
     if data["first_name"]:
         m = Member(f_name=data['first_name'],
-               l_name=data['other_name'],
-               date_of_birth=data['date_of_birth'],
-               phone_number=data['phone'],
-               address=data['address'],
-               hometown=data['hometown'],
-               gender = data['gender'],
-               marital_status=data['marital_status'],
-               date_joined = data['date_joined'],
-                emergency_num=data['emergency'],
-                occupation=data['occupation'],
+                   l_name=data['other_name'],
+                   date_of_birth=data['date_of_birth'],
+                   phone_number=data['phone'],
+                   address=data['address'],
+                   hometown=data['hometown'],
+                   gender=data['gender'],
+                   marital_status=data['marital_status'],
+                   date_joined=data['date_joined'],
+                   emergency_num=data['emergency'],
+                   occupation=data['occupation'],
                    nxt_of_kin=data['nxt_of_kin'],
-                   place_of_residence = data['place_of_residence'],
-                welfare_card_num=data['welfare_card_number'],
-               tithe_card_num=data['tithe_card_number'],
-               history=data['history'],
-               baptism_status=data['baptism'],
-               baptist_at_gcop=data['baptist_at_gcop']
-               )
+                   place_of_residence=data['place_of_residence'],
+                   welfare_card_num=data['welfare_card_number'],
+                   tithe_card_num=data['tithe_card_number'],
+                   history=data['history'],
+                   baptism_status=data['baptism'],
+                   baptist_at_gcop=data['baptist_at_gcop']
+                   )
         m.save()
         church_branch = Branches.objects.get(branch_name=data['church_branch'])
         m.church_branch = church_branch
@@ -30,22 +29,22 @@ def member_entry(data):
         ##print('Saved member data')
 
     for p in (data['position']).split(','):
-        position = ChurchPositions(position_name=p,member=m)
+        position = ChurchPositions(position_name=p, member=m)
         position.save()
         ##print('Saved position data')
 
     for g in data['group_name']:
         group = Groups.objects.get(group_id=int(g))
-        jgroup = Joinedgroups(group=group,member=m)
+        jgroup = Joinedgroups(group=group, member=m)
         jgroup.save()
         ##print('Saved group data')
 
-    if data['parent_status']=='Both':
+    if data['parent_status'] == 'Both':
         f = Relations(f_name=data['father_first_name'],
                       l_name=data['father_other_name'],
                       phone_number=data['father_phone_number'],
                       relationship='Father',
-                      is_member=data['father_is_member'],member_id=m.member_id)
+                      is_member=data['father_is_member'], member_id=m.member_id)
 
         f.save()
         ##print('Saved father data')
@@ -53,73 +52,75 @@ def member_entry(data):
                       l_name=data['mother_other_name'],
                       phone_number=data['mother_phone_number'],
                       relationship='Mother',
-                      is_member=data['mother_is_member'],member_id=m.member_id)
+                      is_member=data['mother_is_member'], member_id=m.member_id)
 
         m.save()
         ##print('Saved mother data')
-    elif data['parent_status']=='Only Father':
+    elif data['parent_status'] == 'Only Father':
         f = Relations(f_name=data['father_first_name'],
                       l_name=data['father_other_name'],
                       phone_number=data['father_phone_number'],
                       relationship='Father',
-                      is_member=data['father_is_member'],member_id=m.member_id)
+                      is_member=data['father_is_member'], member_id=m.member_id)
 
         f.save()
         ##print('Saved father data')
-    elif data['parent_status']=='Only Mother':
+    elif data['parent_status'] == 'Only Mother':
         m = Relations(f_name=data['mother_first_name'],
                       l_name=data['mother_other_name'],
                       phone_number=data['mother_phone_number'],
                       relationship='Mother',
-                      is_member=data['mother_is_member'],member_id=m.member_id)
+                      is_member=data['mother_is_member'], member_id=m.member_id)
 
         m.save()
         ##print('Saved mother data')
-
 
     for c in range(data['number_of_children']):
-        cd = data[f"child_{c+1}"]
+        cd = data[f"child_{c + 1}"]
         cc = Relations(f_name=cd['child_first_name'],
-                      l_name=cd['child_other_name'],
-                      phone_number=cd['child_phone_number'],
-                      relationship='Child',
-                      is_member=cd['child_is_member'],member_id=m.member_id)
+                       l_name=cd['child_other_name'],
+                       phone_number=cd['child_phone_number'],
+                       relationship='Child',
+                       is_member=cd['child_is_member'], member_id=m.member_id)
 
         cc.save()
         ##print('Saved child data')
 
     for s in range(data['number_of_survivors']):
-        sd = data[f"survivor_{s+1}"]
+        sd = data[f"survivor_{s + 1}"]
         cc = Relations(f_name=sd['survivor_first_name'],
-                      l_name=sd['survivor_other_name'],
-                      phone_number=sd['survivor_phone_number'],
-                      relationship='Close Relative',
-                      is_member=sd['survivor_is_member'],member_id=m.member_id)
+                       l_name=sd['survivor_other_name'],
+                       phone_number=sd['survivor_phone_number'],
+                       relationship='Close Relative',
+                       is_member=sd['survivor_is_member'], member_id=m.member_id)
 
         cc.save()
         ##print('Saved survivor data')
 
-
     if data['marital_status'] == 'married':
         sp = Relations(f_name=data['spouse_first_name'],
-                      l_name=data['spouse_other_name'],
-                      phone_number=data['spouse_phone_number'],
-                      relationship='Spouse',
-                      is_member=data['spouse_is_member'],member_id=m.member_id)
+                       l_name=data['spouse_other_name'],
+                       phone_number=data['spouse_phone_number'],
+                       relationship='Spouse',
+                       is_member=data['spouse_is_member'], member_id=m.member_id)
         sp.save()
     ##print('Saved spouse data')
+
 
 def user_without_image():
     users = Member.objects.filter(member_image__isnull=True)
     data = {}
     for i in users:
-        data = { 'id':i.member_id,
-                 'first_name':i.f_name,
-                 "last_name":i.l_name
-        }
+        data = {'id': i.member_id,
+                'first_name': i.f_name,
+                "last_name": i.l_name
+                }
 
     return data
+
+
 from django.db.models import Q
+
 
 def get_member(f_name, l_name, phone_num):
     data = {}
@@ -159,7 +160,6 @@ def print_pdf(member_id):
             "Close Relative": Relations.objects.filter(member_id=member.member_id,
                                                        relationship__iexact='Close Relative').first()
         }
-
 
         # Fetch positions
         positions = ChurchPositions.objects.filter(member=member)
@@ -263,7 +263,6 @@ def print_pdf(member_id):
 
         # Add watermark
 
-
         # Reset text color for main content
         pdf.set_text_color(0, 0, 0)  # Black text for main content
         pdf.set_font("Arial", size=12)  # Reset font size if needed
@@ -286,8 +285,6 @@ def print_pdf(member_id):
         pdf.ln(10)
         pdf.cell(80, 8, "SIGNATURE:", border=0)
         pdf.cell(100, 8, "_____________________")
-
-
 
         # Save the PDF
         output_path = f"output_{member_id}.pdf"
