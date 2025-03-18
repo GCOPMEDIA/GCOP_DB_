@@ -177,7 +177,7 @@ class Member(models.Model):
     nxt_of_kin = models.CharField(max_length=100,null=True,blank=True)
     history = models.TextField(blank=True, null=True)
     welfare_card_num = models.CharField(max_length=50, blank=True, null=True)
-    dues_card_num = models.CharField(max_length=50, blank=True, null=True)
+    place_of_residence = models.CharField(max_length=50, blank=True, null=True)
     tithe_card_num = models.CharField(max_length=50, blank=True, null=True)
     created_at = models.DateTimeField(blank=True, null=True)
     church_branch = models.ForeignKey(Branches, models.DO_NOTHING, db_column='church_branch', blank=True, null=True)
