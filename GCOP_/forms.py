@@ -91,6 +91,7 @@ class FurtherQuestionsForm(forms.Form):
     parent_status = forms.ChoiceField(label='Are Your Parents Still Alive?',choices=parents)
     date_joined = forms.DateField( label="What Year Did You Join GCOP", required=False,help_text='mm/dd/yy')
     welfare_card_number = forms.CharField(max_length=200, label="Welfare Card Number if any",required=False)
+    dues_card_number = forms.CharField(max_length=200, label="Dues Card Number if any",required=False)
     tithe_card_number = forms.CharField(max_length=200, label='Tithe Card Number if any',required=False)
     church_branch = forms.ChoiceField(choices=church_branches,widget=forms.Select)
     group_name = forms.MultipleChoiceField(choices=group_choices,widget=forms.SelectMultiple(attrs={'class': 'multi-dropdown'}))
