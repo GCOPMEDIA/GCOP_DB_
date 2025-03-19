@@ -75,7 +75,7 @@ class UserDetailsForm(forms.Form):
     occupation = forms.CharField(max_length=100,label='Occupation',required=False)
     nxt_of_kin = forms.CharField(max_length=100,label='Name Of Next Of Kin',required=False)
     address = forms.CharField(max_length=100, label="Ghana Post Address")
-    place_of_residence = forms.CharField(max_length=200, label="Dues Card Number if any",required=False)
+    place_of_residence = forms.CharField(max_length=200, label="Place Of Residence",required=False)
     hometown = forms.CharField(max_length=100, label="Home Town")
     gender = forms.ChoiceField(choices=gender_choices,widget=forms.Select,label='Gender')
     baptism = forms.ChoiceField(choices=yes_or_no,widget=forms.Select,label='Have You Been Baptized? ')
