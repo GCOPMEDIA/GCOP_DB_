@@ -90,7 +90,7 @@ class Branches(models.Model):
 class ChurchPositions(models.Model):
     postition_id = models.AutoField(primary_key=True)
     position_name = models.CharField(max_length=100)
-    member = models.ForeignKey('Member', models.DO_NOTHING, blank=True, null=True)
+    member = models.ForeignKey('Member', on_delete=models.CASCADE)  # Cascade deletes related records
 
     class Meta:
         managed = False
@@ -153,8 +153,8 @@ class Groups(models.Model):
 
 class Joinedgroups(models.Model):
     id = models.BigAutoField(primary_key=True)
-    group = models.ForeignKey(Groups, models.DO_NOTHING, blank=True, null=True)
-    member = models.ForeignKey('Member', models.DO_NOTHING, blank=True, null=True)
+    group = models.ForeignKey(Groups,on_delete= models.CASCADE, blank=True, null=True)
+    member = models.ForeignKey('Member', on_delete=models.CASCADE, blank=True, null=True)
     group_position = models.IntegerField(blank=True, null=True)
 
     class Meta:
@@ -183,7 +183,7 @@ class Member(models.Model):
     place_of_residence = models.CharField(max_length=50, blank=True, null=True)
     tithe_card_num = models.CharField(max_length=50, blank=True, null=True)
     created_at = models.DateTimeField(blank=True, null=True)
-    church_branch = models.ForeignKey(Branches, models.DO_NOTHING, db_column='church_branch', blank=True, null=True)
+    church_branch = models.ForeignKey(Branches, on_delete=models.CASCADE, db_column='church_branch', blank=True, null=True)
     member_image = CloudinaryField('image', blank=True, null=True)
     address = models.CharField(max_length=250, blank=True, null=True)
     baptism_status = models.BooleanField(blank=True, null=True)
