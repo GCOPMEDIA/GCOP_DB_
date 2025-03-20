@@ -242,6 +242,7 @@ def upload_member_image(request, member_id):
 def form_success_view(request):
     data = json.loads(request.session.get('final_data5', '{}'))
     print(data)  # Load all collected data
+    data['registered_by'] = request.user.first_name
     member_entry(data)
     return render(request, 'form_success.html', {'data': data})  # Render success page
 
