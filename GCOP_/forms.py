@@ -6,21 +6,22 @@ positions = [
 ]
 
 group_choices = [
-    ('17',"Men's Fellowship"),
-    ('13',"Clergy"),
-    ('14',"Elder"),
-    ('15',"Worker"),
-    ('16',"Media"),
-    ('12',"Youth Ministry"),
+    ('17',"Church Committee"),
+    ('16',"Men's Fellowship"),
+    ('12',"Clergy"),
+    ('13',"Elder"),
+    ('14',"Worker"),
+    ('15',"Media"),
+    ('11',"Youth Ministry"),
     ("2","Women's Fellowship"),
-    ('4',"Choir"),
-    ('5','Band'),
-    ('6','Ushers'),
-    ('7',"Tambourine"),
-    ('8',"Prayer"),
-    ('9','Children Ministry'),
-    ('10','Singing Band'),
-    ('11','Mercy Ladies'),
+    ('3',"Church Choir"),
+    ('4','Band'),
+    ('5','Ushers'),
+    ('6',"Tambourine"),
+    ('7',"Prayer"),
+    ('8','Children Ministry'),
+    ('9','Singing Band'),
+    ('10','Mercy Ladies'),
     ("1","Lyric Group")
 ]
 gender_choices = [
