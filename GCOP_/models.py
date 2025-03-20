@@ -83,7 +83,7 @@ class Branches(models.Model):
     branch_location = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'branches'
 
 
@@ -93,7 +93,7 @@ class ChurchPositions(models.Model):
     member = models.ForeignKey('Member', on_delete=models.CASCADE)  # Cascade deletes related records
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'church_positions'
 
 
@@ -147,7 +147,7 @@ class Groups(models.Model):
     group_name = models.CharField(unique=True, max_length=100)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'groups'
 
 
@@ -158,7 +158,7 @@ class Joinedgroups(models.Model):
     group_position = models.IntegerField(blank=True, null=True)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'joinedGroups'
 
 
@@ -206,7 +206,7 @@ class Relations(models.Model):
     member_id = models.IntegerField(blank=True, null=True)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'relations'
 
 
@@ -217,3 +217,4 @@ class MemberImageUploadForm(forms.ModelForm):
     class Meta:
         model = Member
         fields = ['member_image']
+
