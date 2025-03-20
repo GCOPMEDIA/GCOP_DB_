@@ -8,6 +8,7 @@ from datetime import date
 from .forms import UserDetailsForm, FurtherQuestionsForm, NextForm, FatherForm, MotherForm, SurvivorForm, SpouseForm
 from .utils import *
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 
 # Utility function to convert date fields to strings
@@ -44,7 +45,7 @@ def update_session_data(request, new_data):
 
 
 # Step 1: User Details Form
-@login_required
+@login_required(login_url='/', redirect_field_name='user_form')
 def user_form_view(request):
     if User.is_authenticated:
 
@@ -62,7 +63,7 @@ def user_form_view(request):
 
 
 # Step 2: Further Questions (Collecting number of children and survivors)
-@login_required
+@login_required(login_url='/', redirect_field_name='user_form')
 def further_questions_view(request):
     if request.method == 'POST':
         form = FurtherQuestionsForm(request.POST)
@@ -94,7 +95,7 @@ def further_questions_view(request):
 
 
 # Step 3: Spouse Details (Only shown if married)
-@login_required
+@login_required(login_url='/', redirect_field_name='user_form')
 def spouse_details(request):
     if request.method == 'POST':
         form = SpouseForm(request.POST)
@@ -116,7 +117,7 @@ def spouse_details(request):
 
 
 # Step 4: Child Details (Handles multiple children dynamically)
-@login_required
+@login_required(login_url='/', redirect_field_name='user_form')
 def child_details_view(request, child_index):
     number_of_children = request.session.get('number_of_children', 0)
 
@@ -141,7 +142,7 @@ def child_details_view(request, child_index):
 
 
 # Step 5: Father Details
-@login_required
+@login_required(login_url='/', redirect_field_name='user_form')
 def father_details(request):
     parent_status = request.session.get('parent_status', 'None')
     if parent_status in ['Both', 'Only Father']:
@@ -160,7 +161,7 @@ def father_details(request):
         return redirect('mother_details')
 
 
-@login_required
+@login_required(login_url='/', redirect_field_name='user_form')
 def mother_details(request):
     parent_status = request.session.get('parent_status', 'None')
     if parent_status in ['Both', 'Only Mother']:
@@ -183,7 +184,7 @@ def mother_details(request):
 
 
 # Step 7: Survivor Details (Handles multiple survivors dynamically)
-@login_required
+@login_required(login_url='/', redirect_field_name='user_form')
 def survivor_details_view(request, survivor_index):
     number_of_survivors = request.session.get('number_of_survivors', 0)
 
@@ -211,7 +212,7 @@ from django.shortcuts import render
 from .models import Member
 
 
-@login_required
+@login_required(login_url='/', redirect_field_name='members_without_images')
 def members_without_images(request):
     members = Member.objects.filter(member_image__isnull=True)
     return render(request, 'members_without_images.html', {'members': members})
@@ -221,7 +222,7 @@ from django.shortcuts import get_object_or_404, redirect
 from .forms import MemberImageUploadForm
 
 
-@login_required
+@login_required(login_url='/', redirect_field_name='members_without_images')
 def upload_member_image(request, member_id):
     member = get_object_or_404(Member, member_id=member_id)
 
@@ -237,7 +238,7 @@ def upload_member_image(request, member_id):
 
 
 # Step 8: Success Page (Shows collected data)
-@login_required
+@login_required(login_url='/', redirect_field_name='user_form')
 def form_success_view(request):
     data = json.loads(request.session.get('final_data5', '{}'))
     print(data)  # Load all collected data
@@ -248,6 +249,7 @@ def form_success_view(request):
 from .forms import MemberSearchForm
 
 
+@login_required(login_url='/', redirect_field_name='member_form_view')
 def member_form_view(request):
     if request.method == "POST":
         form = MemberSearchForm(request.POST)
@@ -266,6 +268,7 @@ def member_form_view(request):
 from django.http import HttpResponse
 
 
+@login_required(login_url='/', redirect_field_name='member_form_view')
 def print_view(request, member_id):
     try:
 
@@ -279,6 +282,7 @@ def print_view(request, member_id):
     # Handle member not found
 
 
+@login_required(login_url='/', redirect_field_name='member_form_view')
 def users_search_view(request, f_name, l_name, phone_num):
     members = Member.objects.filter(
         Q(f_name__iexact=f_name) | Q(l_name__iexact=l_name) | Q(phone_number=phone_num)
@@ -295,6 +299,7 @@ from .models import Member
 from .utils import print_pdf  # Import the utility function
 
 
+@login_required(login_url='/', redirect_field_name='member_form_view')
 def download_pdf(request, member_id):
     # print_pdf(member_id)
     try:
@@ -313,9 +318,10 @@ def download_pdf(request, member_id):
     except Exception as e:
         return HttpResponse("Member not found.", status=404)
 
+
+@login_required(login_url='/', redirect_field_name='to_print')
 def to_print(request):
+    members = Member.objects.filter(is_printed=False, member_image__isnull=False)
+    return render(request, 'to_print.html', {'members': members})
 
-        members = Member.objects.filter(is_printed=False, member_image__isnull=False)
-        return render(request,'to_print.html',{'members':members})
-
-        # return HttpResponse("No Members to print.", status=404)
+    # return HttpResponse("No Members to print.", status=404)
