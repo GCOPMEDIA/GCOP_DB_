@@ -274,9 +274,12 @@ def print_pdf(member_id):
             if field not in ["title", "image_path"]:
                 pdf.set_font("Arial", style='B', size=10)
                 pdf.cell(80, 8, f"{field.replace('_', ' ').upper()}:", border=0)
+
                 pdf.set_font("Arial", size=10)
-                pdf.multi_cell(100, 8, value)  # Wrap text properly for long values
-                pdf.ln(2)  # Add a little space between fields
+                clean_value = " ".join(value.replace("\xa0", " ").split())  # Fix spaces
+                pdf.multi_cell(100, 8, clean_value, align='L')  # Ensure proper alignment
+
+                pdf.ln(2)  # Add spacing
 
         # Pastor Signature Section
         pdf.ln(10)
