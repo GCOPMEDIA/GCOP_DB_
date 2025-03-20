@@ -20,7 +20,8 @@ def member_entry(data):
                    tithe_card_num=data['tithe_card_number'],
                    history=data['history'],
                    baptism_status=data['baptism'],
-                   baptist_at_gcop=data['baptist_at_gcop']
+                   baptist_at_gcop=data['baptist_at_gcop'],
+                   registered_by=data['registered_by']
                    )
         m.save()
         church_branch = Branches.objects.get(branch_name=data['church_branch'])
