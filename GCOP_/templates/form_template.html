@@ -7,8 +7,9 @@
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
     <title>Member Form</title>
+    {% load static %}
+
     <style>
-        /* Google Font */
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
 
         * {
@@ -19,30 +20,46 @@
         }
 
         body {
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            background: url("{% static 'images/logo.png' %}") no-repeat center center fixed;
+            background-size: cover;
             display: flex;
             justify-content: center;
-            align-items: flex-start;
-            min-height: 100vh;
+            align-items: center;
+            height: 100vh;
             padding: 20px;
             overflow-y: auto;
         }
 
-        .container {
-            background: white;
-            max-width: 500px;
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
-            max-height: 90vh;
-            padding: 30px;
+            height: 100%;
+            background: rgba(102, 51, 153, 0.7);
+            z-index: 0;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
             border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 500px;
+            padding: 30px;
             text-align: center;
+            z-index: 1;
+            position: relative;
             animation: fadeIn 0.8s ease-in-out;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            max-height: 90vh;
             overflow-y: auto;
         }
 
         h2 {
-            color: #4a4a4a;
+            color: white;
             font-weight: 600;
             margin-bottom: 20px;
         }
@@ -52,21 +69,28 @@
             margin-top: 20px;
         }
 
-        input, select, textarea {
-            width: 100%;
-            padding: 10px;
-            margin-top: 10px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            font-size: 14px;
-        }
         .form {
             width: 100%;
-            padding: 10px;
-            margin-top: 10px;
-            border: 1px solid #ccc;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            border: none;
             border-radius: 6px;
             font-size: 14px;
+            background: rgba(255, 255, 255, 0.3);
+            color: white;
+            transition: background 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        input:focus {
+            background: rgba(255, 255, 255, 0.4);
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
         }
 
         .button-container {
@@ -78,7 +102,7 @@
         button {
             flex: 1;
             padding: 12px;
-            background: #764ba2;
+            background: #663399;
             color: white;
             font-weight: 500;
             border: none;
@@ -95,23 +119,6 @@
             opacity: 0.9;
         }
 
-        .progress-bar {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px;
-        }
-
-        .progress-step {
-            width: 50%;
-            height: 5px;
-            background: #ddd;
-            border-radius: 3px;
-        }
-
-        .progress-step.active {
-            background: #764ba2;
-        }
-
         @keyframes fadeIn {
             from {
                 opacity: 0;
@@ -126,19 +133,8 @@
 </head>
 <body>
     <div class="container">
-        <!-- Progress Bar -->
-        <div class="progress-bar">
-            <div class="progress-step {% if step == '1' %}active{% endif %}"></div>
-            <div class="progress-step {% if step == '2' %}active{% endif %}"></div>
-            <div class="progress-step {% if step == '3' %}active{% endif %}"></div>
-            <div class="progress-step {% if step == '4' %}active{% endif %}"></div>
-            <div class="progress-step {% if step == '5' %}active{% endif %}"></div>
-            <div class="progress-step {% if step == '6' %}active{% endif %}"></div>
-        </div>
-
-        <!-- Dynamic Heading -->
         <h2>
-            {% if step == '1' %} Step: 1 Member's Personal Details
+            {% if step == '1' %} Step 1: Member's Personal Details
             {% elif step == '2' %} Step 2: Further Details
             {% elif step == '3' %} Child Details - {{ child_index }} of {{ request.session.number_of_children }}
             {% elif step == '4' %} Father Details
@@ -148,45 +144,22 @@
             {% endif %}
         </h2>
 
-        <!-- Dynamic Form -->
-        <form method="post" action="
-            {% if step == '1' %}{% url 'user_form' %}
-            {% elif step == '2' %}{% url 'further_questions' %}
-            {% elif step == '3' %}{% url 'child_details' child_index %}
-            {% elif step == '4' %}{% url 'father_details' %}
-            {% elif step == '5' %}{% url 'mother_details' %}
-            {% elif step == '6' %}{% url 'survivor_details' survivor_index %}
-            {% elif step == 'spouse' %}{% url 'spouse_details' %}
-            {% endif %}">
+        <form method="post" action="">
             {% csrf_token %}
             <div class="form">
-            {{ form.as_p }}
-                </div>
+                {{ form.as_p }}
+            </div>
 
             <input type="hidden" name="step" value="{{ step }}">
 
-            <!-- Button Container -->
             <div class="button-container">
-                <!-- Previous Button -->
                 {% if step != '1' %}
                     <button type="button" class="previous" onclick="goToPreviousStep()">Previous</button>
                 {% endif %}
-
-                <!-- Next/Submit Button -->
-                <button type="submit">
-                    {% if step == '1' %} Next
-                    {% elif step == '2' %} Next
-                    {% elif step == '3' %} Next
-                    {% elif step == '4' %} Next
-                    {% elif step == '5' %} Next
-                    {% elif step == '6' %} Next
-                    {% elif step == 'spouse' %} Next
-                    {% else %} Submit
-                    {% endif %}
-                </button>
+                <button type="submit">Next</button>
             </div>
         </form>
-
+    </div>
 
 <!-- Include jQuery (if not already included) -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
