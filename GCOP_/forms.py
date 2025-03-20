@@ -30,7 +30,8 @@ gender_choices = [
 married_status = [
     ("married",'Married')
     , ('divorced',"Divorced"),
-    ('single','Single')
+    ('single','Single'),
+    ('widowed','Widowed')
 ]
 yes_or_no = [
     (True,"Yes"),
