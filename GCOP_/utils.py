@@ -258,9 +258,9 @@ def print_pdf(member_id):
                 img = Image.open(BytesIO(response.content))
                 local_image_path = f"temp_{member_id}.jpg"
                 img.save(local_image_path)
-                pdf.image(local_image_path, x=160, y=10, w=35, h=45)  # Top-right corner
+                pdf.image(local_image_path, x=160, y=10, w=45, h=45)  # Top-right corner
                 pdf.ln(20)
-        pdf.image("GCOP_/static/images/logo.png", x=10, y=10, w=35, h=45)  # 3.5cm x 4.5cm
+        pdf.image("GCOP_/logo.png", x=10, y=10, w=20, h=20)  # Adjust width & height as needed
 
         # Add watermark
 
