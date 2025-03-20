@@ -162,8 +162,11 @@ class Joinedgroups(models.Model):
         db_table = 'joinedGroups'
 
 
+from django.contrib.auth.models import User
+
 class Member(models.Model):
     member_id = models.AutoField(primary_key=True)
+    registered_by = models.CharField(max_length=100, blank=True, null=True)  # Stores first name of the user
     f_name = models.CharField(max_length=100)
     l_name = models.CharField(max_length=100)
     date_of_birth = models.DateField(blank=True, null=True)
@@ -172,9 +175,9 @@ class Member(models.Model):
     marital_status = models.CharField(max_length=20, blank=True, null=True)
     date_joined = models.DateField(blank=True, null=True)
     phone_number = models.CharField(max_length=20, blank=True, null=True)
-    emergency_num = models.CharField(max_length=20,blank=True,null=True)
-    occupation = models.CharField(max_length=100,blank=True,null=True)
-    nxt_of_kin = models.CharField(max_length=100,null=True,blank=True)
+    emergency_num = models.CharField(max_length=20, blank=True, null=True)
+    occupation = models.CharField(max_length=100, blank=True, null=True)
+    nxt_of_kin = models.CharField(max_length=100, blank=True, null=True)
     history = models.TextField(blank=True, null=True)
     welfare_card_num = models.CharField(max_length=50, blank=True, null=True)
     place_of_residence = models.CharField(max_length=50, blank=True, null=True)
@@ -185,11 +188,12 @@ class Member(models.Model):
     address = models.CharField(max_length=250, blank=True, null=True)
     baptism_status = models.BooleanField(blank=True, null=True)
     baptist_at_gcop = models.BooleanField(blank=True, null=True)
-    is_printed=models.BooleanField(default=False,blank=True,null=True)
+    is_printed = models.BooleanField(default=False, blank=True, null=True)
 
     class Meta:
         managed = True
         db_table = 'member'
+
 
 
 class Relations(models.Model):
