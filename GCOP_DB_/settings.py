@@ -94,6 +94,16 @@ GOOGLE_DRIVE_STORAGE_MEDIA_ROOT = '1A7lHRGhCbVd7u67X0tqOrKtxQOhamKe6'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
+import os
+
+STATIC_URL = '/static/'
+
+# Add this line to include your app-level static folder
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'GCOP_', 'static')]
+
+# Ensure STATIC_ROOT is set for collectstatic
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
 
 
 
@@ -120,10 +130,7 @@ CLOUDINARY_STORAGE = {
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 
-import os
 
-STATIC_URL = '/static/'
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 
 
 
@@ -161,7 +168,6 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = 'static/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
