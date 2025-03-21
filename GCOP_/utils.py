@@ -233,6 +233,9 @@ def print_pdf(member_id):
                 data[f"IS CHILD {idx} A GCOP MEMBER"] = "Yes" if child.is_member else "No"
 
         # Create PDF
+        # Remove all "N/A" values
+        data = {k: v for k, v in data.items() if v != "N/A"}
+
         class PDF(FPDF):
             def header(self):
                 # Set watermark on every page
