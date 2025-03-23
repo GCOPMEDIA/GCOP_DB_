@@ -8,7 +8,6 @@ from datetime import date
 from .forms import UserDetailsForm, FurtherQuestionsForm, NextForm, FatherForm, MotherForm, SurvivorForm, SpouseForm
 from .utils import *
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin
 
 
 # Utility function to convert date fields to strings
@@ -241,9 +240,10 @@ def upload_member_image(request, member_id):
 @login_required(login_url='/', redirect_field_name='user_form')
 def form_success_view(request):
     data = json.loads(request.session.get('final_data5', '{}'))
-    print(data)  # Load all collected data
+     # Load all collected data
     data['registered_by'] = request.user.first_name
-    member_entry(data)
+    print(data['registered_by'])
+    # member_entry(data)
     return render(request, 'form_success.html', {'data': data})  # Render success page
 
 
