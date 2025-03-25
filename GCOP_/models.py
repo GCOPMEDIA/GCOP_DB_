@@ -6,7 +6,7 @@
 #   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
 # Feel free to rename the models, but don't rename db_table values or field names.
 from django.db import models
-from cloudinary.models import CloudinaryField
+
 
 class AuthGroup(models.Model):
     name = models.CharField(unique=True, max_length=150)
@@ -83,17 +83,17 @@ class Branches(models.Model):
     branch_location = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
-        managed = True
+        managed = False
         db_table = 'branches'
 
 
 class ChurchPositions(models.Model):
     postition_id = models.AutoField(primary_key=True)
     position_name = models.CharField(max_length=100)
-    member = models.ForeignKey('Member', on_delete=models.CASCADE)  # Cascade deletes related records
+    member = models.ForeignKey('Member', models.DO_NOTHING)
 
     class Meta:
-        managed = True
+        managed = False
         db_table = 'church_positions'
 
 
@@ -147,26 +147,24 @@ class Groups(models.Model):
     group_name = models.CharField(unique=True, max_length=100)
 
     class Meta:
-        managed = True
+        managed = False
         db_table = 'groups'
 
 
 class Joinedgroups(models.Model):
     id = models.BigAutoField(primary_key=True)
-    group = models.ForeignKey(Groups,on_delete= models.CASCADE, blank=True, null=True)
-    member = models.ForeignKey('Member', on_delete=models.CASCADE, blank=True, null=True)
     group_position = models.IntegerField(blank=True, null=True)
+    group = models.ForeignKey(Groups, models.DO_NOTHING, blank=True, null=True)
+    member = models.ForeignKey('Member', models.DO_NOTHING, blank=True, null=True)
 
     class Meta:
-        managed = True
+        managed = False
         db_table = 'joinedGroups'
 
 
-from django.contrib.auth.models import User
-
 class Member(models.Model):
     member_id = models.AutoField(primary_key=True)
-    registered_by = models.CharField(max_length=100, blank=True, null=True)  # Stores first name of the user
+    registered_by = models.CharField(max_length=100, blank=True, null=True)
     f_name = models.CharField(max_length=100)
     l_name = models.CharField(max_length=100)
     date_of_birth = models.DateField(blank=True, null=True)
@@ -183,17 +181,25 @@ class Member(models.Model):
     place_of_residence = models.CharField(max_length=50, blank=True, null=True)
     tithe_card_num = models.CharField(max_length=50, blank=True, null=True)
     created_at = models.DateTimeField(blank=True, null=True)
-    church_branch = models.ForeignKey(Branches, on_delete=models.CASCADE, db_column='church_branch', blank=True, null=True)
-    member_image = CloudinaryField('image', blank=True, null=True)
+    member_image = models.CharField(max_length=255, blank=True, null=True)
     address = models.CharField(max_length=250, blank=True, null=True)
     baptism_status = models.BooleanField(blank=True, null=True)
     baptist_at_gcop = models.BooleanField(blank=True, null=True)
-    is_printed = models.BooleanField(default=False, blank=True, null=True)
+    is_printed = models.BooleanField(blank=True, null=True)
+    church_branch = models.ForeignKey(Branches, models.DO_NOTHING, db_column='church_branch', blank=True, null=True)
 
     class Meta:
-        managed = True
+        managed = False
         db_table = 'member'
 
+
+class QrCodes(models.Model):
+    code_data = models.TextField()
+    scanned_at = models.DateTimeField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'qr_codes'
 
 
 class Relations(models.Model):
@@ -206,15 +212,5 @@ class Relations(models.Model):
     member_id = models.IntegerField(blank=True, null=True)
 
     class Meta:
-        managed = True
+        managed = False
         db_table = 'relations'
-
-
-from django import forms
-from .models import Member
-
-class MemberImageUploadForm(forms.ModelForm):
-    class Meta:
-        model = Member
-        fields = ['member_image']
-
