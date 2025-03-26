@@ -328,15 +328,7 @@ def to_print(request):
     # return HttpResponse("No Members to print.", status=404)
 
 
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from .models import QrCodes
-from .serializers import QRCodeSerializer
+@login_required(login_url='/',redirect_field_name='qr_code')
 
-@api_view(['POST'])
-def save_qr_code(request):
-    serializer = QRCodeSerializer(data=request.data)
-    if serializer.is_valid():
-        serializer.save()
-        return Response({"success": True, "data": serializer.data}, status=201)
-    return Response(serializer.errors, status=400)
+def qr_code(request):
+    return render(request,'qr_scanner')
