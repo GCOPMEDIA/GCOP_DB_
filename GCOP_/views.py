@@ -345,12 +345,13 @@ def check_id(request):
         try:
             data = json.loads(request.body)
             scanned_id = (data.get("id"))[-1]
+            print(scanned_id)
 
             # Check if ID exists in the database
             person = Member.objects.filter(member_id=int(scanned_id)).first()
 
             if person:
-                return JsonResponse({"exists": True, "name": person.name, "age": person.age})
+                return JsonResponse({"exists": True, "name": person.f_name, "age": person.l_name})
             else:
                 return JsonResponse({"exists": False})
 
