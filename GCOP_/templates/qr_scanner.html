@@ -17,24 +17,30 @@
     <p id="result">Scan a QR code to get data</p>
 
     <script>
-        function onScanSuccess(qrCodeMessage) {
-            document.getElementById('result').innerText = "Scanning...";
-            fetch("https://your-api-url.com/fetch-data", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ qrValue: qrCodeMessage })
-            })
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById('result').innerText = JSON.stringify(data);
-            })
-            .catch(error => {
-                document.getElementById('result').innerText = "Error fetching data";
-            });
-        }
+    function onScanSuccess(qrCodeMessage) {
+        document.getElementById('result').innerText = "Checking ID in database...";
 
-        let html5QrcodeScanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: 250 });
-        html5QrcodeScanner.render(onScanSuccess);
-    </script>
+        fetch("https://gcop-db.onrender.com/check-id", { // Update this with your API endpoint
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ id: qrCodeMessage }) // Send the scanned ID
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.exists) {
+                document.getElementById('result').innerText = "✅ ID Found: " + JSON.stringify(data);
+            } else {
+                document.getElementById('result').innerText = "❌ ID Not Found";
+            }
+        })
+        .catch(error => {
+            document.getElementById('result').innerText = "⚠️ Error checking ID";
+        });
+    }
+
+    let html5QrcodeScanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: 250 });
+    html5QrcodeScanner.render(onScanSuccess);
+</script>
+
 </body>
 </html>
