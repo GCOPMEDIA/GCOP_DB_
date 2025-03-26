@@ -331,4 +331,4 @@ def to_print(request):
 @login_required(login_url='/',redirect_field_name='qr_code')
 
 def qr_code(request):
-    return render(request,'qr_scanner')
+    return render(request,'qr_scanner.html')
