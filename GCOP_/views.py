@@ -332,3 +332,30 @@ def to_print(request):
 
 def qr_code(request):
     return render(request,'qr_scanner.html')
+
+
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+import json
+
+
+@csrf_exempt  # Disable CSRF for testing (use proper security in production)
+def check_id(request):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            scanned_id = (data.get("id"))[-1]
+
+            # Check if ID exists in the database
+            person = Member.objects.filter(member_id=int(scanned_id)).first()
+
+            if person:
+                return JsonResponse({"exists": True, "name": person.name, "age": person.age})
+            else:
+                return JsonResponse({"exists": False})
+
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=400)
+
+    return JsonResponse({"error": "Invalid request"}, status=400)
+
