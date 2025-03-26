@@ -23,6 +23,10 @@ path('download-pdf/<int:member_id>/', download_pdf, name='download_pdf'),
     path('to-print/',to_print,name='to_print'),
     path('save_qr/', qr_code, name='qr_code'),
 
+    path("check-id", check_id, name="check_id"),
+
+
+
 ]
 
 
