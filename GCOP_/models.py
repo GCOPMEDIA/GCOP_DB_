@@ -8,6 +8,15 @@
 from django.db import models
 
 
+class Attendance(models.Model):
+    scanned_at = models.DateTimeField(blank=True, null=True)
+    member = models.ForeignKey('Member', models.DO_NOTHING)
+
+    class Meta:
+        managed = False
+        db_table = 'attendance'
+
+
 class AuthGroup(models.Model):
     name = models.CharField(unique=True, max_length=150)
 
@@ -187,19 +196,11 @@ class Member(models.Model):
     baptist_at_gcop = models.BooleanField(blank=True, null=True)
     is_printed = models.BooleanField(blank=True, null=True)
     church_branch = models.ForeignKey(Branches, models.DO_NOTHING, db_column='church_branch', blank=True, null=True)
+    church_id = models.TextField(blank=True, null=True)
 
     class Meta:
         managed = False
         db_table = 'member'
-
-
-class QrCodes(models.Model):
-    code_data = models.TextField()
-    scanned_at = models.DateTimeField(blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'qr_codes'
 
 
 class Relations(models.Model):
