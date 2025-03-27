@@ -351,7 +351,7 @@ def check_id(request):
             person = Member.objects.filter(member_id=int(scanned_id)).first()
 
             if person:
-                return JsonResponse({"exists": True, "name": person.f_name, "age": person.l_name})
+                return JsonResponse({"exists": True, "First Name": person.f_name, "Other Names": person.l_name})
             else:
                 return JsonResponse({"exists": False})
 
