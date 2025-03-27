@@ -19,10 +19,10 @@ def convert_dates_to_strings(data):
     return data
 
 
-
 from django.contrib.auth import authenticate, login
 from django.shortcuts import redirect, render
 from django.http import HttpResponse
+
 
 def login_(request):
     if request.method == 'POST':
@@ -41,6 +41,7 @@ def login_(request):
 
     next_url = request.GET.get('next', '')  # Preserve 'next' parameter for redirection
     return render(request, 'registration/login.html', {'next': next_url})
+
 
 # Utility function to update session data
 @login_required
@@ -249,7 +250,7 @@ def upload_member_image(request, member_id):
 @login_required(login_url='/', redirect_field_name='next')
 def form_success_view(request):
     data = json.loads(request.session.get('final_data5', '{}'))
-     # Load all collected data
+    # Load all collected data
     data['registered_by'] = request.user.first_name
     print(data['registered_by'])
     # member_entry(data)
@@ -337,9 +338,9 @@ def to_print(request):
     # return HttpResponse("No Members to print.", status=404)
 
 
-@login_required(login_url='/',redirect_field_name='next')
+@login_required(login_url='/', redirect_field_name='next')
 def qr_code(request):
-    return render(request,'qr_scanner.html')
+    return render(request, 'qr_scanner.html')
 
 
 from django.http import JsonResponse
@@ -357,16 +358,35 @@ def check_id(request):
             # Check if ID exists in the database
             person = Member.objects.filter(church_id=scanned_id).first()
 
-            if person:
-                # print(person)
-                a = Attendance(member=person)
-                a.save()
-                return JsonResponse({"exists": True, "First Name": person.f_name, "Other Names": person.l_name})
-            else:
+            if not person:
                 return JsonResponse({"exists": False})
 
+            # Check if the member has already been registered today
+            today = now().date()
+            already_registered = Attendance.objects.filter(
+                member=person, scanned_at__date=today
+            ).exists()
+
+            if already_registered:
+                return JsonResponse({
+                    "exists": True,
+                    "message": "Member has already been registered today",
+                    "first_name": person.f_name,
+                    "last_name": person.l_name
+                })
+
+            # Register attendance
+            Attendance.objects.create(member=person)
+            return JsonResponse({
+                "exists": True,
+                "message": "Attendance recorded successfully",
+                "first_name": person.f_name,
+                "last_name": person.l_name
+            })
+
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid JSON format"}, status=400)
         except Exception as e:
-            return JsonResponse({"error": str(e)}, status=400)
+            return JsonResponse({"error": str(e)}, status=500)
 
-    return JsonResponse({"error": "Invalid request"}, status=400)
-
+    return JsonResponse({"error": "Invalid request method"}, status=405)
