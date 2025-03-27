@@ -352,13 +352,15 @@ def check_id(request):
     if request.method == "POST":
         try:
             data = json.loads(request.body)
-            scanned_id = (data.get("id"))[-1]
-            print(scanned_id)
+            scanned_id = data.get("id")
 
             # Check if ID exists in the database
-            person = Member.objects.filter(member_id=int(scanned_id)).first()
+            person = Member.objects.filter(church_id=scanned_id).first()
 
             if person:
+                # print(person)
+                a = Attendance(member=person)
+                a.save()
                 return JsonResponse({"exists": True, "First Name": person.f_name, "Other Names": person.l_name})
             else:
                 return JsonResponse({"exists": False})
