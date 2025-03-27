@@ -8,13 +8,17 @@
 from django.db import models
 
 
+from django.db import models
+from django.utils.timezone import now
+
 class Attendance(models.Model):
-    scanned_at = models.DateTimeField(blank=True, null=True)
+    scanned_at = models.DateTimeField(default=now, blank=True, null=True)
     member = models.ForeignKey('Member', models.DO_NOTHING)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'attendance'
+
 
 
 class AuthGroup(models.Model):
