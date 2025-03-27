@@ -23,14 +23,20 @@ def login_(request):
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
+        next_url = request.GET.get('next') or request.POST.get('next')
+        print(next_url)# Get redirect URL
+
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
-            return redirect('user_form')
+            if next_url:  # Redirect to the intended page if available
+                return redirect(next_url)
+            return redirect('user_form')  # Default redirection
         else:
-            return HttpResponse(status=403)
-    else:
-        return render(request, 'registration/login.html', {})
+            return HttpResponse(status=403)  # Or render with an error message
+
+    next_url = request.GET.get('next', '')  # Preserve 'next' parameter for redirection
+    return render(request, 'registration/login.html', {'next': next_url})
 
 
 # Utility function to update session data
@@ -328,8 +334,7 @@ def to_print(request):
     # return HttpResponse("No Members to print.", status=404)
 
 
-@login_required(login_url='/',redirect_field_name='qr_code')
-
+@login_required(login_url='/',redirect_field_name='next')
 def qr_code(request):
     return render(request,'qr_scanner.html')
 
