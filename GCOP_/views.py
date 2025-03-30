@@ -253,7 +253,7 @@ def form_success_view(request):
     # Load all collected data
     data['registered_by'] = request.user.first_name
     print(data['registered_by'])
-    # member_entry(data)
+    member_entry(data)
     return render(request, 'form_success.html', {'data': data})  # Render success page
 
 
