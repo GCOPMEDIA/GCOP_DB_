@@ -22,7 +22,7 @@ path('search_member/',member_form_view,name='member_form_view'),
 path('download-pdf/<int:member_id>/', download_pdf, name='download_pdf'),
     path('to-print/',to_print,name='to_print'),
     path('save_qr/', qr_code, name='qr_code'),
-
+    path('card_details/<member_id>',card_details,name='card_details'),
     path("check-id", check_id, name="check_id"),
 
 
