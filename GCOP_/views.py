@@ -351,7 +351,7 @@ def card_details(request, member_id):
         member = Member.objects.get(member_id=member_id)
         church_branch = member.church_branch
         position = ChurchPositions.objects.get(member_id=member_id)# Get a single object
-        return render(request, 'card_details.html', {'members': member,"church_branch":church_branch.branch_name,'position':position.position_name,"qr_code": qr_base64})
+        return render(request, 'card_details.html', {'member': member,"church_branch":church_branch.branch_name,'position':position.position_name,"qr_code": qr_base64})
 
     # except Exception as e:
     #     return HttpResponse("Member not found.", status=404)
