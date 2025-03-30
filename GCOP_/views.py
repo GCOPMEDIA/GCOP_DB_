@@ -334,8 +334,8 @@ def download_pdf(request, member_id):
         return HttpResponse("Member not found.", status=404)
 def church_id(id_):
     len_ = str(id_)
-    if len(len_)<4:
-        l = len_.zfill(4-len(len_))
+    if len(len_)<5:
+        l = len_.zfill(5)
     else:
         l = len_
     return f"GCOP-{l}"
