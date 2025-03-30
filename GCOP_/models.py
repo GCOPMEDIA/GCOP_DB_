@@ -200,7 +200,7 @@ class Member(models.Model):
     baptist_at_gcop = models.BooleanField(blank=True, null=True)
     is_printed = models.BooleanField(blank=True, null=True)
     church_branch = models.ForeignKey(Branches, models.DO_NOTHING, db_column='church_branch', blank=True, null=True)
-    church_id = models.TextField(blank=True, null=True)
+
 
     class Meta:
         managed = False
