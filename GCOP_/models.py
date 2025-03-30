@@ -8,6 +8,7 @@
 from django.db import models
 
 
+
 from django.db import models
 from django.utils.timezone import now
 
@@ -175,6 +176,8 @@ class Joinedgroups(models.Model):
         db_table = 'joinedGroups'
 
 
+from cloudinary.models import CloudinaryField
+
 class Member(models.Model):
     member_id = models.AutoField(primary_key=True)
     registered_by = models.CharField(max_length=100, blank=True, null=True)
@@ -194,17 +197,17 @@ class Member(models.Model):
     place_of_residence = models.CharField(max_length=50, blank=True, null=True)
     tithe_card_num = models.CharField(max_length=50, blank=True, null=True)
     created_at = models.DateTimeField(blank=True, null=True)
-    member_image = models.CharField(max_length=255, blank=True, null=True)
+    member_image = CloudinaryField('image', blank=True, null=True)  # ✅ Cloudinary field
     address = models.CharField(max_length=250, blank=True, null=True)
     baptism_status = models.BooleanField(blank=True, null=True)
     baptist_at_gcop = models.BooleanField(blank=True, null=True)
-    is_printed = models.BooleanField(blank=True, null=True)
+    is_printed = models.BooleanField(blank=True, null=True, default=False)
     church_branch = models.ForeignKey(Branches, models.DO_NOTHING, db_column='church_branch', blank=True, null=True)
 
-
     class Meta:
-        managed = False
+        managed = True
         db_table = 'member'
+
 
 
 class Relations(models.Model):
