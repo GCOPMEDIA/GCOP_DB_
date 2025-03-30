@@ -6,6 +6,8 @@ positions = [
 ]
 
 group_choices = [
+    ('20',"Good Samaritan"),
+    ('19',"Harvest Committee"),
     ('18',"Peace Group"),
     ('17',"Church Committee"),
     ('16',"Men's Fellowship"),
