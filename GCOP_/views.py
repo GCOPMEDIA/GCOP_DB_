@@ -332,12 +332,26 @@ def download_pdf(request, member_id):
 
     except Exception as e:
         return HttpResponse("Member not found.", status=404)
+def church_id(id_):
+    len_ = str(id_)
+    if len(len_)<4:
+        l = len_.zfill(4-len(len_))
+    else:
+        l = len_
+    return f"GCOP-{l}"
+
+
 @login_required(login_url='/', redirect_field_name='next')
 def card_details(request, member_id):
     # print_pdf(member_id)
     # try:
+
+        # Generate the PDF using the utility function
+        member = Member.objects.get(member_id=member_id)
+
+
         qr = qrcode.QRCode(version=1, box_size=10, border=5)
-        qr.add_data(f"GCOP-{member_id}")  # Example data
+        qr.add_data(church_id(member_id))  # Example data
         qr.make(fit=True)
 
         # Generate image in-memory
@@ -347,11 +361,9 @@ def card_details(request, member_id):
         buffer = BytesIO()
         img.save(buffer, format="PNG")
         qr_base64 = base64.b64encode(buffer.getvalue()).decode()
-        # Generate the PDF using the utility function
-        member = Member.objects.get(member_id=member_id)
         church_branch = member.church_branch
         position = ChurchPositions.objects.get(member_id=member_id)# Get a single object
-        return render(request, 'card_details.html', {'member': member,"church_branch":church_branch.branch_name,'position':position.position_name,"qr_code": qr_base64})
+        return render(request, 'card_details.html', {'member': member,"church_branch":church_branch.branch_name,'position':position.position_name,"qr_code": qr_base64,'church_id':church_id(member_id)})
 
     # except Exception as e:
     #     return HttpResponse("Member not found.", status=404)
