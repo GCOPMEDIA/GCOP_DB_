@@ -43,6 +43,9 @@ Members whose PDF hasn't been printed</h2>
     Download PDF
             </a>
                     </td>
+                    <td>
+                        <a href="{% url 'card_details' member.member_id" class="btn">Get Card Details</a>
+                    </td>
                 </tr>
                 {% empty %}
                 <tr>
