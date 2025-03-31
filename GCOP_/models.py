@@ -203,10 +203,24 @@ class Member(models.Model):
     baptist_at_gcop = models.BooleanField(blank=True, null=True)
     is_printed = models.BooleanField(blank=True, null=True, default=False)
     church_branch = models.ForeignKey(Branches, models.DO_NOTHING, db_column='church_branch', blank=True, null=True)
+    church_Id = models.TextField(blank=True,null=True,editable=False)
 
     class Meta:
-        managed = True
+        managed = False
         db_table = 'member'
+class ChurchID(models.Model):
+    member = models.OneToOneField(Member, on_delete=models.CASCADE)  # Link to Member
+    gcop_id = models.CharField(max_length=15, unique=True, blank=True)  # Auto-generated
+
+    def save(self, *args, **kwargs):
+        if not self.gcop_id:
+            last_entry = ChurchID.objects.order_by('-id').first()
+            next_number = (int(last_entry.gcop_id.split('-')[1]) + 1) if last_entry else 1
+            self.gcop_id = f"GCOP-{next_number:05d}"  # Format: GCOP-00005
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return self.gcop_id
 
 
 
