@@ -9,8 +9,18 @@ from django.db import models
 
 
 
-from django.db import models
 from django.utils.timezone import now
+
+from django.db import models
+
+class AttendanceMercyTemple(models.Model):
+    scanned_at = models.DateTimeField(default=now, blank=True, null=True)
+    member = models.ForeignKey('Member', models.DO_NOTHING)
+
+    class Meta:
+        managed = False  # Tells Django NOT to manage this table (no migrations)
+        db_table = 'attendance_in_mercy_temple'  # This should match the exact view name in your database
+
 
 class Attendance(models.Model):
     scanned_at = models.DateTimeField(default=now, blank=True, null=True)
@@ -196,7 +206,7 @@ class Member(models.Model):
     welfare_card_num = models.CharField(max_length=50, blank=True, null=True)
     place_of_residence = models.CharField(max_length=50, blank=True, null=True)
     tithe_card_num = models.CharField(max_length=50, blank=True, null=True)
-    created_at = models.DateTimeField(blank=True, null=True)
+    created_at = models.DateTimeField(default=now,blank=True, null=True)
     member_image = CloudinaryField('image', blank=True, null=True)  # ✅ Cloudinary field
     address = models.CharField(max_length=250, blank=True, null=True)
     baptism_status = models.BooleanField(blank=True, null=True)
@@ -205,7 +215,7 @@ class Member(models.Model):
     church_branch = models.ForeignKey(Branches, models.DO_NOTHING, db_column='church_branch', blank=True, null=True)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'member'
 class ChurchID(models.Model):
     member = models.OneToOneField(Member, on_delete=models.CASCADE)  # Link to Member
