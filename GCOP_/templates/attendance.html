@@ -3,23 +3,68 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% load static %}
     <title>Attendance Record</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            text-align: center;
-            padding: 20px;
+         * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
         }
 
-        .container {
-            background: white;
-            width: 60%;
-            margin: 30px auto;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        /* Background using logo.png */
+        body {
+        background: url("{% static 'images/logo.png' %}") no-repeat center center fixed;
+        background-size: contain;
+        height: 100vh;
+        width: 100vw;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 0;
+        padding: 0;
+    }
+
+        /* Dark overlay for contrast */
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(102, 51, 153, 0.7); /* Rebeccapurple overlay */
+            z-index: 0;
         }
+
+        /* Glassmorphism Login Container */
+        .container {
+    background: rgba(255, 255, 255);
+
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0);
+    width: 90%; /* Increased from 100% */
+    max-width: 600px; /* Increased from 400px */
+    padding: 40px; /* Increased padding */
+    text-align: center;
+    z-index: 1;
+    position: relative;
+    animation: fadeIn 0.8s ease-in-out;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    margin: 20px auto; /* Ensures spacing around */
+}
+
+
+
+<!--        .container {-->
+<!--            background: white;-->
+<!--            width: 60%;-->
+<!--            margin: 30px auto;-->
+<!--            padding: 20px;-->
+<!--            border-radius: 10px;-->
+<!--            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);-->
+<!--        }-->
 
         h1 {
             color: rebeccapurple;
