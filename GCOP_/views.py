@@ -3,6 +3,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib.auth.models import User
 from django.http import HttpResponse
 from django.contrib.auth import authenticate, login
+from datetime import date
 import json
 import qrcode
 import base64
@@ -432,3 +433,51 @@ def check_id(request):
             return JsonResponse({"error": str(e)}, status=500)
 
     return JsonResponse({"error": "Invalid request method"}, status=405)
+
+
+from django.utils import timezone
+from django.shortcuts import render
+from django.http import HttpResponse
+from datetime import datetime
+
+
+def attendance(request):
+    today = timezone.localdate()
+
+    # Fetch all attendance records for today and related members
+    members = Attendance.objects.filter(scanned_at__date=today).select_related('member')
+
+    if not members.exists():
+        return HttpResponse("No member has checked in yet.", status=404)
+
+    # Process members to extract necessary details
+    members_today = []
+    male_count = 0
+    female_count = 0
+
+    for m in members:
+        time_only = m.scanned_at.strftime('%I:%M %p')  # Format time as HH:MM AM/PM
+        members_today.append({
+            "name": f"{m.member.f_name} {m.member.l_name}",
+            "gender": m.member.gender,
+            "time": time_only
+        })
+
+        # Gender count
+        if m.member.gender.lower() == 'male':
+            male_count += 1
+        elif m.member.gender.lower() == 'female':
+            female_count += 1
+
+    total_members = len(members_today)
+
+    context = {
+        "members": members_today,
+        "total_members": total_members,
+        "male_count": male_count,
+        "female_count": female_count,
+        "today":today
+    }
+
+    return render(request, 'attendance.html', context)
+
