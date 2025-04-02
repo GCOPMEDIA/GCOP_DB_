@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendance Record</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            width: 60%;
+            margin: 30px auto;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        h1 {
+            color: rebeccapurple;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+        }
+
+        th {
+            background-color: rebeccapurple;
+            color: white;
+        }
+
+        .summary {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #eee;
+            border-radius: 8px;
+        }
+
+        .summary h2 {
+            color: rebeccapurple;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Attendance Record For {{ today }}</h1>
+
+        <table>
+            <tr>
+                <th>Name</th>
+                <th>Reported Time</th>
+            </tr>
+            {% for member in members %}
+            <tr>
+                <td>{{ member.name }}</td>
+
+                <td>{{ member.time }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+
+        <div class="summary">
+            <h2>Summary</h2>
+            <p><strong>Total Members:</strong> {{ total_members }}</p>
+            <p><strong>Males:</strong> {{ male_count }}</p>
+            <p><strong>Females:</strong> {{ female_count }}</p>
+        </div>
+    </div>
+
+</body>
+</html>
