@@ -24,6 +24,7 @@ path('download-pdf/<int:member_id>/', download_pdf, name='download_pdf'),
     path('save_qr/', qr_code, name='qr_code'),
     path('card_details/<member_id>',card_details,name='card_details'),
     path("check-id", check_id, name="check_id"),
+    path("attendance-today/",attendance,name="attendance")
 
 
 
