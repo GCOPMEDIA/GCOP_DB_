@@ -365,10 +365,11 @@ def card_details(request, member_id):
     img.save(buffer, format="PNG")
     qr_base64 = base64.b64encode(buffer.getvalue()).decode()
 
-    # image = requests.get(member.member_image.url)
+    image = requests.get(member.member_image.url)
     # image_bytes = image.content  # Extract raw image bytes
     #
     # img_base64 = process_image(image_bytes)
+    member_image = base64.b64encode(image.content).decode()
       # Save to file for manual checking
 
 
@@ -378,7 +379,7 @@ def card_details(request, member_id):
     # Get a single object
     return render(request, 'card_details.html',
                   {'member': member, "church_branch": church_branch.branch_name, "qr_code": qr_base64,
-                   'church_id': church_id(member_id)})# 'image': img_base64})
+                   'church_id': church_id(member_id),'image':member_image})# 'image': img_base64})
 
 
 # except Exception as e:
