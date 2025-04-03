@@ -420,16 +420,37 @@
 </body>
 <script>
   document.getElementById("downloadBtn").addEventListener("click", function () {
-      const div = document.getElementById("capture");
+    const div = document.getElementById("capture");
 
-      html2canvas(div).then((canvas) => {
-          let imgData = canvas.toDataURL("image/png"); // Convert canvas to image
-          let link = document.createElement("a");
-          link.href = imgData;
-          link.download = "div_image.png"; // Set the file name
-          link.click(); // Trigger download
-      });
-  });
+    // Ensure images are loaded
+    let images = div.querySelectorAll("div");
+    let loaded = 0;
+
+    images.forEach(imgDiv => {
+        let bgImage = window.getComputedStyle(imgDiv).backgroundImage;
+        if (bgImage && bgImage !== "none") {
+            let url = bgImage.replace(/url\(["']?(.*?)["']?\)/, '$1');
+            let img = new Image();
+            img.crossOrigin = "anonymous"; // Enable cross-origin support if needed
+            img.src = url;
+            img.onload = () => {
+                loaded++;
+                if (loaded === images.length) {
+                    html2canvas(div).then((canvas) => {
+                        let imgData = canvas.toDataURL("image/png");
+                        let link = document.createElement("a");
+                        link.href = imgData;
+                        link.download = "div_image.png";
+                        link.click();
+                    });
+                }
+            };
+        } else {
+            loaded++;
+        }
+    });
+});
+
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
