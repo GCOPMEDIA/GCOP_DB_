@@ -1,8 +1,8 @@
 from .models import *
-from rembg import remove
-from PIL import Image
-import io
-import base64
+
+# from PIL import Image
+# import io
+# import base64
 
 
 def member_entry(data):
