@@ -389,13 +389,19 @@
     <div class="Rectangle_2" style=""></div>
     <div class="Layer_4" style=""></div>
     <div class="Layer_4_copy" style=""></div>
-    <div class="Layer_10" style="background-image: url({{ member.member_image.url }});"></div>
+    <div class="Layer_10" >
+      <img src="{{ member.member_image.url }})">
+    </div>
     <div class="Layer_1_copy" style=""></div>
     <div class="Layer_6" style=""></div>
     <div class="Layer_2" style=""></div>
     <div class="Layer_5" style=""></div>
-    <div class="Layer_11" style="background-image: url({{ member.member_image.url }});"></div>
-    <div class="Layer_8" style="background-image: url({{ member.member_image.url }});"></div>
+    <div class="Layer_11" >
+      <img src="{{ member.member_image.url }})">
+    </div>
+    <div class="Layer_8" >
+      <img src="{{ member.member_image.url }})">
+    </div>
     <div class="Layer_12" style=""></div>
     <div class="Layer_14" style=""></div>
     <div class="Layer_13" style=""></div>
@@ -419,38 +425,17 @@
 
 </body>
 <script>
-  document.getElementById("downloadBtn").addEventListener("click", function () {
-    const div = document.getElementById("capture");
+   document.getElementById("downloadBtn").addEventListener("click", function () {
+      const div = document.getElementById("capture");
 
-    // Ensure images are loaded
-    let images = div.querySelectorAll("div");
-    let loaded = 0;
-
-    images.forEach(imgDiv => {
-        let bgImage = window.getComputedStyle(imgDiv).backgroundImage;
-        if (bgImage && bgImage !== "none") {
-            let url = bgImage.replace(/url\(["']?(.*?)["']?\)/, '$1');
-            let img = new Image();
-            img.crossOrigin = "anonymous"; // Enable cross-origin support if needed
-            img.src = url;
-            img.onload = () => {
-                loaded++;
-                if (loaded === images.length) {
-                    html2canvas(div).then((canvas) => {
-                        let imgData = canvas.toDataURL("image/png");
-                        let link = document.createElement("a");
-                        link.href = imgData;
-                        link.download = "div_image.png";
-                        link.click();
-                    });
-                }
-            };
-        } else {
-            loaded++;
-        }
-    });
-});
-
+      html2canvas(div).then((canvas) => {
+          let imgData = canvas.toDataURL("image/png"); // Convert canvas to image
+          let link = document.createElement("a");
+          link.href = imgData;
+          link.download = "div_image.png"; // Set the file name
+          link.click(); // Trigger download
+      });
+  });
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
