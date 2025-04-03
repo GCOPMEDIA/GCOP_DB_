@@ -1,4 +1,8 @@
 from .models import *
+from rembg import remove
+from PIL import Image
+import io
+import base64
 
 
 def member_entry(data):
@@ -303,3 +307,43 @@ def print_pdf(member_id):
         print("Error: Member not found.")
     except Exception as e:
         print(f"An error occurred: {e}")
+
+
+import requests
+import io
+import base64
+from PIL import Image, UnidentifiedImageError
+from rembg import remove
+
+
+def process_image(input_data):
+    try:
+        # Ensure input_data is image bytes
+        input_image = Image.open(io.BytesIO(input_data))
+
+        # Convert to PNG (ensure valid format for rembg)
+        img_byte_arr = io.BytesIO()
+        input_image.save(img_byte_arr, format="PNG")
+        img_byte_arr.seek(0)
+
+        # Remove background
+        output_data = remove(img_byte_arr.getvalue())
+
+        # Convert result to image
+        output_image = Image.open(io.BytesIO(output_data))
+
+        # Convert to grayscale
+        bw_image = output_image.convert("L")
+
+        # Save to bytes buffer
+        final_byte_arr = io.BytesIO()
+        bw_image.save(final_byte_arr, format="PNG")
+        final_byte_arr.seek(0)
+
+        # Encode in base64
+        img_base64 = base64.b64encode(final_byte_arr.getvalue()).decode("utf-8")
+        return img_base64
+
+    except UnidentifiedImageError:
+        print("Error: The provided image data is not valid.")
+        return None
