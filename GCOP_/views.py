@@ -13,6 +13,7 @@ from datetime import date
 from .forms import UserDetailsForm, FurtherQuestionsForm, NextForm, FatherForm, MotherForm, SurvivorForm, SpouseForm
 from .utils import *
 from django.contrib.auth.decorators import login_required
+import requests
 
 
 # Utility function to convert date fields to strings
@@ -333,9 +334,11 @@ def download_pdf(request, member_id):
 
     except Exception as e:
         return HttpResponse("Member not found.", status=404)
+
+
 def church_id(id_):
     len_ = str(id_)
-    if len(len_)<5:
+    if len(len_) < 5:
         l = len_.zfill(5)
     else:
         l = len_
@@ -347,27 +350,39 @@ def card_details(request, member_id):
     # print_pdf(member_id)
     # try:
 
-        # Generate the PDF using the utility function
-        member = Member.objects.get(member_id=member_id)
+    # Generate the PDF using the utility function
+    member = Member.objects.get(member_id=member_id)
+
+    qr = qrcode.QRCode(version=1, box_size=10, border=5)
+    qr.add_data(church_id(member_id))  # Example data
+    qr.make(fit=True)
+
+    # Generate image in-memory
+    img = qr.make_image(fill="black", back_color="white")
+
+    # Convert to base64
+    buffer = BytesIO()
+    img.save(buffer, format="PNG")
+    qr_base64 = base64.b64encode(buffer.getvalue()).decode()
+
+    # image = requests.get(member.member_image.url)
+    # image_bytes = image.content  # Extract raw image bytes
+    #
+    # img_base64 = process_image(image_bytes)
+      # Save to file for manual checking
 
 
-        qr = qrcode.QRCode(version=1, box_size=10, border=5)
-        qr.add_data(church_id(member_id))  # Example data
-        qr.make(fit=True)
+    # Send the base64-encoded image as a response
 
-        # Generate image in-memory
-        img = qr.make_image(fill="black", back_color="white")
+    church_branch = member.church_branch
+    # Get a single object
+    return render(request, 'card_details.html',
+                  {'member': member, "church_branch": church_branch.branch_name, "qr_code": qr_base64,
+                   'church_id': church_id(member_id)})# 'image': img_base64})
 
-        # Convert to base64
-        buffer = BytesIO()
-        img.save(buffer, format="PNG")
-        qr_base64 = base64.b64encode(buffer.getvalue()).decode()
-        church_branch = member.church_branch
-        position = ChurchPositions.objects.get(member_id=member_id)# Get a single object
-        return render(request, 'card_details.html', {'member': member,"church_branch":church_branch.branch_name,'position':position.position_name,"qr_code": qr_base64,'church_id':church_id(member_id)})
 
-    # except Exception as e:
-    #     return HttpResponse("Member not found.", status=404)
+# except Exception as e:
+#     return HttpResponse("Member not found.", status=404)
 
 
 @login_required(login_url='/', redirect_field_name='next')
@@ -399,7 +414,6 @@ def check_id(request):
             # Check if ID exists in the database
             person_id = (ChurchID.objects.filter(gcop_id=scanned_id).first()).member_id
             person = Member.objects.get(member_id=person_id)
-
 
             if not person:
                 return JsonResponse({"exists": False})
@@ -476,7 +490,7 @@ def attendance(request):
         "total_members": total_members,
         "male_count": male_count,
         "female_count": female_count,
-        "today":today
+        "today": today
     }
 
     return render(request, 'attendance.html', context)
@@ -517,11 +531,7 @@ def attendance_mercy_temple(request):
         "total_members": total_members,
         "male_count": male_count,
         "female_count": female_count,
-        "today":today
+        "today": today
     }
 
     return render(request, 'attendance.html', context)
-
-
-
-
