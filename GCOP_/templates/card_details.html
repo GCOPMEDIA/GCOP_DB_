@@ -1,157 +1,424 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>GCOP Member Details</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            padding: 20px;
-        }
-        .container {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 20px;
-            border-radius: 10px;
-        }
-          .btn {
-    display: block; /* Ensures it's centered when using margin auto */
-    width: fit-content; /* Keeps button size appropriate to text */
-    margin: 20px auto; /* Centers the button */
-    padding: 14px 24px; /* Increases size */
-    background: #9b6bc5; /* Lighter purple */
-    color: white; /* Text remains visible */
-    font-size: 18px; /* Slightly larger text */
-    font-weight: 600; /* Makes text bolder */
-    text-decoration: none;
-    border-radius: 10px; /* More rounded corners */
-    transition: 0.3s ease-in-out;
-    text-align: center;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ID Card</title>
+
+</head>
+{% load static %}
+<style>
+    .Group_ES {
+  position: relative;
+  left: 0px;
+  top: 0px;
+  width: 990px;
+  height: 600px;
+  z-index: 66;
+}
+.Layer_8 {
+  position: absolute;
+  left: 103px;
+  top: 439px;
+  width: 77px;
+  height: 60px;
+  z-index: 62;
+}
+.Layer_14 {
+  position: absolute;
+  background-image: url("{% static 'images/5fd37b1635292cbced910c67718e9689_copy.png' %}");
+  background-size: contain;
+  background-repeat: no-repeat;
+  left: 70px;
+  top: 475px;
+  width: 77px;
+  height: 60px;
+  z-index: 62;
+}
+.Layer_11 {
+  opacity: 0.85;
+  position: absolute;
+  left: 655px;
+  top: 177px;
+  width: 285px;
+  height: 249px;
+  z-index: 60;
+}
+.Layer_5 {
+  position: absolute;
+  background-image: url("{% static 'images/Layer_5.png' %}");
+  left: 61px;
+  top: 219px;
+  width: 114px;
+  height: 91px;
+  z-index: 58;
+}
+.Layer_2 {
+  position: absolute;
+  background-image: url("{% static 'images/Layer_2.png' %}");
+  left: 845px;
+  top: 27px;
+  width: 95px;
+  height: 63px;
+  z-index: 57;
+}
+.Membership_and_Identification_Card {
+  font-size: 40px;
+  font-family: "Arial";
+  color: rgb(0, 0, 0);
+  font-weight: bold;
+  line-height: 1.2;
+  text-align: center;
+  -moz-transform: matrix( 0.66143682987998,0,0,0.63884260298095,0,0);
+  -webkit-transform: matrix( 0.66143682987998,0,0,0.63884260298095,0,0);
+  -ms-transform: matrix( 0.66143682987998,0,0,0.63884260298095,0,0);
+  position: absolute;
+  left: 109.963px;
+  top: 35.561px;
+  z-index: 52;
+}
+.MERCY_TEMPLE {
+  font-size: 29px;
+  font-family: "Arial";
+  color: rgb(255, 255, 255);
+  font-weight: bold;
+  line-height: 1.2;
+  text-align: center;
+  -moz-transform: matrix( 0.90715310585675,0,0,0.86876481374719,0,0);
+  -webkit-transform: matrix( 0.90715310585675,0,0,0.86876481374719,0,0);
+  -ms-transform: matrix( 0.90715310585675,0,0,0.86876481374719,0,0);
+  position: absolute;
+  left: 366.629px;
+  top: 40.5px;
+  z-index: 51;
+}
+.Personal_ID_Number {
+  font-size: 29px;
+  font-family: "Arial";
+  color: rgb(6, 10, 38);
+  font-weight: bold;
+  line-height: 1.2;
+  text-align: left;
+  position: absolute;
+  left: 192px;
+  top: 425px;
+  z-index: 50;
+}
+.Position {
+  font-size: 29px;
+  font-family: "Arial";
+  color: rgb(6, 10, 38);
+  font-weight: bold;
+  line-height: 1.2;
+  text-align: left;
+  position: absolute;
+  left: 192px;
+  top: 335px;
+  z-index: 49;
+}
+.Firstnames {
+  font-size: 29px;
+  font-family: "Arial";
+  color: rgb(6, 10, 38);
+  font-weight: bold;
+  line-height: 1.2;
+  text-align: left;
+  position: absolute;
+  left: 192px;
+  top: 248px;
+  z-index: 48;
+}
+.Sex {
+  font-size: 29px;
+  font-family: "Arial";
+  color: rgb(6, 10, 38);
+  font-weight: bold;
+  line-height: 1.2;
+  text-align: left;
+  -moz-transform: matrix( 0.76829124677057,0,0,0.77772142971594,0,0);
+  -webkit-transform: matrix( 0.76829124677057,0,0,0.77772142971594,0,0);
+  -ms-transform: matrix( 0.76829124677057,0,0,0.77772142971594,0,0);
+  position: absolute;
+  left: 733.334px;
+  top: 401px;
+  z-index: 47;
+}
+.Surname {
+  font-size: 29px;
+  font-family: "Arial";
+  color: rgb(6, 10, 38);
+  font-weight: bold;
+  line-height: 1.2;
+  text-align: left;
+  position: absolute;
+  left: 193px;
+  top: 160px;
+  z-index: 46;
+}
+.GCOP_00002 {
+  font-size: 35px;
+  font-weight: bold;
+  font-family: "Arial";
+  color: rgb(6, 10, 38);
+  line-height: 1.2;
+  text-align: left;
+  -moz-transform: matrix( 0.97684479286221,0,0,1.20222641935528,0,0);
+  -webkit-transform: matrix( 0.97684479286221,0,0,1.20222641935528,0,0);
+  -ms-transform: matrix( 0.97684479286221,0,0,1.20222641935528,0,0);
+  position: absolute;
+  left: 190.565px;
+  top: 455px;
+  z-index: 45;
+}
+.MEDIA {
+  font-size: 35px;
+  font-family: "Arial";
+  font-weight: bold;
+  color: rgb(6, 10, 38);
+  line-height: 1.2;
+  text-align: left;
+  -moz-transform: matrix( 0.97684479286221,0,0,1.20222641935528,0,0);
+  -webkit-transform: matrix( 0.97684479286221,0,0,1.20222641935528,0,0);
+  -ms-transform: matrix( 0.97684479286221,0,0,1.20222641935528,0,0);
+  position: absolute;
+  left: 191.186px;
+  top: 365px;
+  z-index: 44;
+}
+.SAMUEL_NYARKO {
+  font-size: 35px;
+  font-family: "Arial";
+  font-weight: bold;
+  color: rgb(6, 10, 38);
+  line-height: 1.2;
+  text-align: left;
+  -moz-transform: matrix( 0.97684479286221,0,0,1.20222641935528,0,0);
+  -webkit-transform: matrix( 0.97684479286221,0,0,1.20222641935528,0,0);
+  -ms-transform: matrix( 0.97684479286221,0,0,1.20222641935528,0,0);
+  position: absolute;
+  left: 191.137px;
+  top: 278px;
+  z-index: 43;
+}
+.OSEI {
+  font-size: 35px;
+  font-weight: bold;
+  font-family: "Arial";
+  color: rgb(6, 10, 38);
+  line-height: 1.2;
+  text-align: center;
+  -moz-transform: matrix( 0.97684479286221,0,0,1.20222641935528,0,0);
+  -webkit-transform: matrix( 0.97684479286221,0,0,1.20222641935528,0,0);
+  -ms-transform: matrix( 0.97684479286221,0,0,1.20222641935528,0,0);
+  position: absolute;
+  left: 191.789px;
+  top: 190px;
+  z-index: 42;
+}
+.GOD_S_CHURCH_OF_PEACE_INTERNATIONAL {
+  font-size: 29px;
+  font-family: "Arial";
+  color: rgb(255, 255, 255);
+  line-height: 1.2;
+  text-align: center;
+  -moz-transform: matrix( 0.97684479286221,0,0,1.20222641935528,0,0);
+  -webkit-transform: matrix( 0.97684479286221,0,0,1.20222641935528,0,0);
+  -ms-transform: matrix( 0.97684479286221,0,0,1.20222641935528,0,0);
+  position: absolute;
+  left: 137.941px;
+  top: 2px;
+  z-index: 41;
+}
+.Layer_6 {
+  opacity: 1;
+  position: absolute;
+  background-image: url("{% static 'images/Layer_6.png' %}");
+  left: 178px;
+  top: 148px;
+  width: 179px;
+  height: 381px;
+  z-index: 40;
+}
+.Layer_1_copy {
+  opacity: 1;
+  position: absolute;
+  background-image: url("{% static 'images/Layer_1_copy.png' %}");
+  left: 330px;
+  top: 147px;
+  width: 330px;
+  height: 327px;
+  z-index: 39;
+}
+.Layer_10 {
+  opacity: 0.2;
+  position: absolute;
+  background-size: contain;
+  background-repeat: no-repeat; /* Prevents repeating */
+  background-image: url("{% static 'images/Layer\ 0.png' %}");
+  left: 0px;
+  top: 0px;
+  width: 857px;
+  height: 573px;
+  z-index: 36;
+}
+
+.Layer_12 {
+  opacity: 1;
+  position: absolute;
+  background-image: url("{% static 'images/IMG_20210830_214546.png' %}");
+  background-size: contain;
+  background-repeat: no-repeat; /* Prevents repeating */
+  left: 700px;
+  top: 308px;
+  width: 300px;
+  height: 400px;
+  z-index: 36;
+}
+
+.Layer_13 {
+  opacity: 1;
+  position: absolute;
+  background-image: url("{% static 'images/6cd9df66684cd6733a41d0a6385bfed8-removebg-preview.png' %}");
+  background-size: contain;
+  background-repeat: no-repeat; /* Prevents repeating */
+
+  left: 700px;
+  top: 420px;
+  width: 300px;
+  height: 400px;
+  z-index: 36;
+}
+
+
+.Layer_4_copy {
+  position: absolute;
+  background-image: url("{% static 'images/Layer_4_copy.png' %}");
+  opacity: 0.8;
+  left: 0px;
+  top: 553px;
+  width: 990px;
+  height: 11px;
+  z-index: 34;
+}
+.Layer_4 {
+  position: absolute;
+  background-image: url("{% static 'images/Layer_4.png' %}");
+  left: 0px;
+  top: 127px;
+  width: 992px;
+  height: 14px;
+  z-index: 33;
+}
+.Rectangle_2 {
+  position: absolute;
+  background-image: url("{% static 'images/Rectangle_2.png'%}");
+  left: -7px;
+  top: -1px;
+  width: 999px;
+  height: 136px;
+  z-index: 32;
+}
+.Layer_3 {
+  position: absolute;
+  background-image: url("{% static 'images/Layer_3.png' %}");
+  left: -13px;
+  top: 1px;
+  width: 1002px;
+  height: 558px;
+  z-index: 31;
+}
+.Layer_0 {
+  position: absolute;
+  opacity: 0.8;
+  left: 0px;
+  top: 0px;
+  width: 990px;
+  height: 600px;
+  z-index: 30;
+}
+.Layer_1 {
+  position: absolute;
+  background-image: url("{% static 'images/jjgjgjgj.png' %}");
+  left: 40px;
+  top: 14px;
+  width: 98px;
+  height: 97px;
+  z-index: 53;
+}
+.container {
+  text-align: center; /* Centers the button */
+  margin-top: 20px; /* Adds space between div and button */
+}
+
+.btn {
+  position: relative; /* Ensures it follows normal flow */
+  background-color: #007BFF;
+  color: white;
+  padding: 10px 20px;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+  margin-top: 20px; /* Adds spacing */
+  display: inline-block;
 }
 
 .btn:hover {
-    background: #b388d6; /* Even lighter on hover */
-    color: white; /* Ensures readability */
-    transform: scale(1.05); /* Slight pop effect */
+  background-color: #0056b3;
 }
 
-  </style>
-<!--    <style>-->
-<!--        /* Import Google Font */-->
-<!--        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');-->
+</style>
+<body class="container">
 
-<!--        * {-->
-<!--            margin: 0;-->
-<!--            padding: 0;-->
-<!--            box-sizing: border-box;-->
-<!--            font-family: 'Poppins', sans-serif;-->
-<!--        }-->
+  <div class="Group_ES" id="capture">
+    <div class="Layer_0" style=""></div>
+    <div class="Layer_1" style=""></div>
+    <div class="Layer_3" style=""></div>
+    <div class="Rectangle_2" style=""></div>
+    <div class="Layer_4" style=""></div>
+    <div class="Layer_4_copy" style=""></div>
+    <div class="Layer_10" style="background-image: url({{ member.member_image.url }});"></div>
+    <div class="Layer_1_copy" style=""></div>
+    <div class="Layer_6" style=""></div>
+    <div class="Layer_2" style=""></div>
+    <div class="Layer_5" style=""></div>
+    <div class="Layer_11" style=""></div>
+    <div class="Layer_8" style=""></div>
+    <div class="Layer_12" style=""></div>
+    <div class="Layer_14" style=""></div>
+    <div class="Layer_13" style=""></div>
 
-<!--        body {-->
-<!--    background: linear-gradient(135deg, #667eea, #764ba2);-->
-<!--    display: flex;-->
-<!--    justify-content: center;-->
-<!--    align-items: flex-start; /* Allow scrolling */-->
-<!--    min-height: 100vh;-->
-<!--    padding: 20px;-->
-<!--    overflow-y: auto; /* Enables scrolling if needed */-->
-<!--}-->
+      <h1 class="GOD_S_CHURCH_OF_PEACE_INTERNATIONAL">GOD'S CHURCH OF PEACE INTERNATIONAL</h1>
+      <h2 class="MERCY_TEMPLE"></h2>
+      <p class="Membership_and_Identification_Card">Membership and Identification Card</p>
 
-<!--.container {-->
-<!--    background: white;-->
-<!--    max-width: 500px;-->
-<!--    width: 100%;-->
-<!--    max-height: 90vh; /* Limit height to 80% of viewport */-->
-<!--    padding: 30px;-->
-<!--    border-radius: 12px;-->
-<!--    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);-->
-<!--    text-align: center;-->
-<!--    animation: fadeIn 0.8s ease-in-out;-->
-<!--    overflow-y: auto; /* Scroll inside container if content overflows */-->
-<!--}-->
+      <p class="Surname">Surname</p>
+      <p class="Firstnames">Firstnames</p>
+      <p class="Position">Church Branch</p>
+      <p class="Personal_ID_Number">Personal ID Number</p>
+      <p class="Sex">Sex: Male</p>
 
-<!--        h2 {-->
-<!--            color: #4a4a4a;-->
-<!--            font-weight: 600;-->
-<!--            margin-bottom: 15px;-->
-<!--        }-->
+      <p class="OSEI">{{ member.f_name }}</p>
+      <p class="SAMUEL_NYARKO">{{ member.l_name }}</p>
+      <p class="MEDIA">{{ church_branch }}</p>
+      <p class="GCOP_00002">{{ church_id }}</p>
+  </div>
+  <button type="button"    class="btn"  id="downloadBtn">Download card as Image</button>
 
-<!--        p {-->
-<!--            color: #666;-->
-<!--            margin-bottom: 20px;-->
-<!--            font-size: 16px;-->
-<!--        }-->
-
-<!--        ul {-->
-<!--            list-style: none;-->
-<!--            text-align: left;-->
-<!--            padding: 0;-->
-<!--        }-->
-
-<!--        li {-->
-<!--            background: #f7f7f7;-->
-<!--            padding: 12px;-->
-<!--            border-radius: 8px;-->
-<!--            margin: 5px 0;-->
-<!--            font-size: 15px;-->
-<!--            display: flex;-->
-<!--            justify-content: space-between;-->
-<!--        }-->
-
-<!--        li strong {-->
-<!--            color: #333;-->
-<!--        }-->
-
-<!--        /* Button Styling */-->
-
-
-<!--        /* Fade-in Animation */-->
-<!--        @keyframes fadeIn {-->
-<!--            from {-->
-<!--                opacity: 0;-->
-<!--                transform: translateY(-10px);-->
-<!--            }-->
-<!--            to {-->
-<!--                opacity: 1;-->
-<!--                transform: translateY(0);-->
-<!--            }-->
-<!--        }-->
-
-<!--    </style>-->
-</head>
-<body>
-    <div class="container">
-        <h2 class="text-center">PDF Preview</h2>
-        <table class="table table-bordered text-white">
-            <tbody>
-                <tr><th>Member Image</th>
-                    <td>
-                        {% if member.member_image %}
-                            <img src="{{ member.member_image.url }}" alt="Member Image" class="img-fluid" style="max-width: 150px;">
-                        {% else %}
-                            No Image Available
-                        {% endif %}
-                    </td>
-                </tr>
-                <tr><th>Surname</th><td>{{ member.f_name }}</td></tr>
-                <tr><th>First Names</th><td>{{ member.l_name }}</td></tr>
-                <tr><th>Member Id</th><td>{{ church_id }}</td></tr>
-                <tr><th>Church Branch</th><td>{{ church_branch }}</td></tr>
-                <tr><th>Position</th><td>{{ position }}</td></tr>
-                <tr><th>Member Qrcode</th>
-                    <td>
-
-<img src="data:image/png;base64,{{ qr_code }}" class="img-fluid" style="max-width: 150px;">
-                    </td>
-                </tr>
-
-            </tbody>
-        </table>
-
-    </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+<script>
+  document.getElementById("downloadBtn").addEventListener("click", function () {
+      const div = document.getElementById("capture");
+
+      html2canvas(div).then((canvas) => {
+          let imgData = canvas.toDataURL("image/png"); // Convert canvas to image
+          let link = document.createElement("a");
+          link.href = imgData;
+          link.download = "div_image.png"; // Set the file name
+          link.click(); // Trigger download
+      });
+  });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
 </html>
