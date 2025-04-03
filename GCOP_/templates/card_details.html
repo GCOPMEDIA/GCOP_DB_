@@ -19,8 +19,11 @@
 }
 .Layer_8 {
   position: absolute;
-  background-size: contain;
+<!--  background-size: contain;-->
   background-repeat: no-repeat;
+  filter: grayscale(100%);
+  background-size: contain;
+  mix-blend-mode: multiply;
   left: 103px;
   top: 439px;
   width: 77px;
@@ -259,8 +262,9 @@
   position: absolute;
   background-size: contain;
   background-repeat: no-repeat; /* Prevents repeating */
-  background-image: url("{% static 'images/Layer\ 0.png' %}");
-  left: 0px;
+  left: -350px;
+  filter: grayscale(100%);
+
   top: 0px;
   width: 857px;
   height: 573px;
@@ -334,6 +338,7 @@
 }
 .Layer_0 {
   position: absolute;
+  background-image: url("{% static 'images/Layer\ 0.png' %}");
   opacity: 0.8;
   left: 0px;
   top: 0px;
