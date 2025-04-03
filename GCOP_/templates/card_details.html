@@ -341,7 +341,7 @@
 }
 .Layer_0 {
   position: absolute;
-  background-image: url("{% static 'images/Layer_0.png' %}");
+  background-image: url("{% static 'images/Layer\ 0.png' %}");
   opacity: 0.8;
   left: 0px;
   top: 0px;
@@ -389,13 +389,13 @@
     <div class="Rectangle_2" style=""></div>
     <div class="Layer_4" style=""></div>
     <div class="Layer_4_copy" style=""></div>
-    <div class="Layer_10" style="background-image: url({{ image }});"></div>
+    <div class="Layer_10" style="background-image: url({{ member.member_image.url }});"></div>
     <div class="Layer_1_copy" style=""></div>
     <div class="Layer_6" style=""></div>
     <div class="Layer_2" style=""></div>
     <div class="Layer_5" style=""></div>
-    <div class="Layer_11" style="background-image: url({{ image }});"></div>
-    <div class="Layer_8" style="background-image: url({{ image }});"></div>
+    <div class="Layer_11" style="background-image: url({{ member.member_image.url }});"></div>
+    <div class="Layer_8" style="background-image: url({{ member.member_image.url }});"></div>
     <div class="Layer_12" style=""></div>
     <div class="Layer_14" style=""></div>
     <div class="Layer_13" style=""></div>
@@ -419,7 +419,7 @@
 
 </body>
 <script>
-   document.getElementById("downloadBtn").addEventListener("click", function () {
+  document.getElementById("downloadBtn").addEventListener("click", function () {
       const div = document.getElementById("capture");
 
       html2canvas(div).then((canvas) => {
