@@ -25,7 +25,9 @@ group_choices = [
     ('8','Children Ministry'),
     ('9','Singing Band'),
     ('10','Mercy Ladies'),
-    ("1","Lyric Group")
+    ("1","Lyric Group"),
+    ('21','Protocol'),
+    ('22','Welfare')
 ]
 gender_choices = [
     ('male',"Male"),
