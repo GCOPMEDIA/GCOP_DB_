@@ -353,7 +353,7 @@ def card_details(request, member_id):
     # Generate the PDF using the utility function
     member = Member.objects.get(member_id=member_id)
 
-    qr = qrcode.QRCode(version=1, box_size=10, border=5)
+    qr = qrcode.QRCode(version=1, box_size=10, border=1)
     qr.add_data(church_id(member_id))  # Example data
     qr.make(fit=True)
 
