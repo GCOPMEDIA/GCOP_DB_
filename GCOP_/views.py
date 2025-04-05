@@ -376,10 +376,13 @@ def card_details(request, member_id):
     # Send the base64-encoded image as a response
 
     church_branch = member.church_branch
+    formatted_name = " . ".join((f"{member.f_name} {member.l_name}").split())
+    formatted_id = " . ".join([member_id.zfill(6)[i:i + 2] for i in range(0, 6, 2)])
+
     # Get a single object
     return render(request, 'card_details.html',
                   {'member': member, "church_branch": church_branch.branch_name, "qr_code": qr_base64,
-                   'church_id': church_id(member_id),'image':member_image})# 'image': img_base64})
+                   'church_id': church_id(member_id),'image':member_image,'name':formatted_name,'f_id':formatted_id})# 'image': img_base64})
 
 
 # except Exception as e:
