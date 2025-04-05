@@ -409,15 +409,15 @@
     letter-spacing: 10px;
     color: rgb(5, 5, 5);
     font-weight: normal;
-    line-height: 2;
+    line-height: 1;
     text-align: center;
     position: absolute;
-    left: 242px;
+    left: 303px;
     top: 298px;
     z-index: 24;
   }
   .Layer_7_copy {
-    background-image: url("{% static 'images/back_card/Layer_7_copy.png' %}");
+
     opacity: 1;
     position: absolute;
     left: 856px;
@@ -478,7 +478,7 @@
     z-index: 14;
   }
   .Layer_1 {
-    background-image: url("{% static 'images/back_card/Layer_1.png' %}");
+
     position: absolute;
     left: 409px;
     top: 380px;
@@ -586,16 +586,18 @@
   <button type="button"    class="btn"  id="downloadBtn">Download front card as Image</button>
   <div style="height:20px;"></div>
 <div class="Group_1_copy" id="capture1">
-        <div class="_00___00___00___02">00 . 00 . 00 . 02</div>
-        <div class="OSEI___SAMUEL___NYARKO">OSEI . SAMUEL . NYARKO</div>
-        <div class="Layer_7_copy"> </div>
+        <div style="text-align:center;" class="OSEI___SAMUEL___NYARKO">{{ f_id }} <br><span style="display:block; height:1px;"></span>
+        {{ name }}
+        </div>
+
+        <div class="Layer_7_copy"  style="background-image: url({{ member.member_image.url }});"> </div>
         <div class="Sankofa"></div>
         <div class="If_found__please_contact__233_20_463_6990____23">If found, please contact<br> +233 20 177 1771 / +233 20 463 6990 23 <br>gcopmedia@gmail.com</div>
         <div class="This_is_the_property_of_GOD_S_CHURCH_OF_PEACE_I"><p>This  is the property of <br> GOD'S CHURCH OF PEACE INTERNATIONAL</p></div>
         <div class="Layer_4_copy_2"></div>
         <div class="Layer_4_copy_3"></div>
         <div class="Rectangle_2_copy"></div>
-        <div class="Layer_1"></div>
+        <div class="Layer_1" style="background-image: url('{{ qr_code }}');"></div>
         <div class="Layer_3_copy"></div>
         <div class="Layer_0_copy"></div>
         <div class="Logo"></div>
