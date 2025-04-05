@@ -333,6 +333,7 @@
 .Layer_3 {
   position: absolute;
   background-image: url("{% static 'images/front_card/Layer_3.png' %}");
+  background-size:cover;
   left: -13px;
   top: 1px;
   width: 1002px;
@@ -416,7 +417,7 @@
     z-index: 24;
   }
   .Layer_7_copy {
-    background-image: url("Layer 7 copy.png");
+    background-image: url("{% static 'images/back_card/Layer_7_copy.png' %}");
     opacity: 1;
     position: absolute;
     left: 856px;
@@ -450,20 +451,20 @@
     z-index: 17;
   }
   .Layer_4_copy_3 {
-    background-image: url("Layer 4 copy 2.png");
+    background-image: url("{% static 'images/back_card/Layer_4_copy_2.png' %}");
     position: absolute;
     left: -8px;
     top: 554px;
-    width: 1002px;
+    width: 1015px;
     height: 14px;
     z-index: 16;
   }
   .Layer_4_copy_2 {
-    background-image: url("Layer 4 copy 2.png");
+    background-image: url("{% static 'images/back_card/Layer_4_copy_2.png' %}");
     position: absolute;
     left: -8px;
     top: 129px;
-    width: 1002px;
+    width: 1015px;
     height: 11px;
     z-index: 15;
   }
@@ -472,12 +473,12 @@
     position: absolute;
     left: -15px;
     top: -1px;
-    width: 1014px;
+    width: 1020px;
     height: 138px;
     z-index: 14;
   }
   .Layer_1 {
-    background-image: url("Layer 1.png");
+    background-image: url("{% static 'images/back_card/Layer_1.png' %}");
     position: absolute;
     left: 409px;
     top: 380px;
@@ -486,7 +487,7 @@
     z-index: 13;
   }
   .Layer_3_copy {
-    background-image: url("./Layer\ 3\ copy.png");
+    background-image: url("{% static 'images/back_card/Layer_3_copy.png' %}");
     position: absolute;
     background-size: cover;
     background-repeat: no-repeat;
@@ -497,16 +498,16 @@
     z-index: 12;
   }
   .Layer_0_copy {
-    background-image: url("./Layer\ 0\ copy.png");
+    background-image: url("{% static 'images/back_card/Layer_0_copy.png' %}");
     position: absolute;
     left: -8px;
     top: 0px;
-    width: 1009px;
+    width: 1015px;
     height: 607px;
     z-index: 11;
   }
   .Sankofa {
-        background-image: url("./IMG_20210830_214546.png");
+        background-image: url("{% static 'images/back_card/IMG_20210830_214546.png' %}");
         opacity: 0.03;
         position: absolute;
         left: -10px;
@@ -517,7 +518,7 @@
 
   }
   .Logo {
-    background-image: url("./jjgjgjgj.png");
+    background-image: url("{% static 'images/back_card/jjgjgjgj.png' %}");
     opacity: 0.11;
     position: absolute;
     left: 756px;
@@ -527,7 +528,7 @@
     z-index: 23;
   }
   .Lines {
-    background-image: url("./IMG_2211\ copy.png");
+    background-image: url("{% static 'images/back_card/IMG_2211_copy.png' %}");
     opacity: 0.3;
     position: absolute;
     left: 670px;
@@ -537,7 +538,7 @@
     z-index: 23;
   }
   .Lines1 {
-    background-image: url("./IMG_2211.png");
+    background-image: url("{% static 'images/back_card/IMG_2211.png' %}");
     opacity: 0.18;
     position: absolute;
     left: -16px;
@@ -607,19 +608,34 @@
   document.getElementById("downloadBtn").addEventListener("click", function () {
       const div = document.getElementById("capture");
 
-      html2canvas(document.getElementById("capture"), {
-    useCORS: true,  // Enables cross-origin loading
-    allowTaint: true, // Allows tainted images
-}).then(canvas => {
-    let imgData = canvas.toDataURL("image/png");
-    let link = document.createElement("a");
-    link.href = imgData;
-    link.download = "id_card.png";
-    link.click();
-});
+      html2canvas(div, {
+          useCORS: true,
+          allowTaint: true
+      }).then(canvas => {
+          let imgData = canvas.toDataURL("image/png");
+          let link = document.createElement("a");
+          link.href = imgData;
+          link.download = "id_card_front.png";
+          link.click();
+      });
+  });
 
+  document.getElementById("downloadBtn1").addEventListener("click", function () {
+      const div = document.getElementById("capture1");
+
+      html2canvas(div, {
+          useCORS: true,
+          allowTaint: true
+      }).then(canvas => {
+          let imgData = canvas.toDataURL("image/png");
+          let link = document.createElement("a");
+          link.href = imgData;
+          link.download = "id_card_back.png";
+          link.click();
+      });
   });
 </script>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
 </html>
