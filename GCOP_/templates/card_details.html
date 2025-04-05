@@ -418,8 +418,9 @@
   }
   .Layer_7_copy {
 
-    opacity: 1;
+    opacity: 0.11;
     position: absolute;
+    background-size: contain;
     left: 856px;
     top: 371px;
     width: 116px;
@@ -485,6 +486,7 @@
     width: 154px;
     height: 157px;
     z-index: 13;
+    background-size: contain;
   }
   .Layer_3_copy {
     background-image: url("{% static 'images/back_card/Layer_3_copy.png' %}");
@@ -597,7 +599,7 @@
         <div class="Layer_4_copy_2"></div>
         <div class="Layer_4_copy_3"></div>
         <div class="Rectangle_2_copy"></div>
-        <div class="Layer_1" style="background-image: url('{{ qr_code }}');"></div>
+<div class="Layer_1" style="background-image: url('data:image/png;base64,{{ qr_code }}');"></div>
         <div class="Layer_3_copy"></div>
         <div class="Layer_0_copy"></div>
         <div class="Logo"></div>
