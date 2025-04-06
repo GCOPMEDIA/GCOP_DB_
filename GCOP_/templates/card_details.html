@@ -350,7 +350,7 @@
   height: 600px;
   z-index: 30;
 }
-.Layer_1 {
+.Layer_1_ {
   position: absolute;
   background-image: url("{% static 'images/front_card/jjgjgjgj.png' %}");
   left: 40px;
@@ -403,19 +403,22 @@
     z-index: 25;
   }
   .OSEI___SAMUEL___NYARKO {
+    position: absolute;
+    top: 298px; /* keep this if vertical position is fine */
+    left: 50%;
+    transform: translateX(-50%);
     font-size: 25px;
     font-family: "Candara bold";
     font-variant: small-caps slashed-zero;
     letter-spacing: 10px;
     color: rgb(5, 5, 5);
+     max-width: fit-content;
     font-weight: normal;
     line-height: 1;
     text-align: center;
-    position: absolute;
-    left: 303px;
-    top: 298px;
     z-index: 24;
-  }
+}
+
   .Layer_7_copy {
 
     opacity: 0.15;
@@ -479,7 +482,7 @@
     height: 138px;
     z-index: 14;
   }
-  .Layer_1 {
+  .Layer_1{
 
     position: absolute;
     left: 409px;
@@ -555,7 +558,7 @@
 
   <div class="Group_ES" id="capture">
     <div class="Layer_0" style=""></div>
-    <div class="Layer_1" style=""></div>
+    <div class="Layer_1_" style=""></div>
     <div class="Layer_3" style=""></div>
     <div class="Rectangle_2" style=""></div>
     <div class="Layer_4" style=""></div>
@@ -579,7 +582,7 @@
       <p class="Firstnames">Firstnames</p>
       <p class="Position">Church Branch</p>
       <p class="Personal_ID_Number">Personal ID Number</p>
-      <p class="Sex">Sex: Male</p>
+      <p class="Sex" style="text-transform: capitalize;">Sex: {{ member.gender }}</p>
 
       <p class="OSEI">{{ member.f_name }}</p>
       <p class="SAMUEL_NYARKO">{{ member.l_name }}</p>
