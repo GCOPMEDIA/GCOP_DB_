@@ -1,12 +1,12 @@
-# import requests
-#
-# url = "https://gcop-db.onrender.com/check-id"
-# data = {"id": "GCOP-00005"}
-#
-# response = requests.post(url, json=data)
-#
-# print("Status Code:", response.status_code)
-# print("Response:", response.json())  # Print JSON response
+import requests
+
+url = "https://gcop-db.onrender.com/check-id"
+data = {"id": "GCOP-0005"}
+
+response = requests.post(url, json=data)
+
+print("Status Code:", response.status_code)
+print("Response:", response.json())  # Print JSON response
 # from fpdf import FPDF
 #
 #
