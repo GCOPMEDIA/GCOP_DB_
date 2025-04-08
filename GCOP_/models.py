@@ -213,6 +213,7 @@ class Member(models.Model):
     baptist_at_gcop = models.BooleanField(blank=True, null=True)
     is_printed = models.BooleanField(blank=True, null=True, default=False)
     church_branch = models.ForeignKey(Branches, models.DO_NOTHING, db_column='church_branch', blank=True, null=True)
+    church_id = models.CharField(blank=True,null=True,unique=True)
 
     class Meta:
         managed = True
@@ -230,6 +231,9 @@ class ChurchID(models.Model):
 
     def __str__(self):
         return self.gcop_id
+    class Meta:
+        managed = True
+        db_table = 'ChurchID'
 
 
 
