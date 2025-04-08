@@ -10,132 +10,133 @@ from django.core.exceptions import ObjectDoesNotExist
 
 def member_entry(data):
     # Check for existing phone number
-    if Member.objects.filter(phone_number=data['phone']).exists():
-        return JsonResponse({
-            "status": "error",
-            "message": f"Member with phone number {data['phone']} already exists."
-        }, status=400)
-    else:
-        if data["first_name"]:
-            m = Member(
-                f_name=data['first_name'],
-                l_name=data['other_name'],
-                date_of_birth=data['date_of_birth'],
-                phone_number=data['phone'],
-                address=data['address'],
-                hometown=data['hometown'],
-                gender=data['gender'],
-                marital_status=data['marital_status'],
-                date_joined=data['date_joined'],
-                emergency_num=data['emergency'],
-                occupation=data['occupation'],
-                nxt_of_kin=data['nxt_of_kin'],
-                place_of_residence=data['place_of_residence'],
-                welfare_card_num=data['welfare_card_number'],
-                tithe_card_num=data['tithe_card_number'],
-                history=data['history'],
-                baptism_status=data['baptism'],
-                baptist_at_gcop=data['baptist_at_gcop'],
-                registered_by=data['registered_by']
-            )
-            m.save()
 
-            church_branch = Branches.objects.get(branch_name=data['church_branch'])
-            m.church_branch = church_branch
-            m.save()
+        if data['phone'].strip() != "" and Member.objects.filter(phone_number=data['phone'].strip()).exists():
+            return JsonResponse({
+                "status": "error",
+                "message": f"Member with phone number {data['phone']} already exists."
+            }, status=400)
+        else:
+            if data["first_name"]:
+                m = Member(
+                    f_name=data['first_name'],
+                    l_name=data['other_name'],
+                    date_of_birth=data['date_of_birth'],
+                    phone_number=data['phone'],
+                    address=data['address'],
+                    hometown=data['hometown'],
+                    gender=data['gender'],
+                    marital_status=data['marital_status'],
+                    date_joined=data['date_joined'],
+                    emergency_num=data['emergency'],
+                    occupation=data['occupation'],
+                    nxt_of_kin=data['nxt_of_kin'],
+                    place_of_residence=data['place_of_residence'],
+                    welfare_card_num=data['welfare_card_number'],
+                    tithe_card_num=data['tithe_card_number'],
+                    history=data['history'],
+                    baptism_status=data['baptism'],
+                    baptist_at_gcop=data['baptist_at_gcop'],
+                    registered_by=data['registered_by']
+                )
+                m.save()
 
-        # Save positions
-        for p in (data['position']).split(','):
-            position = ChurchPositions(position_name=p, member=m)
-            position.save()
+                church_branch = Branches.objects.get(branch_name=data['church_branch'])
+                m.church_branch = church_branch
+                m.save()
 
-        # Save groups
-        for g in data['group_name']:
-            group = Groups.objects.get(group_id=int(g))
-            jgroup = Joinedgroups(group=group, member=m)
-            jgroup.save()
+            # Save positions
+            for p in (data['position']).split(','):
+                position = ChurchPositions(position_name=p, member=m)
+                position.save()
 
-        # Save parents
-        if data['parent_status'] == 'Both':
-            f = Relations(
-                f_name=data['father_first_name'],
-                l_name=data['father_other_name'],
-                phone_number=data['father_phone_number'],
-                relationship='Father',
-                is_member=data['father_is_member'],
-                member_id=m.member_id
-            )
-            f.save()
+            # Save groups
+            for g in data['group_name']:
+                group = Groups.objects.get(group_id=int(g))
+                jgroup = Joinedgroups(group=group, member=m)
+                jgroup.save()
 
-            mother = Relations(
-                f_name=data['mother_first_name'],
-                l_name=data['mother_other_name'],
-                phone_number=data['mother_phone_number'],
-                relationship='Mother',
-                is_member=data['mother_is_member'],
-                member_id=m.member_id
-            )
-            mother.save()
-        elif data['parent_status'] == 'Only Father':
-            f = Relations(
-                f_name=data['father_first_name'],
-                l_name=data['father_other_name'],
-                phone_number=data['father_phone_number'],
-                relationship='Father',
-                is_member=data['father_is_member'],
-                member_id=m.member_id
-            )
-            f.save()
-        elif data['parent_status'] == 'Only Mother':
-            mother = Relations(
-                f_name=data['mother_first_name'],
-                l_name=data['mother_other_name'],
-                phone_number=data['mother_phone_number'],
-                relationship='Mother',
-                is_member=data['mother_is_member'],
-                member_id=m.member_id
-            )
-            mother.save()
+            # Save parents
+            if data['parent_status'] == 'Both':
+                f = Relations(
+                    f_name=data['father_first_name'],
+                    l_name=data['father_other_name'],
+                    phone_number=data['father_phone_number'],
+                    relationship='Father',
+                    is_member=data['father_is_member'],
+                    member_id=m.member_id
+                )
+                f.save()
 
-        # Save children
-        for c in range(data['number_of_children']):
-            cd = data[f"child_{c + 1}"]
-            cc = Relations(
-                f_name=cd['child_first_name'],
-                l_name=cd['child_other_name'],
-                phone_number=cd['child_phone_number'],
-                relationship='Child',
-                is_member=cd['child_is_member'],
-                member_id=m.member_id
-            )
-            cc.save()
+                mother = Relations(
+                    f_name=data['mother_first_name'],
+                    l_name=data['mother_other_name'],
+                    phone_number=data['mother_phone_number'],
+                    relationship='Mother',
+                    is_member=data['mother_is_member'],
+                    member_id=m.member_id
+                )
+                mother.save()
+            elif data['parent_status'] == 'Only Father':
+                f = Relations(
+                    f_name=data['father_first_name'],
+                    l_name=data['father_other_name'],
+                    phone_number=data['father_phone_number'],
+                    relationship='Father',
+                    is_member=data['father_is_member'],
+                    member_id=m.member_id
+                )
+                f.save()
+            elif data['parent_status'] == 'Only Mother':
+                mother = Relations(
+                    f_name=data['mother_first_name'],
+                    l_name=data['mother_other_name'],
+                    phone_number=data['mother_phone_number'],
+                    relationship='Mother',
+                    is_member=data['mother_is_member'],
+                    member_id=m.member_id
+                )
+                mother.save()
 
-        # Save survivors
-        for s in range(data['number_of_survivors']):
-            sd = data[f"survivor_{s + 1}"]
-            cc = Relations(
-                f_name=sd['survivor_first_name'],
-                l_name=sd['survivor_other_name'],
-                phone_number=sd['survivor_phone_number'],
-                relationship='Close Relative',
-                is_member=sd['survivor_is_member'],
-                member_id=m.member_id
-            )
-            cc.save()
+            # Save children
+            for c in range(data['number_of_children']):
+                cd = data[f"child_{c + 1}"]
+                cc = Relations(
+                    f_name=cd['child_first_name'],
+                    l_name=cd['child_other_name'],
+                    phone_number=cd['child_phone_number'],
+                    relationship='Child',
+                    is_member=cd['child_is_member'],
+                    member_id=m.member_id
+                )
+                cc.save()
 
-        # Save spouse
-        if data['marital_status'] == 'married':
-            sp = Relations(
-                f_name=data['spouse_first_name'],
-                l_name=data['spouse_other_name'],
-                phone_number=data['spouse_phone_number'],
-                relationship='Spouse',
-                is_member=data['spouse_is_member'],
-                member_id=m.member_id
-            )
-            sp.save()
+            # Save survivors
+            for s in range(data['number_of_survivors']):
+                sd = data[f"survivor_{s + 1}"]
+                cc = Relations(
+                    f_name=sd['survivor_first_name'],
+                    l_name=sd['survivor_other_name'],
+                    phone_number=sd['survivor_phone_number'],
+                    relationship='Close Relative',
+                    is_member=sd['survivor_is_member'],
+                    member_id=m.member_id
+                )
+                cc.save()
 
-        return JsonResponse({"status": "success", "message": "Member saved successfully."})
+            # Save spouse
+            if data['marital_status'] == 'married':
+                sp = Relations(
+                    f_name=data['spouse_first_name'],
+                    l_name=data['spouse_other_name'],
+                    phone_number=data['spouse_phone_number'],
+                    relationship='Spouse',
+                    is_member=data['spouse_is_member'],
+                    member_id=m.member_id
+                )
+                sp.save()
+
+            return JsonResponse({"status": "success", "message": "Member saved successfully."})
 
 
 
