@@ -338,8 +338,8 @@ def download_pdf(request, member_id):
 
 def church_id(id_):
     len_ = str(id_)
-    if len(len_) < 5:
-        l = len_.zfill(5)
+    if len(len_) < 6:
+        l = len_.zfill(6)
     else:
         l = len_
     return f"GCOP-{l}"
