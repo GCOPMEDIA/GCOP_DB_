@@ -8,7 +8,16 @@ from .models import *
 from django.http import JsonResponse
 from django.core.exceptions import ObjectDoesNotExist
 
+def church_id(id_):
+    len_ = str(id_)
+    if len(len_) < 6:
+        l = len_.zfill(6)
+    else:
+        l = len_
+    return f"GCOP-{l}"
+
 def member_entry(data):
+
     # Check for existing phone number
 
         if data['phone'].strip() != "" and Member.objects.filter(phone_number=data['phone'].strip()).exists():
@@ -40,7 +49,8 @@ def member_entry(data):
                     registered_by=data['registered_by']
                 )
                 m.save()
-
+                m_again = Member(church_id=church_id(m.member_id))
+                m_again.save()
                 church_branch = Branches.objects.get(branch_name=data['church_branch'])
                 m.church_branch = church_branch
                 m.save()
