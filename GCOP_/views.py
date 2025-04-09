@@ -416,7 +416,7 @@ def check_id(request):
             scanned_id = data.get("id")
 
             # Check if ID exists in the database
-            person_id = (ChurchID.objects.filter(gcop_id=scanned_id).first()).member_id
+            person_id = (Member.objects.filter(church_id=scanned_id).first()).member_id
             person = Member.objects.get(member_id=person_id)
 
             if not person:
