@@ -416,8 +416,8 @@ def check_id(request):
             scanned_id = data.get("id")
 
             # Check if ID exists in the database
-            person_id = (Member.objects.filter(church_id=scanned_id).first()).member_id
-            person = Member.objects.get(member_id=person_id)
+            person = Member.objects.filter(church_id=scanned_id)
+
 
             if not person:
                 return JsonResponse({"exists": False})
