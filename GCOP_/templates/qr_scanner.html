@@ -1,101 +1,139 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    {% load static %}
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>QR Code Scanner</title>
+    {% load static %}
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
     <style>
         body {
-                background: url("{% static 'images/logo.png' %}") no-repeat center center fixed;
-
-            font-family: Arial, sans-serif;
-            background-color: #f9f9f9;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             text-align: center;
-            padding: 40px 20px;
+            margin: 0;
+            padding: 20px;
+            background: url("{% static 'images/logo.png' %}") no-repeat center center fixed;
+            background-size: contain;
+            color: #333;
         }
-
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
         h2 {
             color: rebeccapurple;
+            margin-bottom: 25px;
         }
-
         #reader {
             width: 300px;
-            margin: auto;
-            border: 2px solid rebeccapurple;
+            margin: 20px auto;
+            border: 3px solid rebeccapurple;
             border-radius: 8px;
-            padding: 10px;
-            background-color: white;
+            overflow: hidden;
         }
-
-        #result-box {
-            margin-top: 30px;
-            padding: 15px 20px;
+        #result-container {
+            margin: 25px auto;
+            padding: 20px;
             border-radius: 8px;
-            display: inline-block;
+            background: #f9f9f9;
+            min-height: 80px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        #result {
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+        .success {
+            color: #2e7d32;
+            border-left: 4px solid #2e7d32;
+        }
+        .error {
+            color: #c62828;
+            border-left: 4px solid #c62828;
+        }
+        .info {
+            color: rebeccapurple;
+            border-left: 4px solid rebeccapurple;
+        }
+        #scan-again-btn {
+            display: none;
             background-color: rebeccapurple;
             color: white;
-            font-size: 18px;
-            font-weight: bold;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            opacity: 0;
-            transform: scale(0.9);
-            transition: opacity 0.5s ease, transform 0.3s ease;
-        }
-
-        #result-box.show {
-            opacity: 1;
-            transform: scale(1.05);
-        }
-
-        #scan-again {
-            margin-top: 15px;
+            border: none;
             padding: 10px 20px;
-            background-color: white;
-            border: 2px solid rebeccapurple;
-            color: rebeccapurple;
-            font-weight: bold;
+            font-size: 16px;
             border-radius: 5px;
             cursor: pointer;
-            display: none;
+            margin-top: 15px;
+            transition: background-color 0.3s;
         }
-
-        #scan-again:hover {
-            background-color: rebeccapurple;
-            color: white;
+        #scan-again-btn:hover {
+            background-color: #4a2d8a;
+        }
+        .result-details {
+            text-align: left;
+            margin-top: 15px;
+            padding: 10px;
+            background: white;
+            border-radius: 5px;
+            width: 100%;
+            font-family: monospace;
+            font-size: 14px;
+            border: 1px solid #eee;
         }
     </style>
 </head>
 <body>
-    <h2>Member Attendance checking </h2>
-    <div id="reader"></div>
+    <div class="container">
+        <h2>QR Code Scanner</h2>
+        <div id="reader"></div>
 
-    <div id="result-box">Scan a QR code to get data</div>
-    <br />
-    <button id="scan-again">Scan Again</button>
-
-    <!-- Beep Sound -->
-    <audio id="beep-sound" src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg" preload="auto"></audio>
+        <div id="result-container" class="info">
+            <div id="result">Ready to scan QR code</div>
+            <button id="scan-again-btn">Scan Again</button>
+            <div id="result-details" class="result-details" style="display: none;"></div>
+        </div>
+    </div>
 
     <script>
         let html5QrcodeScanner;
-        const readerId = "reader";
-        const resultBox = document.getElementById("result-box");
-        const scanAgainBtn = document.getElementById("scan-again");
-        const beep = document.getElementById("beep-sound");
+        let isScanning = false;
 
-        function showResult(message) {
-            resultBox.innerText = message;
-            resultBox.classList.remove("show");
-            void resultBox.offsetWidth; // trigger reflow
-            resultBox.classList.add("show");
+        function startScanner() {
+            if (!isScanning) {
+                document.getElementById('result').innerText = "Ready to scan QR code";
+                document.getElementById('result-container').className = "info";
+                document.getElementById('result-details').style.display = "none";
+                document.getElementById('scan-again-btn').style.display = "none";
+
+                html5QrcodeScanner = new Html5QrcodeScanner(
+                    "reader",
+                    { fps: 10, qrbox: 250 },
+                    /* verbose= */ false
+                );
+                html5QrcodeScanner.render(onScanSuccess);
+                isScanning = true;
+            }
         }
 
         function onScanSuccess(qrCodeMessage) {
-            html5QrcodeScanner.clear(); // Stop scanning
-            beep.play();
-            showResult("Checking ID in database...");
+            // Stop scanning
+            html5QrcodeScanner.clear().then(() => {
+                isScanning = false;
+            }).catch(err => {
+                console.error("Failed to clear scanner", err);
+            });
+
+            document.getElementById('result').innerText = "Checking ID in database...";
+            document.getElementById('result-container').className = "info";
+            document.getElementById('result-details').style.display = "none";
 
             fetch("https://gcop-db.onrender.com/check-id", {
                 method: "POST",
@@ -104,34 +142,36 @@
             })
             .then(response => response.json())
             .then(data => {
+                const resultContainer = document.getElementById('result-container');
+                const resultDetails = document.getElementById('result-details');
+
                 if (data.exists) {
-                    showResult("✅ ID Found:\n" + JSON.stringify(data, null, 2));
+                    document.getElementById('result').innerText = "✅ Valid ID Found";
+                    resultContainer.className = "success";
+                    resultDetails.innerText = JSON.stringify(data, null, 2);
+                    resultDetails.style.display = "block";
                 } else {
-                    showResult("❌ ID Not Found");
+                    document.getElementById('result').innerText = "❌ ID Not Found in Database";
+                    resultContainer.className = "error";
+                    resultDetails.innerText = `Scanned ID: ${qrCodeMessage}`;
+                    resultDetails.style.display = "block";
                 }
-                scanAgainBtn.style.display = "inline-block";
+
+                document.getElementById('scan-again-btn').style.display = "inline-block";
             })
             .catch(error => {
-                showResult("⚠️ Error checking ID");
-                scanAgainBtn.style.display = "inline-block";
+                document.getElementById('result').innerText = "⚠️ Error checking ID";
+                document.getElementById('result-container').className = "error";
+                document.getElementById('scan-again-btn').style.display = "inline-block";
+                console.error("Error:", error);
             });
         }
 
-        function startScanner() {
-            showResult("Scan a QR code to get data");
-            scanAgainBtn.style.display = "none";
-            html5QrcodeScanner = new Html5Qrcode(readerId);
-            html5QrcodeScanner.start(
-                { facingMode: "environment" },
-                { fps: 10, qrbox: 250 },
-                onScanSuccess
-            );
-        }
-
-        scanAgainBtn.addEventListener("click", startScanner);
-
         // Initialize scanner on page load
-        window.onload = startScanner;
+        document.addEventListener('DOMContentLoaded', startScanner);
+
+        // Set up scan again button
+        document.getElementById('scan-again-btn').addEventListener('click', startScanner);
     </script>
 </body>
 </html>
