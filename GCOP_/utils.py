@@ -20,12 +20,7 @@ def member_entry(data):
 
     # Check for existing phone number
 
-        if data['phone'].strip() != "" and Member.objects.filter(phone_number=data['phone'].strip()).exists():
-            return JsonResponse({
-                "status": "error",
-                "message": f"Member with phone number {data['phone']} already exists."
-            }, status=400)
-        else:
+
             if data["first_name"]:
                 m = Member(
                     f_name=data['first_name'],
