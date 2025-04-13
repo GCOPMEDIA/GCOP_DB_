@@ -1,46 +1,136 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>QR Code Scanner</title>
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
     <style>
-        body { font-family: Arial, sans-serif; text-align: center; }
-        #reader { width: 300px; margin: auto; }
-        #result { margin-top: 20px; font-size: 18px; font-weight: bold; }
+        body {
+                background: url("{% static 'images/logo.png' %}") no-repeat center center fixed;
+
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        h2 {
+            color: rebeccapurple;
+        }
+
+        #reader {
+            width: 300px;
+            margin: auto;
+            border: 2px solid rebeccapurple;
+            border-radius: 8px;
+            padding: 10px;
+            background-color: white;
+        }
+
+        #result-box {
+            margin-top: 30px;
+            padding: 15px 20px;
+            border-radius: 8px;
+            display: inline-block;
+            background-color: rebeccapurple;
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            opacity: 0;
+            transform: scale(0.9);
+            transition: opacity 0.5s ease, transform 0.3s ease;
+        }
+
+        #result-box.show {
+            opacity: 1;
+            transform: scale(1.05);
+        }
+
+        #scan-again {
+            margin-top: 15px;
+            padding: 10px 20px;
+            background-color: white;
+            border: 2px solid rebeccapurple;
+            color: rebeccapurple;
+            font-weight: bold;
+            border-radius: 5px;
+            cursor: pointer;
+            display: none;
+        }
+
+        #scan-again:hover {
+            background-color: rebeccapurple;
+            color: white;
+        }
     </style>
 </head>
 <body>
-    <h2>Scan QR Code</h2>
+    <h2>Member Attendance checking </h2>
     <div id="reader"></div>
-    <p id="result">Scan a QR code to get data</p>
+
+    <div id="result-box">Scan a QR code to get data</div>
+    <br />
+    <button id="scan-again">Scan Again</button>
+
+    <!-- Beep Sound -->
+    <audio id="beep-sound" src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg" preload="auto"></audio>
 
     <script>
-    function onScanSuccess(qrCodeMessage) {
-        document.getElementById('result').innerText = "Checking ID in database...";
+        let html5QrcodeScanner;
+        const readerId = "reader";
+        const resultBox = document.getElementById("result-box");
+        const scanAgainBtn = document.getElementById("scan-again");
+        const beep = document.getElementById("beep-sound");
 
-        fetch("https://gcop-db.onrender.com/check-id", { // Update this with your API endpoint
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ id: qrCodeMessage }) // Send the scanned ID
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.exists) {
-                document.getElementById('result').innerText = "✅ ID Found: " + JSON.stringify(data);
-            } else {
-                document.getElementById('result').innerText = "❌ ID Not Found";
-            }
-        })
-        .catch(error => {
-            document.getElementById('result').innerText = "⚠️ Error checking ID";
-        });
-    }
+        function showResult(message) {
+            resultBox.innerText = message;
+            resultBox.classList.remove("show");
+            void resultBox.offsetWidth; // trigger reflow
+            resultBox.classList.add("show");
+        }
 
-    let html5QrcodeScanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: 250 });
-    html5QrcodeScanner.render(onScanSuccess);
-</script>
+        function onScanSuccess(qrCodeMessage) {
+            html5QrcodeScanner.clear(); // Stop scanning
+            beep.play();
+            showResult("Checking ID in database...");
 
+            fetch("https://gcop-db.onrender.com/check-id", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ id: qrCodeMessage })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.exists) {
+                    showResult("✅ ID Found:\n" + JSON.stringify(data, null, 2));
+                } else {
+                    showResult("❌ ID Not Found");
+                }
+                scanAgainBtn.style.display = "inline-block";
+            })
+            .catch(error => {
+                showResult("⚠️ Error checking ID");
+                scanAgainBtn.style.display = "inline-block";
+            });
+        }
+
+        function startScanner() {
+            showResult("Scan a QR code to get data");
+            scanAgainBtn.style.display = "none";
+            html5QrcodeScanner = new Html5Qrcode(readerId);
+            html5QrcodeScanner.start(
+                { facingMode: "environment" },
+                { fps: 10, qrbox: 250 },
+                onScanSuccess
+            );
+        }
+
+        scanAgainBtn.addEventListener("click", startScanner);
+
+        // Initialize scanner on page load
+        window.onload = startScanner;
+    </script>
 </body>
 </html>
