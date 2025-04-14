@@ -44,8 +44,7 @@ def member_entry(data):
                     registered_by=data['registered_by']
                 )
                 m.save()
-                m_again = Member(church_id=church_id(m.member_id))
-                m_again.save()
+        
                 church_branch = Branches.objects.get(branch_name=data['church_branch'])
                 m.church_branch = church_branch
                 m.save()
