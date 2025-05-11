@@ -38,7 +38,8 @@ ALLOWED_HOSTS = [
     "localhost",
     "127.0.0.1",
     "gcop-db.onrender.com",
-    "https://gcop-db-u09k.onrender.com",# Add your Render domain here
+    "https://gcop-db-u09k.onrender.com",
+    "gcop-db-u09k.onrender.com"# Add your Render domain here
 ]
 
 
