@@ -15,13 +15,11 @@ import os
 import cloudinary
 import dj_database_url
 from dotenv import load_dotenv
+
 load_dotenv()
-
-
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -30,20 +28,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-s)e7eeh2k$ai&)9_fg3cbz36y$hcng3(rf@l9t-6h51t6x&5*)'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-
+DEBUG = False
 
 ALLOWED_HOSTS = [
     "localhost",
     "127.0.0.1",
     "gcop-db.onrender.com",
     "https://gcop-db-u09k.onrender.com",
-    "gcop-db-u09k.onrender.com"# Add your Render domain here
+    "gcop-db-u09k.onrender.com"  # Add your Render domain here
 ]
-
-
-
 
 # Application definition
 
@@ -66,7 +59,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-         'whitenoise.middleware.WhiteNoiseMiddleware'
+    'whitenoise.middleware.WhiteNoiseMiddleware'
 
 ]
 
@@ -92,7 +85,6 @@ WSGI_APPLICATION = 'GCOP_DB_.wsgi.application'
 GOOGLE_DRIVE_STORAGE_JSON_KEY_FILE = "credentials.json"
 GOOGLE_DRIVE_STORAGE_MEDIA_ROOT = '1A7lHRGhCbVd7u67X0tqOrKtxQOhamKe6'
 
-
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
@@ -106,22 +98,15 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, 'GCOP_', 'static')]
 # Ensure STATIC_ROOT is set for collectstatic
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-
-
-
-
-
 DATABASES = {
-    "default": dj_database_url.config(default=os.environ.get('DATABASE_URL'),conn_max_age=1800)
+    "default": dj_database_url.config(default=os.environ.get('DATABASE_URL'), conn_max_age=1800)
 }
 
-
 cloudinary.config(
-  cloud_name = os.getenv('CLOUD_NAME'),
-  api_key = os.getenv('API_KEY'),
-  api_secret = os.getenv('API_SECRET')
+    cloud_name=os.getenv('CLOUD_NAME'),
+    api_key=os.getenv('API_KEY'),
+    api_secret=os.getenv('API_SECRET')
 )
-
 
 CLOUDINARY_STORAGE = {
     'CLOUD_NAME': os.getenv('CLOUD_NAME'),
@@ -130,11 +115,6 @@ CLOUDINARY_STORAGE = {
 }
 
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
-
-
-
-
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -154,7 +134,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
@@ -165,7 +144,6 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
