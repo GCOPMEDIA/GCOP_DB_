@@ -112,5 +112,13 @@
         </ul>
         <a href="{% url 'user_form' %}" class="btn">Register Another Member </a>
     </div>
+
+    {% if messages %}
+      <script>
+        {% for message in messages %}
+          alert("{{ message|escapejs }}");
+        {% endfor %}
+      </script>
+    {% endif %}
 </body>
 </html>
