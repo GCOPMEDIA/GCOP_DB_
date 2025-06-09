@@ -1,16 +1,16 @@
-import requests
-
-url = "https://gcop-db.onrender.com/check-id"
-data = {"id": "GCOP-0005"}
-
-response = requests.post(url, json=data)
-
-print("Status Code:", response.status_code)
-print("Response:", response.json())  # Print JSON response
-# from fpdf import FPDF
+# import requests
 #
+# url = "https://gcop-db.onrender.com/check-id"
+# data = {"id": "GCOP-000005"}
 #
-# def create_id_template():
+# response = requests.post(url, json=data)
+#
+# print("Status Code:", response.status_code)
+# print("Response:", response.json())  # Print JSON response
+# # from fpdf import FPDF
+# #
+# #
+# # def create_id_template():
 #     # Create PDF object
 #     pdf = FPDF(orientation='P', unit='mm', format=(85, 54))  # ID card size (typical dimensions)
 #
