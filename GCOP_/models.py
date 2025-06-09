@@ -198,7 +198,7 @@ class Member(models.Model):
     gender = models.CharField(max_length=10, blank=True, null=True)
     marital_status = models.CharField(max_length=20, blank=True, null=True)
     date_joined = models.DateField(blank=True, null=True)
-    phone_number = models.CharField(max_length=20, blank=True, null=True)
+    phone_number = models.CharField(max_length=20, blank=True, null=True,unique=True)
     emergency_num = models.CharField(max_length=20, blank=True, null=True)
     occupation = models.CharField(max_length=100, blank=True, null=True)
     nxt_of_kin = models.CharField(max_length=100, blank=True, null=True)
