@@ -26,9 +26,6 @@ path('download-pdf/<int:member_id>/', download_pdf, name='download_pdf'),
     path("check-id", check_id, name="check_id"),
     path("attendance-today/",attendance,name="attendance"),
     path('attendance-today-mercy-temple/',attendance_mercy_temple,name='attendance-mercy-temple')
-
-
-
 ]
 
 
