@@ -42,9 +42,7 @@ from django.shortcuts import redirect, render
 from django.http import HttpResponse
 
 
-@login_required(login_url="/", redirect_field_name="next")
-def dashboard(request):
-    return render(request, "dashboard.html")
+
 
 
 def login_(request):
@@ -59,7 +57,7 @@ def login_(request):
         if user is not None:
             login(request, user)
             return (
-                redirect(next_url) if next_url else redirect("user_form")
+                redirect(next_url) if next_url else redirect("dashboard")
             )  # Redirect to next URL or default
         else:
             return HttpResponse(status=403)  # Or render with an error message
@@ -67,6 +65,9 @@ def login_(request):
     next_url = request.GET.get("next", "")  # Preserve 'next' parameter for redirection
     return render(request, "registration/login.html", {"next": next_url})
 
+@login_required(login_url="/", redirect_field_name="next")
+def dashboard(request):
+    return render(request, "dashboard.html")
 
 # Utility function to update session data
 @login_required
