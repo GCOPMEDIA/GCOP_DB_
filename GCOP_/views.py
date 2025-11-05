@@ -39,6 +39,9 @@ from django.contrib.auth import authenticate, login
 from django.shortcuts import redirect, render
 from django.http import HttpResponse
 
+@login_required(login_url="/", redirect_field_name="next")
+def dashboard(request):
+    return render(request, "dashboard.html")
 
 def login_(request):
     if request.method == "POST":

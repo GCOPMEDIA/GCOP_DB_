@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    {% load static %}
+
+    <style>
+        /* Base */
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
+        html, body { height: 100%; }
+
+        /* Background using logo.png */
+        body {
+            background: url("{% static 'images/logo.png' %}") no-repeat center center fixed;
+            background-size: contain;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 40px 20px;
+            position: relative;
+            color: #fff;
+            overflow-y: auto;
+        }
+
+        /* Overlay */
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background: rgba(102, 51, 153, 0.72);
+            z-index: 0;
+        }
+
+        /* Page container */
+        .dashboard-container {
+            width: 100%;
+            max-width: 1100px;
+            z-index: 1;
+            display: grid;
+            grid-template-columns: 260px 1fr;
+            gap: 24px;
+            align-items: start;
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        /* Sidebar (glass) */
+        .sidebar {
+            background: rgba(255,255,255,0.12);
+            backdrop-filter: blur(8px);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid rgba(255,255,255,0.18);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.35);
+        }
+
+        .brand { font-size: 18px; font-weight: 600; color: #fff; margin-bottom: 12px; }
+        .nav { margin-top: 12px; }
+        .nav a { display:block; color: rgba(255,255,255,0.9); padding: 8px 6px; border-radius: 8px; text-decoration:none; margin-bottom:6px; }
+        .nav a:hover { background: rgba(255,255,255,0.06); }
+
+        /* Main area */
+        .main {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .topbar {
+            display:flex; justify-content:space-between; align-items:center;
+            gap:12px;
+        }
+        .topbar h1 { font-size: 28px; color: #fff; }
+        .user-badge { background: rgba(255,255,255,0.08); padding:8px 12px; border-radius: 999px; color:#fff; font-weight:500; }
+
+        /* Stats grid */
+        .stats-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+        }
+        .stat-card {
+            background: rgba(255,255,255,0.12);
+            padding: 18px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.16);
+            box-shadow: 0 8px 18px rgba(0,0,0,0.25);
+            text-align: left;
+        }
+        .stat-card h3 { font-size:14px; color: #efeefe; margin-bottom: 6px; }
+        .stat-card .num { font-size:24px; font-weight:700; color:#fff; }
+
+        /* Recent Activity / Table */
+        .glass {
+            background: rgba(255,255,255,0.08);
+            border-radius: 12px; padding: 18px; border: 1px solid rgba(255,255,255,0.12);
+        }
+        table { width:100%; border-collapse: collapse; margin-top:10px; }
+        table thead th { text-align:left; font-size:13px; color: #f1eefe; padding:8px 6px; }
+        table tbody td { padding: 10px 6px; border-top: 1px solid rgba(255,255,255,0.04); color:#eee; font-size:13px; }
+        .muted { color: rgba(255,255,255,0.7); font-size:12px; }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .dashboard-container { grid-template-columns: 1fr; }
+            .stats-grid { grid-template-columns: repeat(2,1fr); }
+        }
+        @media (max-width: 560px) {
+            .stats-grid { grid-template-columns: 1fr; }
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-8px);} to { opacity:1; transform: translateY(0);} }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="brand">GCOP Dashboard</div>
+            <div class="muted">Quick links</div>
+            <nav class="nav">
+                <a href="{% url 'user_form' %}">Register New Member</a>
+                <a href="{% url 'members_without_images' %}">Members Without Images</a>
+                <a href="{% url 'attendance' %}">Attendance</a>
+                <a href="{% url 'member_form_view' %}">Search For Member</a>
+                <a href="">Admin Dashboard</a>
+            </nav>
+        </aside>
+
+        <!-- Main -->
+        <main class="main">
+            <div class="topbar">
+                <h1>Dashboard</h1>
+                <div class="user-badge">Hello, {{ request.user.get_full_name|default:request.user.username }}</div>
+            </div>
+
+            <!-- Stats -->
+            <section class="stats-grid">
+                <div class="stat-card">
+                    <h3>Members</h3>
+                    <div class="num">{{ members_count|default:"—" }}</div>
+                    <div class="muted">Total registered members</div>
+                </div>
+
+                <div class="stat-card">
+                    <h3>Present Today</h3>
+                    <div class="num">{{ present_count|default:"—" }}</div>
+                    <div class="muted">Checked in this session</div>
+                </div>
+
+                <div class="stat-card">
+                    <h3>New This Month</h3>
+                    <div class="num">{{ new_count|default:"—" }}</div>
+                    <div class="muted">Members added this month</div>
+                </div>
+            </section>
+
+            <!-- Recent activity -->
+            <section class="glass">
+                <h3>Recent Activity</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>When</th>
+                            <th>Activity</th>
+                            <th>User</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if recent_activities %}
+                            {% for act in recent_activities %}
+                                <tr>
+                                    <td class="muted">{{ act.timestamp|date:"M d, H:i" }}</td>
+                                    <td>{{ act.description }}</td>
+                                    <td class="muted">{{ act.user }}</td>
+                                </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="3" class="muted">No recent activity to show.</td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </section>
+        </main>
+    </div>
+</body>
+</html>
