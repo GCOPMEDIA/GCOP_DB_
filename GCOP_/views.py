@@ -19,7 +19,9 @@ from .forms import (
     MotherForm,
     SurvivorForm,
     SpouseForm,
+    EditMemberForm,
 )
+from django.shortcuts import get_object_or_404
 from .utils import *
 from django.contrib.auth.decorators import login_required
 import requests
@@ -39,9 +41,11 @@ from django.contrib.auth import authenticate, login
 from django.shortcuts import redirect, render
 from django.http import HttpResponse
 
+
 @login_required(login_url="/", redirect_field_name="next")
 def dashboard(request):
     return render(request, "dashboard.html")
+
 
 def login_(request):
     if request.method == "POST":
@@ -94,6 +98,28 @@ def user_form_view(request):
         return render(request, "form_template.html", {"form": form, "step": "1"})
     else:
         return HttpResponse(status=403)
+
+
+@login_required(login_url="/", redirect_field_name="next")
+def edit_details(request, member_id):
+    """Edit a Member by id. GET shows form prefilled; POST saves changes.
+
+    This view expects a URL like /members/<id>/edit/ (see urls.py update).
+    """
+    member = Member.objects.get(member_id=member_id)
+    print(member.l_name)
+
+    if request.method == "POST":
+        form = EditMemberForm(request.POST, request.FILES, instance=member)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Member details updated.")
+            return redirect("dashboard")
+    else:
+        form = EditMemberForm(instance=member)
+        print(form)
+
+    return render(request, "edit_member_details.html", {"form": form, "member": member})
 
 
 # Step 2: Further Questions (Collecting number of children and survivors)
@@ -537,10 +563,11 @@ def attendance(request):
             }
         )
 
-        # Gender count
-        if m.member.gender.lower() == "male":
+        # Gender count (defensive: member.gender may be None)
+        gender_val = (m.member.gender or "").strip().lower()
+        if gender_val == "male":
             male_count += 1
-        elif m.member.gender.lower() == "female":
+        elif gender_val == "female":
             female_count += 1
 
     total_members = len(members_today)
@@ -599,3 +626,50 @@ def attendance_mercy_temple(request):
     }
 
     return render(request, "attendance.html", context)
+
+
+def print_attendance(request):
+    # Generate a PDF of today's attendance and return as attachment
+    today = timezone.localdate()
+
+    records = Attendance.objects.filter(scanned_at__date=today).select_related("member")
+    if not records.exists():
+        return HttpResponse("No member has checked in yet.", status=404)
+
+    pdf = FPDF()
+    pdf.set_auto_page_break(auto=True, margin=15)
+    pdf.add_page()
+
+    # Title
+    pdf.set_font("Arial", "B", 16)
+    pdf.cell(0, 10, f"Attendance Record - {today}", ln=True, align="C")
+    pdf.ln(6)
+
+    # Table header
+    pdf.set_font("Arial", "B", 12)
+    pdf.cell(90, 10, "Name", border=1)
+    pdf.cell(40, 10, "Time ", border=1)
+    pdf.cell(40, 10, "Gender", border=1)
+    pdf.ln()
+
+    # Table rows
+    pdf.set_font("Arial", size=11)
+    for r in records:
+        name = f"{r.member.f_name} {r.member.l_name}"
+        time_only = r.scanned_at.strftime("%I:%M %p")
+        gender = (r.member.gender or "").capitalize()
+
+        # Ensure cell text fits: truncate if necessary
+        name_display = name if len(name) <= 40 else name[:37] + "..."
+
+        pdf.cell(90, 8, name_display, border=1)
+        pdf.cell(40, 8, time_only, border=1)
+        pdf.cell(40, 8, gender, border=1)
+        pdf.ln()
+
+    # Output PDF to bytes
+    pdf_bytes = pdf.output(dest="S").encode("latin-1")
+
+    resp = HttpResponse(pdf_bytes, content_type="application/pdf")
+    resp["Content-Disposition"] = f'attachment; filename="attendance_{today}.pdf"'
+    return resp

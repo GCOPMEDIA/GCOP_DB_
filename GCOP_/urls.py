@@ -48,4 +48,6 @@ urlpatterns = [
     path(
         "dashboard/", dashboard, name="dashboard"
     ),  # New URL pattern for the dashboard view
+    path("members/<int:member_id>/edit/", edit_details, name="edit_member"),
+    path("print-attendance/", print_attendance, name="print_attendance"),
 ]

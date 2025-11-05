@@ -2,10 +2,289 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Member Details</title>
+    {% load static %}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: url("{% static 'images/logo.png' %}") no-repeat center center fixed;
+            background-size: contain;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            padding: 20px;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(102, 51, 153, 0.7);
+            z-index: 0;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.18);
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 600px;
+            padding: 30px;
+            text-align: center;
+            z-index: 1;
+            position: relative;
+            animation: fadeIn 0.8s ease-in-out;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            max-height: 90vh;
+            overflow-y: auto;
+            color: #111;
+        }
+
+        h2 {
+            color: white;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        form {
+            text-align: left;
+            margin-top: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display:block; color: #fff; margin-bottom:6px; font-size:14px;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            background: rgba(255, 255, 255, 0.22);
+            color: #000;
+            transition: background 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        input::placeholder, textarea::placeholder { color: rgba(0,0,0,0.45); }
+
+        input:focus, textarea:focus {
+            background: rgba(255, 255, 255, 0.32);
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.25);
+            outline: none;
+        }
+
+        .btn-primary {
+            background: #663399; border: none; padding: 12px 18px; border-radius: 8px;
+        }
+
+        .btn-secondary {
+            background: rgba(255,255,255,0.12); border: none; color: #fff; padding: 12px 18px; border-radius:8px;
+        }
+
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .form-actions { display:flex; gap:10px; margin-top:12px; justify-content:flex-start; }
+        @media (max-width: 780px) { .form-grid { grid-template-columns: 1fr; } .form-actions { flex-direction:column; } }
+
+        .error-message { color: #ffdddd; font-size:13px; margin-top:6px; }
+        .help-text { color: rgba(255,255,255,0.8); font-size:13px; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
 </head>
 <body>
-    <h1> Edit Member Details </h1>
+<div class="container">
+    <h2>Edit Member Details</h2>
+
+    {% if form.non_field_errors %}
+        <div class="error-message">{{ form.non_field_errors }}</div>
+    {% endif %}
+
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="form-grid">
+            <div class="form-group">
+                <label for="{{ form.f_name.id_for_label }}">{{ form.f_name.label }}</label>
+                <input
+                    type="text"
+                    id="{{ form.f_name.id_for_label }}"
+                    name="{{ form.f_name.html_name }}"
+                    value="{{ form.f_name.value|default_if_none:"" }}"
+                    placeholder="{{ form.f_name.field.widget.attrs.placeholder|default_if_none:"First name" }}"
+                />
+                {% if form.f_name.errors %}
+                    <div class="error-message">{{ form.f_name.errors|join:", " }}</div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.l_name.id_for_label }}">{{ form.l_name.label }}</label>
+                <input
+                    type="text"
+                    id="{{ form.l_name.id_for_label }}"
+                    name="{{ form.l_name.html_name }}"
+                    value="{{ form.l_name.value|default_if_none:"" }}"
+                    placeholder="{{ form.l_name.field.widget.attrs.placeholder|default_if_none:"Last name" }}"
+                />
+                {% if form.l_name.errors %}
+                    <div class="error-message">{{ form.l_name.errors|join:", " }}</div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.date_of_birth.id_for_label }}">{{ form.date_of_birth.label }}</label>
+                {{ form.date_of_birth }}
+                {% if form.date_of_birth.errors %}
+                    <div class="error-message">{{ form.date_of_birth.errors|join:", " }}</div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.hometown.id_for_label }}">{{ form.hometown.label }}</label>
+                {{ form.hometown }}
+                {% if form.hometown.errors %}
+                    <div class="error-message">{{ form.hometown.errors|join:", " }}</div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.gender.id_for_label }}">{{ form.gender.label }}</label>
+                {{ form.gender }}
+                {% if form.gender.errors %}
+                    <div class="error-message">{{ form.gender.errors|join:", " }}</div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.marital_status.id_for_label }}">{{ form.marital_status.label }}</label>
+                {{ form.marital_status }}
+                {% if form.marital_status.errors %}
+                    <div class="error-message">{{ form.marital_status.errors|join:", " }}</div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.date_joined.id_for_label }}">{{ form.date_joined.label }}</label>
+                {{ form.date_joined }}
+                {% if form.date_joined.errors %}
+                    <div class="error-message">{{ form.date_joined.errors|join:", " }}</div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.phone_number.id_for_label }}">{{ form.phone_number.label }}</label>
+                {{ form.phone_number }}
+                {% if form.phone_number.errors %}
+                    <div class="error-message">{{ form.phone_number.errors|join:", " }}</div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.emergency_num.id_for_label }}">{{ form.emergency_num.label }}</label>
+                {{ form.emergency_num }}
+                {% if form.emergency_num.errors %}
+                    <div class="error-message">{{ form.emergency_num.errors|join:", " }}</div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.occupation.id_for_label }}">{{ form.occupation.label }}</label>
+                {{ form.occupation }}
+                {% if form.occupation.errors %}
+                    <div class="error-message">{{ form.occupation.errors|join:", " }}</div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.nxt_of_kin.id_for_label }}">{{ form.nxt_of_kin.label }}</label>
+                {{ form.nxt_of_kin }}
+                {% if form.nxt_of_kin.errors %}
+                    <div class="error-message">{{ form.nxt_of_kin.errors|join:", " }}</div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.address.id_for_label }}">{{ form.address.label }}</label>
+                {{ form.address }}
+                {% if form.address.errors %}
+                    <div class="error-message">{{ form.address.errors|join:", " }}</div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.place_of_residence.id_for_label }}">{{ form.place_of_residence.label }}</label>
+                {{ form.place_of_residence }}
+                {% if form.place_of_residence.errors %}
+                    <div class="error-message">{{ form.place_of_residence.errors|join:", " }}</div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.history.id_for_label }}">{{ form.history.label }}</label>
+                <textarea id="{{ form.history.id_for_label }}" name="{{ form.history.html_name }}">{{ form.history.value|default_if_none:"" }}</textarea>
+                {% if form.history.errors %}
+                    <div class="error-message">{{ form.history.errors|join:", " }}</div>
+                {% endif %}
+            </div>
+
+            
+
+            <div class="form-group">
+                <label for="{{ form.baptism_status.id_for_label }}">Baptized?</label>
+                {{ form.baptism_status }}
+                {% if form.baptism_status.errors %}
+                    <div class="error-message">{{ form.baptism_status.errors|join:", " }}</div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.baptist_at_gcop.id_for_label }}">Baptized at GCOP?</label>
+                {{ form.baptist_at_gcop }}
+                {% if form.baptist_at_gcop.errors %}
+                    <div class="error-message">{{ form.baptist_at_gcop.errors|join:", " }}</div>
+                {% endif %}
+            </div>
+
+           
+
+            
+
+            {% for hidden in form.hidden_fields %}
+                {{ hidden }}
+            {% endfor %}
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Save changes</button>
+            <a href="{% url 'dashboard' %}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

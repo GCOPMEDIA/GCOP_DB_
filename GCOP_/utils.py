@@ -341,6 +341,30 @@ def print_pdf(member_id):
         print(f"An error occurred: {e}")
 
 
+def edit_member_details(member_id, data):
+    try:
+        member = Member.objects.get(member_id=member_id)
+
+        # Update member fields
+        member.f_name = data.get('first_name', member.f_name)
+        member.l_name = data.get('other_name', member.l_name)
+        member.phone_number = data.get('phone', member.phone_number)
+        member.address = data.get('address', member.address)
+        member.hometown = data.get('hometown', member.hometown)
+        member.marital_status = data.get('marital_status', member.marital_status)
+        member.occupation = data.get('occupation', member.occupation)
+        member.welfare_card_num = data.get('welfare_card_number', member.welfare_card_num)
+        member.tithe_card_num = data.get('tithe_card_number', member.tithe_card_num)
+        member.history = data.get('history', member.history)
+
+        member.save()
+        return JsonResponse({"status": "success", "message": "Member details updated successfully."})
+
+    except Member.DoesNotExist:
+        return JsonResponse({"status": "error", "message": "Member not found."})
+    except Exception as e:
+        return JsonResponse({"status": "error", "message": str(e)})
+
 # import requests
 # import io
 # import base64
