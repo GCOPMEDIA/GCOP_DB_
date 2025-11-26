@@ -1,1 +1,4 @@
 /debug_image.jpg
+venv
+venv/bin/activate
+*.pyc

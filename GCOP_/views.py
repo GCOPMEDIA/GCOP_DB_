@@ -26,6 +26,7 @@ from .utils import *
 from django.contrib.auth.decorators import login_required
 import requests
 from django.contrib import messages
+from .models import AuthUserGroups
 
 
 # Utility function to convert date fields to strings
@@ -67,7 +68,10 @@ def login_(request):
 
 @login_required(login_url="/", redirect_field_name="next")
 def dashboard(request):
-    return render(request, "dashboard.html")
+    print("User ID:", request.user.id)
+    user_groups = AuthUserGroups.objects.filter(user_id=request.user.id)
+    print(user_groups)
+    return render(request, "dashboard.html", {"user_groups": user_groups})
 
 # Utility function to update session data
 @login_required
