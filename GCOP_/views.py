@@ -20,13 +20,15 @@ from .forms import (
     SurvivorForm,
     SpouseForm,
     EditMemberForm,
+    EditGroupsJoinedForm,
+    ChildForm,
 )
 from django.shortcuts import get_object_or_404
 from .utils import *
 from django.contrib.auth.decorators import login_required
 import requests
 from django.contrib import messages
-from .models import AuthUserGroups
+from .models import AuthUserGroups, Joinedgroups, Relations
 
 
 # Utility function to convert date fields to strings
@@ -117,17 +119,79 @@ def edit_details(request, member_id):
     This view expects a URL like /members/<id>/edit/ (see urls.py update).
     """
     member = Member.objects.get(member_id=member_id)
+    # Get the related Joinedgroups record for this member
+    joined_group = Joinedgroups.objects.filter(member=member).first()
 
     if request.method == "POST":
-        form = EditMemberForm(request.POST, request.FILES, instance=member)
-        if form.is_valid():
-            form.save()
-            messages.success(request, "Member details updated.")
-            return redirect("dashboard")
+        # Check if this is a child form submission
+        if 'add_child' in request.POST:
+            child_form = ChildForm(request.POST)
+            if child_form.is_valid():
+                # Save child to Relations table
+                Relations.objects.create(
+                    f_name=child_form.cleaned_data['child_first_name'],
+                    l_name=child_form.cleaned_data['child_other_name'],
+                    phone_number=child_form.cleaned_data['child_phone_number'],
+                    is_member=child_form.cleaned_data['child_is_member'],
+                    relationship='Child',
+                    member_id=member_id
+                )
+                messages.success(request, "Child added successfully.")
+                return redirect('edit_member', member_id=member_id)
+            else:
+                # If child form is invalid, show both forms with errors
+                form = EditMemberForm(instance=member)
+                form_1 = EditGroupsJoinedForm(instance=joined_group) if joined_group else EditGroupsJoinedForm()
+                member_children = Relations.objects.filter(member_id=member_id, relationship='Child')
+                return render(request, "edit_member_details.html", {
+                    "form": form,
+                    "form_1": form_1,
+                    "child_form": child_form,
+                    "member_children": member_children,
+                    "member": member
+                })
+        elif 'save_member' in request.POST:
+            # Handle member form submission
+            form = EditMemberForm(request.POST, request.FILES, instance=member)
+            form_1 = EditGroupsJoinedForm(request.POST, instance=joined_group) if joined_group else EditGroupsJoinedForm(request.POST)
+            
+            if form.is_valid() and form_1.is_valid():
+                form.save()
+                if joined_group:
+                    form_1.save()
+                else:
+                    # Create a new Joinedgroups record if it doesn't exist
+                    new_group = form_1.save(commit=False)
+                    new_group.member = member
+                    new_group.save()
+                messages.success(request, "Member details updated.")
+                return redirect("dashboard")
+            else:
+                # Forms are invalid, re-render with errors
+                child_form = ChildForm()
+                member_children = Relations.objects.filter(member_id=member_id, relationship='Child')
+                return render(request, "edit_member_details.html", {
+                    "form": form,
+                    "form_1": form_1,
+                    "child_form": child_form,
+                    "member_children": member_children,
+                    "member": member
+                })
     else:
         form = EditMemberForm(instance=member)
+        form_1 = EditGroupsJoinedForm(instance=joined_group) if joined_group else EditGroupsJoinedForm()
+        child_form = ChildForm()
 
-    return render(request, "edit_member_details.html", {"form": form, "member": member})
+    # Get children that belong to this member
+    member_children = Relations.objects.filter(member_id=member_id, relationship='Child')
+
+    return render(request, "edit_member_details.html", {
+        "form": form,
+        "form_1": form_1,
+        "child_form": child_form,
+        "member_children": member_children,
+        "member": member
+    })
 
 
 # Step 2: Further Questions (Collecting number of children and survivors)

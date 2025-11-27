@@ -270,20 +270,98 @@
                 {% endif %}
             </div>
 
-           
+            <!-- Group Information Section -->
+            <div class="form-group" style="grid-column: 1 / -1;">
+                <h4 style="color: white; font-size: 16px; margin-top: 20px; margin-bottom: 15px;">Groups & Position</h4>
+            </div>
 
-            
+            <div class="form-group">
+                <label for="{{ form_1.group.id_for_label }}">{{ form_1.group.label }}</label>
+                {{ form_1.group }}
+                {% if form_1.group.errors %}
+                    <div class="error-message">{{ form_1.group.errors|join:", " }}</div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form_1.group_position.id_for_label }}">{{ form_1.group_position.label }}</label>
+                {{ form_1.group_position }}
+                {% if form_1.group_position.errors %}
+                    <div class="error-message">{{ form_1.group_position.errors|join:", " }}</div>
+                {% endif %}
+            </div>
 
             {% for hidden in form.hidden_fields %}
+                {{ hidden }}
+            {% endfor %}
+            {% for hidden in form_1.hidden_fields %}
                 {{ hidden }}
             {% endfor %}
         </div>
 
         <div class="form-actions">
-            <button type="submit" class="btn btn-primary">Save changes</button>
+            <button type="submit" name="save_member" value="true" class="btn btn-primary">Save changes</button>
             <a href="{% url 'dashboard' %}" class="btn btn-secondary">Cancel</a>
         </div>
     </form>
+
+    <!-- Add Child Section -->
+    <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.3);">
+        <h3 style="color: white; font-size: 18px; margin-bottom: 20px;">Add Child</h3>
+        
+        {% if member_children %}
+            <div style="margin-bottom: 20px; background: rgba(76, 175, 80, 0.2); padding: 15px; border-radius: 6px;">
+                <h5 style="color: #4CAF50; margin-bottom: 10px;">Children:</h5>
+                <ul style="margin: 0; padding-left: 20px; color: white;">
+                    {% for child in member_children %}
+                        <li>{{ child.f_name }} {{ child.l_name }} (Phone: {{ child.phone_number|default:"N/A" }})</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+
+        <form method="POST" style="text-align: left;">
+            {% csrf_token %}
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="{{ child_form.child_first_name.id_for_label }}">{{ child_form.child_first_name.label }}</label>
+                    {{ child_form.child_first_name }}
+                    {% if child_form.child_first_name.errors %}
+                        <div class="error-message">{{ child_form.child_first_name.errors|join:", " }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ child_form.child_other_name.id_for_label }}">{{ child_form.child_other_name.label }}</label>
+                    {{ child_form.child_other_name }}
+                    {% if child_form.child_other_name.errors %}
+                        <div class="error-message">{{ child_form.child_other_name.errors|join:", " }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ child_form.child_phone_number.id_for_label }}">{{ child_form.child_phone_number.label }}</label>
+                    {{ child_form.child_phone_number }}
+                    {% if child_form.child_phone_number.errors %}
+                        <div class="error-message">{{ child_form.child_phone_number.errors|join:", " }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ child_form.child_is_member.id_for_label }}">{{ child_form.child_is_member.label }}</label>
+                    {{ child_form.child_is_member }}
+                    {% if child_form.child_is_member.errors %}
+                        <div class="error-message">{{ child_form.child_is_member.errors|join:", " }}</div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" name="add_child" class="btn btn-primary">Add Child</button>
+            </div>
+        </form>
+    </div>
+
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>

@@ -174,6 +174,9 @@ class Groups(models.Model):
         managed = False
         db_table = 'groups'
 
+    def __str__(self):
+        return self.group_name
+
 
 class Joinedgroups(models.Model):
     id = models.BigAutoField(primary_key=True)

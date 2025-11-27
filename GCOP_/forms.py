@@ -181,7 +181,7 @@ class SpouseForm(forms.Form):
 
 
 from django import forms
-from .models import Member
+from .models import Member,Joinedgroups
 
 
 class MemberImageUploadForm(forms.ModelForm):
@@ -233,6 +233,33 @@ class EditMemberForm(forms.ModelForm):
             "date_of_birth": forms.DateInput(attrs={"type": "date"}),
             "date_joined": forms.DateInput(attrs={"type": "date"}),
         }
+
+
+class EditGroupsJoinedForm(forms.ModelForm):
+    """ModelForm for editing Joinedgroups instances.
+    
+    Allows selecting which groups a member belongs to and their position.
+    """
+    class Meta:
+        model = Joinedgroups
+        fields = ['group', 'group_position']
+        labels = {
+            'group': 'Group',
+            'group_position': 'Position',
+        }
+        widgets = {
+            'group_position': forms.TextInput(attrs={'type': 'text'}),
+        }
+
+
+class ChildForm(forms.Form):
+    """Form for adding a child to a member."""
+    child_first_name = forms.CharField(max_length=250, label="Child's Surname", required=True)
+    child_other_name = forms.CharField(max_length=250, label="Child's Other Names", required=True)
+    child_phone_number = forms.CharField(max_length=15, label="Child's Phone Number", required=False)
+    child_is_member = forms.ChoiceField(
+        choices=yes_or_no, widget=forms.Select, label="Is Your Child A Member Of GCOP?"
+    )
 
 
 # class EditMemberForm(forms.ModelForm):
