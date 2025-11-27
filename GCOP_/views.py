@@ -68,10 +68,15 @@ def login_(request):
 
 @login_required(login_url="/", redirect_field_name="next")
 def dashboard(request):
-    print("User ID:", request.user.id)
     user_groups = AuthUserGroups.objects.filter(user_id=request.user.id)
-    print(user_groups)
-    return render(request, "dashboard.html", {"user_groups": user_groups})
+    members_count = Member.objects.count()
+    today = timezone.localdate()
+    present_count = Attendance.objects.filter(scanned_at__date=today).count()
+    month_start = today.replace(day=1)
+    new_count = Member.objects.filter(created_at__gte=month_start).count()
+    # Get recent member registrations
+    recent_activities = Member.objects.all().order_by('-member_id')[:10]
+    return render(request, "dashboard.html", {"user_groups": user_groups, "members_count": members_count, "present_count": present_count, "new_count": new_count, "recent_activities": recent_activities})
 
 # Utility function to update session data
 @login_required
@@ -112,7 +117,6 @@ def edit_details(request, member_id):
     This view expects a URL like /members/<id>/edit/ (see urls.py update).
     """
     member = Member.objects.get(member_id=member_id)
-    print(member.l_name)
 
     if request.method == "POST":
         form = EditMemberForm(request.POST, request.FILES, instance=member)
@@ -122,7 +126,6 @@ def edit_details(request, member_id):
             return redirect("dashboard")
     else:
         form = EditMemberForm(instance=member)
-        print(form)
 
     return render(request, "edit_member_details.html", {"form": form, "member": member})
 
@@ -362,7 +365,6 @@ def print_view(request, member_id):
 
         member = Member.objects.get(member_id=member_id)
 
-        print(member.f_name)
         return render(request, "print_view.html", {"member": member})
     except:
         return HttpResponse("Member not found.", status=404)
@@ -477,7 +479,6 @@ def to_print(request):
 
     return render(request, "to_print.html", {"members": members})
 
-    # return HttpResponse("No Members to print.", status=404)
 
 
 @login_required(login_url="/", redirect_field_name="next")
@@ -678,3 +679,22 @@ def print_attendance(request):
     resp = HttpResponse(pdf_bytes, content_type="application/pdf")
     resp["Content-Disposition"] = f'attachment; filename="attendance_{today}.pdf"'
     return resp
+
+
+def total_members(request):
+    total = Member.objects.count()
+    return HttpResponse(f"Total Members: {total}")
+
+
+def members_registered_this_month(request):
+    today = timezone.now()
+    month_start = today.replace(day=1)
+    count = Member.objects.filter(date_registered__gte=month_start).count()
+    return HttpResponse(f"Members registered this month: {count}")
+
+def members_present_today(request):
+    today = timezone.localdate()
+    count = Attendance.objects.filter(scanned_at__date=today).count()
+    return HttpResponse(f"Members present today: {count}")
+
+

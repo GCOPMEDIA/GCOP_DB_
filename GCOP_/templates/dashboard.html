@@ -150,7 +150,6 @@
             <div class="topbar">
                 <h1>Dashboard</h1>
                 <div class="user-badge">Hello, {{ request.user.get_full_name|default:request.user.username }}</div>
-                <div class="user-badge">Group: {% for ug in user_groups %}{{ ug.group.name }}{% if not forloop.last %}, {% endif %}{% endfor %}</div>
             </div>
 
             <!-- Stats -->
@@ -187,11 +186,11 @@
                     </thead>
                     <tbody>
                         {% if recent_activities %}
-                            {% for act in recent_activities %}
+                            {% for member in recent_activities %}
                                 <tr>
-                                    <td class="muted">{{ act.timestamp|date:"M d, H:i" }}</td>
-                                    <td>{{ act.description }}</td>
-                                    <td class="muted">{{ act.user }}</td>
+                                    <td class="muted">{% if member.created_at %}{{ member.created_at|date:"M d, H:i" }}{% else %}—{% endif %}</td>
+                                    <td>{{ member.f_name }} {{ member.l_name }} registered</td>
+                                    <td class="muted">{{ member.registered_by|default:"—" }}</td>
                                 </tr>
                             {% endfor %}
                         {% else %}

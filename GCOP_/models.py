@@ -206,7 +206,7 @@ class Member(models.Model):
     welfare_card_num = models.CharField(max_length=50, blank=True, null=True)
     place_of_residence = models.CharField(max_length=50, blank=True, null=True)
     tithe_card_num = models.CharField(max_length=50, blank=True, null=True)
-    created_at = models.DateTimeField(default=now,blank=True, null=True)
+    created_at = models.DateTimeField(default=now, blank=True, null=True)
     member_image = CloudinaryField('image', blank=True, null=True)  # ✅ Cloudinary field
     address = models.CharField(max_length=250, blank=True, null=True)
     baptism_status = models.BooleanField(blank=True, null=True)
